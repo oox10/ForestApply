@@ -1,0 +1,386 @@
+HTTP/1.1 100 Continue
+
+HTTP/1.1 200 OK
+Date: Sun, 10 Sep 2017 05:43:37 GMT
+X-Powered-By: ASP.NET
+X-AspNet-Version: 4.0.30319
+Cache-Control: private
+Content-Type: text/html; charset=utf-8
+Content-Length: 37688
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>
+	林務局自然保留區暨自然保護區後端管理系統
+</title><link href="../css/style.css" rel="stylesheet" type="text/css" /><link href="../css/jquery.datepick.css" rel="stylesheet" type="text/css" /><link href="../css/jquery-ui-1.9.2.custom.css" rel="stylesheet" type="text/css" /><link href="../css/colorbox.css" rel="stylesheet" type="text/css" /><link href="../css/layout.css" rel="stylesheet" type="text/css" /><link href="../css/fonts.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/jquery.datepick.js"></script>
+    <script type="text/javascript" src="../js/jquery.datepick.tw.js"></script>
+    <script type="text/javascript" src="../js/jquery.colorbox-min.js"></script>
+    <script type="text/javascript" src="../js/jquery-ui-1.9.2.custom.min.js"></script>
+    <script type="text/javascript" src="../js/ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="../js/function.js"></script>
+    
+    <script type="text/javascript">
+<!--
+ $(document).ready(function () {           
+     
+});
+//-->
+        // 日期選擇器
+        $(function () {
+            $("input[class=chooseDate]").datepick({
+                beforeShow: function (input, inst) {
+                    inst.dpDiv.css({ marginTop: -(190 + input.offsetHeight) + 'px', marginLeft: (input.offsetWidth + 0) + 'px' });
+                }
+            });
+        });
+    </script>
+    <style type="text/css">
+        .style1
+        {
+            height: 24px;
+        }
+    </style>
+</head>
+<body>
+    <form name="aspnetForm" method="post" action="ADMReservedApply.aspx" id="aspnetForm">
+<div>
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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" />
+</div>
+
+<div>
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="52B20778" />
+	<input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="uTw3H84PpkKGmpCApmK/uhkuL2Kze3LXKRDEMVX6JZvVu2kVGES+vN1MiI2VWwR4VXQDleoUbja2IyjzxhtLPyqENd+7dlilu7YVCUzudU3YifXy6bk1Iijaibt/ZqDcwxaqGPMwoaFjN8cbwcjao9gjl/Q=" />
+</div>
+    <div id="bkWrapper">
+        <div id="bkheader1">
+        </div>
+        <!--bk_header-end-->
+        <div id="bkmenber">
+            <h1>
+                登入單位：臺灣大學測試帳號</h1>
+        </div>
+        <div id="menunav1">
+            <ul>
+                
+                        <li><a href="ADMLogin.aspx">
+                            登出系統</a></li>
+                    
+                        <li><a href="ADMSystem.aspx">
+                            系統参數設定</a></li>
+                    
+                        <li><a href="ADMArea.aspx">
+                            保留保護區管理</a></li>
+                    
+                        <li><a href="ADMUnit.aspx">
+                            所轄單位管理</a></li>
+                    
+                        <li><a href="ADMNews.aspx">
+                            最新消息資料</a></li>
+                    
+                        <li><a href="ADMReservedApply.aspx">
+                            保留區申請資料</a></li>
+                    
+                        <li><a href="ADMProtectedApply.aspx">
+                            保護區申請資料</a></li>
+                    
+            </ul>
+            <div style="height: 300px">
+            </div>
+        </div>
+        <!--menu_nav-end-->
+        <div id="maincontent">
+            
+    
+            <table cellspacing="0" border="0" id="ctl00_ContentPlaceHolder1_fv" style="width:100%;border-collapse:collapse;">
+	<tr>
+		<td colspan="2">
+                    <table border="0" cellpadding="0" cellspacing="4" width="100%">
+                        <tr>
+                            <td align="right" height="24" nowrap>
+                                進入區域:
+                            </td>
+                            <td>
+                                <span id="ctl00_ContentPlaceHolder1_fv_Label3">插天山自然保留區</span>
+                            </td>
+                            <td align="right" height="24" nowrap>
+                                申請編號:
+                            </td>
+                            <td>
+                                <span id="ctl00_ContentPlaceHolder1_fv_Label6">R10603726</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" height="24">
+                                &nbsp;
+                            </td>
+                            <td>
+                                &nbsp;
+                            </td>
+                            <td align="right" nowrap>
+                                密碼:
+                            </td>
+                            <td>
+                                <span id="ctl00_ContentPlaceHolder1_fv_Label18">61318</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" height="24" nowrap>
+                                申請日期:
+                            </td>
+                            <td>
+                                <span id="ctl00_ContentPlaceHolder1_fv_Label4">2017/9/7</span>
+                            </td>
+                            <td align="right" nowrap>
+                                申請人:
+                            </td>
+                            <td>
+                                <span id="ctl00_ContentPlaceHolder1_fv_Label5">黃建嘉</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" height="24" nowrap>
+                                進入期間:
+                            </td>
+                            <td>
+                                <span id="ctl00_ContentPlaceHolder1_fv_Label7">2017/9/23</span>
+                                &nbsp;~&nbsp;<span id="ctl00_ContentPlaceHolder1_fv_Label8">2017/9/23</span>
+                            </td>
+                            <td align="right" nowrap>
+                                進入目的:
+                            </td>
+                            <td>
+                                <span id="ctl00_ContentPlaceHolder1_fv_lblReason">相關團體為環境教育之需要</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" height="24" nowrap>
+                                檔案上傳:
+                            </td>
+                            <td>
+                                <a id="ctl00_ContentPlaceHolder1_fv_HyperLink1" href="../data/upload/" target="_blank"></a>
+                            </td>
+                            <td align="right" nowrap>
+                                EMail:
+                            </td>
+                            <td>
+                                <span id="ctl00_ContentPlaceHolder1_fv_Label10">ahead001@hotmail.com</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" height="24" nowrap>
+                                進入範圍:
+                            </td>
+                            <td>
+                                <span id="ctl00_ContentPlaceHolder1_fv_lblRange">塔曼山大水塔登山口至塔曼山步道沿線</span>
+                            </td>
+                            <td align="right" nowrap>
+                                到達入口時間:
+                            </td>
+                            <td>
+                                <span id="ctl00_ContentPlaceHolder1_fv_lblReceiveDate">10:30</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" height="24" nowrap>
+                                進入入口及出口地點:
+                            </td>
+                            <td>
+                                <span id="ctl00_ContentPlaceHolder1_fv_Label13">塔曼山大水塔登山口/塔曼山大水塔登山口</span>
+                            </td>
+                            <td align="right" nowrap>
+                                狀態:
+                            </td>
+                            <td>
+                                <span id="ctl00_ContentPlaceHolder1_fv_lblStatus" style="color:Red;">正取送審</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" height="24" valign="top" nowrap>
+                                每日行程路線:
+                            </td>
+                            <td colspan="3">
+                                <span id="ctl00_ContentPlaceHolder1_fv_Label14">10:30塔曼山大水塔登山口->13:30塔曼山->16:00塔曼山大水塔登山口</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" height="24" valign="top" nowrap>
+                                環境維護措施:
+                            </td>
+                            <td colspan="3">
+                                <span id="ctl00_ContentPlaceHolder1_fv_Label15">1.全體隊員遵守進入管制規定及無痕山林規範。<br/>2.不隨意離開已開放供使用之步道及區域。<br/>3.在體驗大自然的豐富饗宴之餘，除了攝影，不帶走任何物品;除了回憶，不留下任何垃圾。<br/>4.由領隊進行環境教育解說。</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" height="24" valign="top" nowrap>
+                                緊急災難處理:
+                            </td>
+                            <td colspan="3">
+                                <span id="ctl00_ContentPlaceHolder1_fv_Label16">1.裝備：無線電*2、地圖、指北針、手機、刀具、急救包、GPS。<br/>2.保險：隊員自行投保。<br/>3.留守人員姓名：黃馨慧、聯絡電話：0936-540-407<br/>4.撤退方式：如身體不適或天氣變化或路線受阻，立即原路撤退下山。</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" height="24">
+                                隊員資料:
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" height="24">
+                                <div>
+			<table cellspacing="1" cellpadding="0" border="0" id="ctl00_ContentPlaceHolder1_fv_gvMember" style="background-color:#CCCCCC;width:100%;">
+				<tr align="center" style="background-color:#F7F7F7;font-weight:bold;height:22px;">
+					<th scope="col">編號</th><th scope="col">姓名</th><th scope="col" style="white-space:nowrap;">身分證字號</th><th scope="col" style="white-space:nowrap;">護照號碼<br />(外籍人士)</th><th scope="col" style="white-space:nowrap;">出生年月日</th><th scope="col">通訊地址</th><th scope="col">聯絡電話</th><th scope="col" style="white-space:nowrap;">緊急連絡親友<br />姓名及電話</th>
+				</tr><tr style="background-color:White;height:22px;">
+					<td align="center">1</td><td align="center" style="white-space:nowrap;">黃建嘉</td><td align="center">H123793499</td><td align="center">&nbsp;</td><td align="center">77-09-29</td><td align="center">台北市大安區新生南路一段157巷1號3樓</td><td align="center">916979878</td><td align="center">
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl02_Label1">黃馨慧</span>
+                                                <br />
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl02_Label17">936540407</span>
+                                            </td>
+				</tr><tr style="background-color:#F7F7F7;height:22px;">
+					<td align="center">2</td><td align="center" style="white-space:nowrap;">邱侶潔</td><td align="center">L224612415</td><td align="center">&nbsp;</td><td align="center">81-03-23</td><td align="center">台中市西屯區惠來里惠安巷10-4號</td><td align="center">920545687</td><td align="center">
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl03_Label1">許淑芬</span>
+                                                <br />
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl03_Label17">920545681</span>
+                                            </td>
+				</tr><tr style="background-color:White;height:22px;">
+					<td align="center">3</td><td align="center" style="white-space:nowrap;">鍾秉蓉</td><td align="center">A228555663</td><td align="center">&nbsp;</td><td align="center">79-11-16</td><td align="center">台北市北投區大同街104號</td><td align="center">930213938</td><td align="center">
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl04_Label1">陳雲美</span>
+                                                <br />
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl04_Label17">931234867</span>
+                                            </td>
+				</tr><tr style="background-color:#F7F7F7;height:22px;">
+					<td align="center">4</td><td align="center" style="white-space:nowrap;">張倖嘉</td><td align="center">L223967073</td><td align="center">&nbsp;</td><td align="center">81-01-24</td><td align="center">南港區 玉成街140巷25號3樓</td><td align="center">987482326</td><td align="center">
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl05_Label1">陳素金</span>
+                                                <br />
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl05_Label17">937795807</span>
+                                            </td>
+				</tr><tr style="background-color:White;height:22px;">
+					<td align="center">5</td><td align="center" style="white-space:nowrap;">王安妮</td><td align="center">L223859969</td><td align="center">&nbsp;</td><td align="center">79-10-24</td><td align="center">40152台中市東區振興路2之9號</td><td align="center">913460360</td><td align="center">
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl06_Label1">王錦德</span>
+                                                <br />
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl06_Label17">913626323</span>
+                                            </td>
+				</tr><tr style="background-color:#F7F7F7;height:22px;">
+					<td align="center">6</td><td align="center" style="white-space:nowrap;">朱祐毅</td><td align="center">B122555524</td><td align="center">&nbsp;</td><td align="center">79-07-04</td><td align="center">新竹市篤行一路8號</td><td align="center">911308475</td><td align="center">
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl07_Label1">朱子煌</span>
+                                                <br />
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl07_Label17">932618220</span>
+                                            </td>
+				</tr><tr style="background-color:White;height:22px;">
+					<td align="center">7</td><td align="center" style="white-space:nowrap;">金怡婷</td><td align="center">L224247230</td><td align="center">&nbsp;</td><td align="center">80-09-07</td><td align="center">台中市后里區甲后路三段279號</td><td align="center">911506617</td><td align="center">
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl08_Label1">陳淑娥</span>
+                                                <br />
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl08_Label17">937205820</span>
+                                            </td>
+				</tr><tr style="background-color:#F7F7F7;height:22px;">
+					<td align="center">8</td><td align="center" style="white-space:nowrap;">林鼎鈞</td><td align="center">F128193924</td><td align="center">&nbsp;</td><td align="center">79-11-21</td><td align="center">新竹市東區篤行一路1號</td><td align="center">934294692</td><td align="center">
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl09_Label1">林木成</span>
+                                                <br />
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl09_Label17">936281087</span>
+                                            </td>
+				</tr><tr style="background-color:White;height:22px;">
+					<td align="center">9</td><td align="center" style="white-space:nowrap;">陳廷碩</td><td align="center">F127007670</td><td align="center">&nbsp;</td><td align="center">76-08-28</td><td align="center">台北市北投區大度路3段301巷55號b1</td><td align="center">910853573</td><td align="center">
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl10_Label1">陳忠和</span>
+                                                <br />
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl10_Label17">918054340</span>
+                                            </td>
+				</tr><tr style="background-color:#F7F7F7;height:22px;">
+					<td align="center">10</td><td align="center" style="white-space:nowrap;">曾子郡</td><td align="center">H223496862</td><td align="center">&nbsp;</td><td align="center">80-05-21</td><td align="center">永和區自由街55號9樓</td><td align="center">958800521</td><td align="center">
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl11_Label1">曾德松</span>
+                                                <br />
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl11_Label17">937428392</span>
+                                            </td>
+				</tr><tr style="background-color:White;height:22px;">
+					<td align="center">11</td><td align="center" style="white-space:nowrap;">郭育丞</td><td align="center">A125487497</td><td align="center">&nbsp;</td><td align="center">77-01-25</td><td align="center">台北市大同區重慶北路3段9巷24號4樓</td><td align="center">987328345</td><td align="center">
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl12_Label1">郭聰能</span>
+                                                <br />
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl12_Label17">987682781</span>
+                                            </td>
+				</tr><tr style="background-color:#F7F7F7;height:22px;">
+					<td align="center">12</td><td align="center" style="white-space:nowrap;">鄧偉勛</td><td align="center">U121649470</td><td align="center">&nbsp;</td><td align="center">79-03-28</td><td align="center">新北市中和區成功路107巷9號4樓</td><td align="center">963055549</td><td align="center">
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl13_Label1">鄧念慈</span>
+                                                <br />
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl13_Label17">928007107</span>
+                                            </td>
+				</tr><tr style="background-color:White;height:22px;">
+					<td align="center">13</td><td align="center" style="white-space:nowrap;">金萱嬛</td><td align="center">L223892919</td><td align="center">&nbsp;</td><td align="center">78-09-14</td><td align="center">台中市后里區甲后路1239號</td><td align="center">919023555</td><td align="center">
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl14_Label1">金鋆鋆</span>
+                                                <br />
+                                                <span id="ctl00_ContentPlaceHolder1_fv_gvMember_ctl14_Label17">932530617</span>
+                                            </td>
+				</tr>
+			</table>
+		</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="style1">
+                                審核備註:
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="style1">
+                                <label>
+                                    <input id="ctl00_ContentPlaceHolder1_fv_ReviewStatus" type="checkbox" name="ctl00$ContentPlaceHolder1$fv$ReviewStatus" />陳核長官
+                                    </lable>
+                                    <input type="submit" name="ctl00$ContentPlaceHolder1$fv$btnAuditNote" value="送審註記" id="ctl00_ContentPlaceHolder1_fv_btnAuditNote" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" height="24">
+                                
+                                <textarea name="ctl00$ContentPlaceHolder1$fv$txtMemo" rows="2" cols="20" id="ctl00_ContentPlaceHolder1_fv_txtMemo" style="height:100px;width:100%;">
+</textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center" colspan="4" height="24">
+                                <hr />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center" colspan="4" height="24">
+                                <input type="submit" name="ctl00$ContentPlaceHolder1$fv$btnApprove" value="申請核准" onclick="return confirm(&#39;確定核准申請?&#39;);" id="ctl00_ContentPlaceHolder1_fv_btnApprove" />&nbsp;
+                                <input type="submit" name="ctl00$ContentPlaceHolder1$fv$btnReject" value="申請駁退" onclick="return confirm(&#39;確定駁退申請?&#39;);" id="ctl00_ContentPlaceHolder1_fv_btnReject" />&nbsp;
+                                &nbsp;
+                                &nbsp;
+                                <input type="submit" name="ctl00$ContentPlaceHolder1$fv$btnSupplement" value="正取補件" onclick="return confirm(&#39;確定正取補件?&#39;);" id="ctl00_ContentPlaceHolder1_fv_btnSupplement" />&nbsp;
+                                &nbsp;
+                                <input type="submit" name="ctl00$ContentPlaceHolder1$fv$btnReturn" value=" 返    回 " id="ctl00_ContentPlaceHolder1_fv_btnReturn" />
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+	</tr>
+</table>
+        
+    
+    
+    
+    
+    
+
+        </div>
+        <!--main_content-end-->
+        <div id="clear">
+        </div>
+        <!--clear-end-->
+        <div id="bkfooter1">
+            <ul>
+                <li>建議最佳瀏覽解析度 1024x768，IE7、Firefox 2.0 以上</li>
+                <li>Copyright © 2012 Forestry Bureau 行政院農業委員會林務局 版權所有</li>
+                <li>地址：10050 台北市杭州南路1段2號 電話：02-23515441 服務信箱：service@forest.gov.tw</li>
+            </ul>
+        </div>
+        <!--footer_bg-end-->
+    </div>
+    <!--bk_wrap-end-->
+    
+    </form>
+</body>
+</html>

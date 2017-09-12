@@ -1,0 +1,233 @@
+
+body{
+  background:url('../image/index_background.png'); 
+}  
+ 
+/* [ CLIENT HEADER DOM ] */ 
+  .navbar{
+	background-color:rgba(0,0,0,0.2);   
+    min-height:55px;	
+  }
+  
+  .navbar > .container{
+	display:flex;  
+	justify-content:space-between;
+	align-items:center;
+  }
+  
+    #navbar-header{
+	  margin:10px 0;
+	  height:50px;   
+      width:50%;
+	  color:#FFFFFF;
+	  
+    } 
+      #organ_mark{height:100%;cursor:pointer;}
+	  #system_mark{height:100%;}
+	  
+      #system_title{
+		font-size:1.5em;
+		font-weight:bold;
+	    vertical-align:middle;
+		letter-spacing: 3px;
+	  }
+  
+    #navbar-manual{
+	  color:#FFFFFF;
+    }  
+    #navbar-manual > li{
+      display:inline-block;
+	  width:100px;
+	  padding:10px 0;
+	  text-align:center;
+	  border-radius:5px;
+      text-shadow:0px 0px 7px   rgba(0,0,0,0.5);
+	  cursor:pointer;
+	}
+    
+	
+	#navbar-manual > li:hover{
+	  text-shadow:0px 0px 2px   rgba(0,0,0,0.5);
+	}
+	#navbar-manual > li > a{ color:#FFFFFF;  }
+    #navbar-manual > li > a:hover{text-decoration:underline;}
+      li.current{ background-color:rgba(0,0,0,0.4); }
+  
+  
+
+
+
+
+/* [ CLIENT FOOTER DOM ] */
+  
+  footer{
+	min-height:200px;
+    background-color:#474a4d;	
+	background-image:url('../image/footer_background.png')
+	
+  }
+			    
+    .footer-block{
+	  display:flex;	
+	  padding:10px;
+	  color:#dcdcdc;
+	}		  
+	
+	
+	.footer-block > div{
+	  font-size:1em;	 
+	}
+	
+    .footer-block > div > h2{
+	  
+	  font-weight:bold;	
+      border-bottom:1px #808080 solid; 	  
+	  padding:5px 0;
+	  margin:5px 10px 5px 0;
+	}
+    
+    .footer-block > div > ul{
+	  margin-bottom:10px;	
+	}
+	
+	.footer-block > div > ul > li{
+	  padding:5px;	
+	}
+	
+	.footer-block a{
+	  color:#ffffff;	  
+	}
+	.footer-block a:hover{
+	  text-decoration:underline;	  
+	}
+	
+	.information{
+	  width:20%;	
+	}   
+	
+	.contact{
+	  flex:1; 
+	}
+	  table.area_admin{  }
+	  
+	  table.area_admin  td{
+		padding:5px;
+        line-height:1.2em;
+	  }	
+	
+	.bottom-block{
+	  color:#a9a9a9;	
+	  padding-bottom:20px;
+	}
+	
+	.copyright{
+	  display:flex;	
+	  line-height:1.5em;
+	  justify-content:space-between;
+	  align-items:center;
+	  font-size:0.95em;
+	  font-weight:bold;
+	}
+	
+	  .site_mark > img{
+		width:25px;
+        height:auto;
+        margin-left:10px;		
+	  }
+	
+	
+/* [ RWD DOM CONFIG ] */
+  
+  @media (max-width: 520px){
+	.container { max-width: 520px; }  
+	
+	div#navbar-header{width:100%;line-height:50px;text-align:center;}
+	
+	.introduction{display:none;}
+	.post > h2{ flex-wrap:wrap; }
+	.post_summary{width:100%; order:10;}
+	
+	.area-block > div:nth-child(2){display:none;}
+	.area_type_selecter{ display:none; } 
+	div.date_option{ display:none; } 
+	
+    
+    div.registration{
+	  padding:0;	
+	  width:100%;
+	  position:relative;
+	  top:0;
+	  left:0;
+	  flex:1;
+	}
+    
+	.footer-block{
+	  flex-direction:column-reverse;
+	}
+	.footer-block > div{width:100%;}
+	
+	table.area_admin  tr > td:nth-child(3){display:none;}  
+	
+	/*booking page*/
+	header.navbar > .container{ flex-direction:column;}
+	div#navbar-header{width:100%;text-align:center;}
+	img#organ_mark{display:none;}
+	ul#navbar-manual{text-align:cneter;}
+	aside.function_area{display:none;}	
+	ol.progress > li:nth-child(1){display:none;}
+  }
+  
+  @media (min-width: 521px) AND (max-width: 768px){
+	  
+    .container { max-width: 750px; }
+    .introduction{display:none;}
+	.post > h2{ flex-wrap:wrap; }
+	.post_summary{width:100%; order:10;}
+	
+	.area-block > div:nth-child(2){display:none;}	
+    div#navbar-header{width:100%;}
+    div.registration{
+		  padding:0;	
+		  width:100%;
+		  position:relative;
+		  top:0;
+		  left:0;
+		  flex:1;
+		}
+
+	table.area_admin  tr > td:nth-child(3){display:none;}
+	
+	/*booking page*/
+	header.navbar > .container{ flex-direction:column;}
+	div#navbar-header{width:100%;text-align:center;}
+	aside.function_area{display:none;}	
+	ol.progress > li:nth-child(1){display:none;}
+	
+	
+  }	
+  @media (min-width: 769px) AND (max-width: 991px){
+    .container { max-width: 970px; }
+    .area_type_selecter{ display:none; }
+    div.registration{ padding:0 10px; }  
+    
+	/*booking page*/
+	header.navbar > .container{ flex-direction:column;}
+	div#navbar-header{width:100%;text-align:center;}
+	aside.function_area{display:none;}	
+	ol.progress > li:nth-child(1){display:none;}
+  }
+  
+  @media (min-width: 992px) AND (max-width: 1199px){
+    .container { max-width: 970px; }
+    .area_type_selecter{ display:none; } 	
+	div.registration{ padding:0 20px; }
+	
+	/*booking page*/
+	img#organ_mark{display:none;}
+	
+  }	
+	
+  @media (min-width: 1200px){
+	.container { width: 1170px; }  
+  }		
+			  

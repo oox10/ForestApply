@@ -1,0 +1,185 @@
+
+  ul.module_summary{
+	width:100%;  
+	display:flex;
+    margin:0 10px;
+  }
+  
+  ul.module_summary > li{
+	width:25%;  
+	flex:1 1 25%;  
+	border-radius:10px;
+	height:100px;
+	padding:15px 20px;
+	margin:10px;
+	background-color:#CDCDCD;
+	position:relative;
+	color:#FFFFFF;
+	display:flex;
+	flex-direction:column;
+	justify-content:space-between;
+  }
+  
+  ul.module_summary > li >.counter{font-size:1.7em; font-weight:bold; }
+  ul.module_summary > li > h1{font-size:1.3em; font-weight:bold; margin-top:10px;}
+  ul.module_summary > li >.module_iconv{position:absolute; font-size:3.5em; right:20px; top:20px; opacity:0.3; color:#000000;}
+  
+  ul.module_summary > li:nth-child(1){background-color:#f5b2ac;}
+  ul.module_summary > li:nth-child(2){background-color:#a3d6cc;}
+  ul.module_summary > li:nth-child(3){background-color:#ece093;}
+  ul.module_summary > li:nth-child(4){background-color:#b2cbe4;}
+  
+  
+	
+  /* [Collection ] */	
+  .datainfo_area{
+	margin:0 20px;  
+  }
+  .datainfo_area > h1{
+	font-weight:bold;
+    padding:8px 0;
+     	
+  }  
+    	
+	.collection_info{
+	  display:flex;	
+	  height:300px;
+	  
+	}
+	
+	.data_amount{
+	  width:66%;	
+	}
+	
+	.data_control{
+	  margin-left:10px;
+	  flex:1;	
+	}
+	
+	.data_control > h1{
+	  font-weight:bold;
+      border-bottom:1px #CDCDCD solid;
+      padding-bottom:10px; 	  
+	  display:flex;
+	  justify-content:space-between;
+	  align-items:center;
+	}
+	.data_control button{
+	  width:150px;
+      height:27px;	  
+	}
+	
+	.data_control > ul{
+	  margin:5px;	 	
+	}
+	
+	ul.logs > li{
+	  font-size:0.8em;	
+	  display:flex; 
+      justify-content:space-between;	  
+	  margin-bottom:8px;
+	  color:#777777;
+	}
+	
+	
+	
+	
+	
+  /* [ POST Area ] */	
+    .post_container{
+	  display:flex;
+	  padding:20px;
+	  justify-content:space-between;
+	}  
+	 
+	  .post_container > div{
+	    flex: 0 1 48%; 
+	  }
+	 
+	  .post_list{
+		
+	  }
+	  
+	  .post_list > h1{
+		font-weight:bold;
+        padding:10px 0;
+		border-bottom:1px #7d7d7d solid;
+	  }
+	  
+	  .post_list > ul{}
+
+	  .post_list > ul > li{
+		padding:10px 0;  
+	  }
+
+	      .post{
+            margin-bottom:10px;	
+			padding:10px;
+			border:1px #CDCDCD solid;
+			border-radius:5px;
+			position:relative;
+			cursor:pointer;
+		  }
+		  
+		  .post.viewed{
+			border:1px #e73562 solid;  
+		  }
+		  
+		  
+		  
+		  @keyframes myanimation {
+			0%   { border:1px #CDCDCD solid; }
+			/*80%  { border:1px #e6b422 dotted; }*/
+			100% { border:1px #c9171e dashed; }
+		  }
+           
+		  .post[top='1'] {
+			box-shadow: 0 1px 5px -1px rgba(0,0,0,0.3);
+		  }  
+		   
+		  .post[mark='緊急通告'] {
+			animation: myanimation 0.5s 200; /* use myanimation 5s duration, 5 times */
+		  }
+		  
+		  .post > h2{ 
+		    padding:5px 0 10px;
+		    position:relative;
+		  }
+		  
+          .post > h2 > span{
+			display:inline-block;  
+		  }
+		  
+			.post_date{ 
+			  color:#eb6101;
+			}
+	        .post_rate{
+			  position:absolute; 
+              display:block;
+              width:0;
+			  height:22px;
+              background-image:url(../image/mark_star.png);
+			  top:-21px;
+			  left:-18px;
+			  transform-origin:left;
+			  transform: scale(0.7);
+			}
+		  
+		  
+		  .post_content{
+			color:#595857;
+			margin-bottom:5px;
+		  }	
+	      
+		  .post_refer{
+			text-align:right;  
+			font-size:0.9em;
+		  }
+	        .post_organ{}
+			.post_type{}	
+	
+	
+	
+	
+	
+	

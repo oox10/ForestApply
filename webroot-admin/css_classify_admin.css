@@ -1,0 +1,55 @@
+/****************************************
+  IISPHO Css  
+  classify admin
+****************************************/
+
+
+div.main_content{
+  display:flex;	
+  margin:10px 20px;
+}
+
+  div.data_record_block{
+	min-width:200px; 
+	margin:0 10px;
+  }
+    div.record_header{
+	  border-bottom:1px #CDCDCD solid;	
+	  padding:5px 0;
+	}
+	
+	div.record_body{
+	  width:100%;	  
+	}	
+	  table.term_table{
+		width:100%;	
+	  }
+		  tr.data_field td{ 
+			border-bottom:1px #CDCDCD solid;
+			padding:5px 0;
+			text-align:cneter;
+			font-weight:bold;
+		  }
+		  tr.data_list td{
+			padding:5px 0;
+			line-height:1.5em; 
+		  }
+		  
+		  tr.data_field td:nth-child(1) , tr.data_field td:last-child{ text-align:center;}
+		  tr.data_list td:nth-child(1){ width:40px; text-align:center;}
+		  tr.data_list td:last-child{ width:40px; text-align:center;}
+		    .term_edit{max-width:250px;}
+			.term_edit[contenteditable=true]{border:1px #CDCDCD dotted; color:#19448e;}
+			
+			
+			.act_term_save,.act_level_save{display:none;}
+			
+	      #user_folder_block tr.data_list td:nth-child(3){ width:50px; text-align:center;}
+		  
+		  #system_level_block .data_list td:nth-child(2){ width:160px;}
+		  #system_level_block .data_list[no='_new'] i.act_level_dele{display:block;}
+		  
+		  
+  #system_level_block{
+	flex:1  
+  }		  

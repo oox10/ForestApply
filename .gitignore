@@ -1,0 +1,9 @@
+conf/server_config.php
+conf/system_config.php
+mvc/lib/*
+userProfile/*
+systemUpload/*
+systemFile/document/*
+systemFile/license/*
+systemFile/member/*
+*.log

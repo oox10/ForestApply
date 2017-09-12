@@ -1,0 +1,395 @@
+
+$(window).load(function () {   //  || $(document).ready(function() { 
+	
+	$('li.step[data-section="submit_process"]').click(function(){
+      /*	  
+      if(!$('li.step[status="_SUBMIT"]').hasClass('checked')){
+		system_message_alert('',"請先完成資料填寫");
+        $(this).prev().trigger('click');
+		return false;		
+	  }
+	  
+	  var apply_id = location.hash.replace(/^#/,'');
+	  if(!apply_id.length || apply_id.length != 8 ){
+		system_message_alert('',"請先完成資料填寫");
+        $(this).prev().trigger('click');
+	  }
+	  
+	  
+	  function process_loading(DOM,Step,Info){
+		if(!DOM.length){
+		  return false;	
+		}
+		switch(Step){
+		  case '0':
+            DOM.find('.process_info').html('資料處理中');		  
+			DOM.find('.process_status').html('<?xml version="1.0" encoding="utf-8"?><svg width="24px" height="24px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-spin"><rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect><g transform="translate(50 50)"><g transform="rotate(0) translate(34 0)"><circle cx="0" cy="0" r="8" fill="#709a4e"><animate attributeName="opacity" from="1" to="0.1" begin="0s" dur="1s" repeatCount="indefinite"></animate><animateTransform attributeName="transform" type="scale" from="1.5" to="1" begin="0s" dur="1s" repeatCount="indefinite"></animateTransform></circle></g><g transform="rotate(45) translate(34 0)"><circle cx="0" cy="0" r="8" fill="#709a4e"><animate attributeName="opacity" from="1" to="0.1" begin="0.12s" dur="1s" repeatCount="indefinite"></animate><animateTransform attributeName="transform" type="scale" from="1.5" to="1" begin="0.12s" dur="1s" repeatCount="indefinite"></animateTransform></circle></g><g transform="rotate(90) translate(34 0)"><circle cx="0" cy="0" r="8" fill="#709a4e"><animate attributeName="opacity" from="1" to="0.1" begin="0.25s" dur="1s" repeatCount="indefinite"></animate><animateTransform attributeName="transform" type="scale" from="1.5" to="1" begin="0.25s" dur="1s" repeatCount="indefinite"></animateTransform></circle></g><g transform="rotate(135) translate(34 0)"><circle cx="0" cy="0" r="8" fill="#709a4e"><animate attributeName="opacity" from="1" to="0.1" begin="0.37s" dur="1s" repeatCount="indefinite"></animate><animateTransform attributeName="transform" type="scale" from="1.5" to="1" begin="0.37s" dur="1s" repeatCount="indefinite"></animateTransform></circle></g><g transform="rotate(180) translate(34 0)"><circle cx="0" cy="0" r="8" fill="#709a4e"><animate attributeName="opacity" from="1" to="0.1" begin="0.5s" dur="1s" repeatCount="indefinite"></animate><animateTransform attributeName="transform" type="scale" from="1.5" to="1" begin="0.5s" dur="1s" repeatCount="indefinite"></animateTransform></circle></g><g transform="rotate(225) translate(34 0)"><circle cx="0" cy="0" r="8" fill="#709a4e"><animate attributeName="opacity" from="1" to="0.1" begin="0.62s" dur="1s" repeatCount="indefinite"></animate><animateTransform attributeName="transform" type="scale" from="1.5" to="1" begin="0.62s" dur="1s" repeatCount="indefinite"></animateTransform></circle></g><g transform="rotate(270) translate(34 0)"><circle cx="0" cy="0" r="8" fill="#709a4e"><animate attributeName="opacity" from="1" to="0.1" begin="0.75s" dur="1s" repeatCount="indefinite"></animate><animateTransform attributeName="transform" type="scale" from="1.5" to="1" begin="0.75s" dur="1s" repeatCount="indefinite"></animateTransform></circle></g><g transform="rotate(315) translate(34 0)"><circle cx="0" cy="0" r="8" fill="#709a4e"><animate attributeName="opacity" from="1" to="0.1" begin="0.87s" dur="1s" repeatCount="indefinite"></animate><animateTransform attributeName="transform" type="scale" from="1.5" to="1" begin="0.87s" dur="1s" repeatCount="indefinite"></animateTransform></circle></g></g></svg>');		  
+		    DOM.attr('status','0');
+			break;	
+		  case '1':
+		    DOM.find('.process_info').html(Info);		  
+			DOM.find('.process_status').html("<img src='theme/image/mark_O_V.png'>");		  
+		    DOM.attr('status','1');
+			break;
+		  case '-1':
+		    DOM.find('.process_info').html(Info);		  
+			DOM.find('.process_status').html("<img src='theme/image/mark_O_X.png'>");	
+            DOM.attr('status','-1');			
+		    break;
+		}
+	  }
+	  
+	  // 檢查
+	  function checkapply(apply_id){
+		return  $.ajax({
+          url: 'index.php',
+	      type:'POST',
+	      dataType:'json',
+	      data: {'act':'Landing/checked/'+apply_id },
+		  beforeSend: function(){ process_loading( $('#check_submit') ,'0','');},
+        });
+	  }
+	  
+	  // 寄信
+	  function acceptmail(apply_id){
+		return  $.ajax({
+          url: 'index.php',
+	      type:'POST',
+	      dataType:'json',
+	      data: {'act':'Landing/accept/'+apply_id },
+		  beforeSend: function(){ process_loading($('#sent_accept_mail'),'0',''); },
+        });
+	  }
+	  
+	  $.when( checkapply(apply_id) ).then(function(step1){
+		
+		if(!step1.action){
+		  process_loading( $('#check_submit') ,'-1',step1.info);
+		  return false;
+		}
+		process_loading( $('#check_submit') ,'1',"資料檢核成功");
+		
+		promise = acceptmail(apply_id);
+		promise.fail(function(xhr, ajaxOptions, thrownError) {  console.log( ajaxOptions+" / "+thrownError);});
+		promise.done(function(step2){
+		  
+          if(!step2.action){
+		    process_loading( $('#sent_accept_mail') ,'0',step2.info);
+		    return false;
+		  }		
+		  process_loading( $('#sent_accept_mail') ,'1',step2.data);
+		  
+		  var application = step1.data.license;	  
+          $.each(application,function(af,av){
+			if($('#preview-'+af).length){
+			  $('#preview-'+af).html(av);
+			}
+		  });
+		  
+		  process_loading( $('#apply_content') ,'1','');
+		  process_loading( $('#apply_program') ,'1','');
+		  
+		  var joinmember = step1.data.member;	
+          // 載入名單
+		  $('#preview-member_list').empty();
+		  $.each(joinmember,function(i,member){
+			var record = $("<tr/>").addClass('record');  
+			record.append("<td>"+(i+1)+"</td>");
+			record.append("<td>"+member.name+"</td>");
+			record.append("<td>"+member.id+"</td>");
+			record.append("<td>"+member.birthday+"</td>");
+			record.append("<td>"+member.address+"</td>");
+			record.append("<td>"+member.phone+"</td>");
+			record.append("<td>"+member.urgent_name+"<br/>"+member.urgent_phone+"</td>");
+			record.appendTo($('#preview-member_list'));
+		  });
+		  process_loading( $('#apply_member') ,'1','');
+		  
+		  
+		  $('.license table').show();
+		  
+		  $('.step.currency').addClass('checked');
+		  $('.step.currency').next().trigger('click'); 
+		  $(window).scrollTop(0);
+		
+		});
+	  },function(xhr, ajaxOptions, thrownError) {  console.log( ajaxOptions+" / "+thrownError);});
+	  
+	  
+	  
+	  /*
+	  var promise2 ,promise1;
+	  
+	  // 確認資料
+	  promise1 = $.ajax({
+        url: 'index.php',
+	    type:'POST',
+	    dataType:'json',
+	    data: {'act':'Landing/checked/'+apply_id },
+		beforeSend: function(){  },
+      }).fail(function(xhr, ajaxOptions, thrownError) {  console.log( ajaxOptions+" / "+thrownError);});
+	  
+	  promise1.done(function(response){
+		 console.log(1.1)
+		
+		if(!response.action) return false;
+		// 寄發郵件  
+		promise2 = $.ajax({
+          url: 'index.php',
+	      type:'POST',
+	      dataType:'json',
+	      data: {'act':'Landing/recover/'+apply_id},
+        }).fail(function(xhr, ajaxOptions, thrownError) {  console.log( ajaxOptions+" / "+thrownError);});  		
+		
+		 promise2.done(function(){
+         // 更改確認狀態
+		  console.log(4)
+	     });
+	     console.log(1.2)
+	  }).done(function(response){
+        // 填寫預覽表格		
+        console.log(2);
+	  }).done(function(response){
+        // 設定狀態		
+        console.log(3)
+	  });
+	  
+	 
+	  
+	  $.when(promise1, promise2).done(function(response1, response2) {
+        console.log(5.1)
+		if(!response1.action){
+		  system_message_alert('',response1.info);	
+		  return false;	
+		}
+		
+		if(!response2.action){
+		  system_message_alert('',response2.info);	
+		  return false;	
+		}
+		console.log(5.2)
+		$('.step.currency').addClass('checked');
+		$('.step.currency').next().trigger('click'); 
+		$(window).scrollTop(0);
+       
+	  });
+	  */
+	  
+	});
+	
+	
+	
+	/*
+	var request = $.ajax( url, { dataType: "json" } ),
+        chained = request.then(function( data ) {
+          return $.ajax( url2, { data: { user: data.userId } } );
+        });
+ 
+        chained.done(function( data ) {
+        // data retrieved from url2 as provided by the first request
+        });
+	*/
+	
+	
+	/*
+	
+	//-- go to regist
+	$('#act_register').click(function(){
+	  location.href='./index.php?act=Account/regist';	
+	});
+	
+	//-- go to login
+	$('#act_login').click(function(){
+	  location.href='./index.php?act=Account';	
+	});
+	
+	
+	//-- reset keyin
+	$('#act_reset').click(function(){
+	  $('._keyin').val('');
+	  location.href='./index.php?act=Account';
+	});
+	
+	
+	//-- cancel button
+	$('#act_cancel').click(function(){
+	  var input_check = false;
+	  
+	  $('._regist').each(function(){
+		if( $(this).val() ){
+			input_check = true;
+			return false;
+		}  
+	  });
+	  
+	  if(input_check){
+		if(confirm("確定要取消註冊，這將會清空目前輸入的資料!")){
+		  $('._regist').val('');
+		}else{
+		  return false;
+		}  
+	  }
+      location.href='./index.php?act=Account';
+	});
+	
+	
+	//-- admin login 
+	$('#act_signin').click(function(){
+
+	  // initial
+	  $('input.lg_text').removeClass('form_error');
+	  
+	  // check input 
+	  if(!$('#uname').val()){
+	    $('#uname').addClass('form_error').focus();
+		system_message_alert('error','請填寫帳號');
+		return false;
+	  }
+	  
+	  if(!$('#upass').val()){
+	    $('#upass').addClass('form_error').focus();
+		system_message_alert('error','請填寫密碼');
+		return false;
+	  }
+	  
+	  var login_info = {};
+	  login_info['account']  = $('#uname').val();
+	  login_info['password'] = $('#upass').val();
+	  
+	  var login_data = encodeURIComponent(Base64.encode(JSON.stringify(login_info)));
+	 
+	  $.ajax({
+        url: 'index.php',
+		type:'POST',
+	    dataType:'json',
+	    data: {act:'Account/signin/'+login_data},
+	    beforeSend: function(){ system_loading(); },
+        error: function(xhr, ajaxOptions, thrownError){ console.log( ajaxOptions+" / "+thrownError); },
+	    success: function(response) { 
+		  if(!response.action){ 
+		    system_message_alert('error',response.info);
+		    $('#upass').val('').focus();
+			system_loading();
+		    return 0
+		  }
+		  if(typeof response.data.repass != 'undefined' ){
+			location.href='index.php?act=Account/start/'+response.data.repass;
+		    return 1;	
+		  }else if( typeof response.data.lgkey != 'undefined' ){
+			location.href='index.php?act=Account/inter/'+response.data.lgkey;
+			return 1;	
+		  }else{
+			system_message_alert('error','未知錯誤，請洽管理人員');
+		  }
+		  
+		},
+		complete:		function(){ }
+	  }).done(function() {   });
+	});
+	
+	
+	//-- client reset password submit
+	$('#act_repass').click(function(){
+	  
+	  // initial
+	  $('input._keyin').removeClass('form_error');
+	  
+	  // check input 
+	  if(!$('#upass').val()){
+	    $('#upass').addClass('form_error').focus();
+		system_message_alert('error',"請輸入密碼");
+		return false;
+	  }
+	  
+	  if( $('#upass_chk').val() != $('#upass').val()  ){
+	    $('#upass_chk').addClass('form_error').val('').focus();
+		system_message_alert('error',"2次輸入的密碼不相符，請重新輸入");
+		return false;
+	  }
+	  
+	  var register_info = {};
+	  register_info['regist_password01'] = $('#upass').val();
+	  register_info['regist_password02'] = $('#upass_chk').val();
+	  
+	  var $dom = $(this);
+	  var pass_data = encodeURIComponent(Base64.encode(JSON.stringify(register_info)));
+	  
+	  $.ajax({
+        url: 'index.php',
+		type:'POST',
+	    dataType:'json',
+	    data: {act:'Account/repass/'+pass_data},
+	    beforeSend: function(){ active_loading($dom,'initial'); $('._keyin').prop('readonly',true);  },
+        error: function(xhr, ajaxOptions, thrownError){ console.log( ajaxOptions+" / "+thrownError); },
+	    success: function(response) {
+		  if(response.action){
+			$('._keyin,.signin_func').hide();
+			system_message_alert('alert','帳號已啟動,請重新登入');
+		  }else{
+		    system_message_alert('error',response.info);
+		  }
+		  $('input._keyin').val('');
+		},
+		complete:		function(){ }
+	  }).done(function(r) { active_loading($dom,r.action); });
+	});
+	
+	
+	
+	
+	
+	//-- client active password reset mail
+	$('#act_recover').click(function(){
+	  
+	  // initial
+	  $('input._keyin').removeClass('form_error');
+	  
+	  // check input 
+	  if(!$('#email').val()){
+	    $('#email').addClass('form_error').focus();
+		system_message_alert('error',"請輸入註冊信箱");
+		return false;
+	  }
+	  
+	  if( $('#email').val() != $('#email_chk').val()  ){
+	    $('#email_chk').addClass('form_error').val('').focus();
+		system_message_alert('error',"2次輸入的EMAIL不相符，請重新輸入");
+		return false;
+	  }
+	  
+	  if(!$('#captcha_input').val()){
+	    $('#captcha_input').addClass('form_error').focus();
+		system_message_alert('error',"請輸入驗證碼");
+		return false;
+	  }
+	  
+	  var register_info = {};
+	  register_info['regist_email'] = $('#email').val();
+	  register_info['verification'] = $('#captcha_input').val();
+	  
+	  var pass_data = encodeURIComponent(Base64.encode(JSON.stringify(register_info)));
+	  var $dom = $(this);
+	 
+	  $.ajax({
+        url: 'index.php',
+		type:'POST',
+	    dataType:'json',
+	    data: {act:'Account/reseter/'+pass_data},
+	    beforeSend: function(){ active_loading($dom,'initial'); $('._keyin').prop('readonly',true);},
+        error: function(xhr, ajaxOptions, thrownError){ console.log( ajaxOptions+" / "+thrownError); },
+	    success: function(response) {
+		  if(response.action){
+			system_message_alert('alert','已發送密碼重設信件');
+		    $('.signin_func').hide();
+		  }else{
+		    system_message_alert('error',response.info);
+			$('#captcha_refresh').trigger('click');
+		    $('#captcha_input').val('');
+			$('input._keyin').prop('readonly',false);
+		  }
+		},
+		complete:		function(){ }
+	  }).done(function(r) { active_loading($dom,r.action); });
+	});
+	
+});  /* << end of window load >> */  	

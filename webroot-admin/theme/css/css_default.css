@@ -1,0 +1,317 @@
+/* Eric Meyer's Reset CSS v2.0 - http://cssreset.com */
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{border:0;font-size:100%;font:inherit;vertical-align:baseline;margin:0;padding:0}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:none}table{border-collapse:collapse;border-spacing:0}
+
+*{	
+  box-sizing: border-box;	
+}
+
+html,body{
+  height:100%;
+  font-family: Arial,'Microsoft Jhenghei','微軟正黑體', PMingLiu, sans-serif;
+  position:relative;
+}
+ 
+ img,label{  vertical-align:middle; }
+ a:link ,a:visited ,a:hover ,a:active ,ins{ text-decoration: none; } 
+ 
+ .tr_like:before,
+ .tr_like:after {
+    content:"";
+    display:block;
+    overflow:hidden;
+  }
+  .tr_like:after {
+    clear:both;
+  }
+  
+  /* For IE 6/7 (trigger hasLayout) */
+  .tr_like {
+    zoom:1;
+  }
+  
+  
+  /*** 系統預設區塊 ***/
+  
+  div.system_message_area{
+    position:absolute;
+	z-index:100;
+	left:30px;
+	right:30px;
+	top:20px;
+	opacity:0.8;
+	font-size:15px;
+	
+	display:none;
+  }
+    div.alert{ background-color:#47885e;}	
+	div.error{ background-color:#c53d43;}
+	
+    div.message_block{
+	  position:relative;
+	  padding:10px 15px;
+	  color:#FFFFFF;
+	  height:25px;
+	  line-height:25px;
+	  height:100%;
+	  text-align:center;
+	}
+  
+      div.msg_title{  font-weight:bold; }
+	  div.msg_info{   }
+	  
+	
+  
+  div.system_loading_area{
+    z-index:500;
+    display:none;
+    position:fixed;
+	top:0px;
+	left:0px;
+	right:0px;
+	bottom:0px;
+	background-color:rgba(0,0,0,0.6);
+	text-align:center;
+  }
+    div.loading_block{
+	  color:#FFFFFF;
+	  position:absolute;
+	  width:250px;
+	  left:50%;
+	  margin-left:-125px;
+	  top:40%;
+	}
+	  div.loading_string{
+	    
+	  }
+	  div.loading_image{
+		padding:5px;
+	  }
+	  div.loading_info{
+	    opacity:0;
+	  }
+	  
+	  div.loading_info{
+	    margin:10px 0;
+		font-size:14px;
+		color:#dcdddd;
+	    line-height:18px;
+	  }
+  
+     
+	  
+  div.system_feedback_area{
+    z-index:300;
+	position:absolute;
+	width:650px;
+	height:690px;
+	left:50%;
+	top:10px;
+	margin-left:-300px;
+	border-radius:8px;
+    font-size:14px;
+    color:#000000;
+	box-shadow:0px 1px 7px rgba(65, 50, 50, 0.79);
+	display:none;  
+  }	
+    
+  div.feedback_block{
+    width:100%;
+	height:100%;
+    background-color:#ee827c;
+	border-radius:8px;
+  }	
+	
+	
+	div.feedback_header{
+	  padding:10px;
+	}
+	  span.fbh_title{  font-weight:bold; color:#ffffff;}
+      a.fbh_option{ display:inline-block;  float:right; cursor:pointer;}
+	
+	
+	div.feedback_body{
+	  position:relative;
+	}
+	
+	  div.fb_imgload{
+	    width:100%;
+		position:absolute;
+		top:100px;
+		text-align:center;
+	    color:#eb6238;
+	    font-size:13px;
+		display:none;
+	  }
+	  
+	  div.fb_preview{ 
+	    margin:0 20px 10px;
+		border:1px #888888 solid;
+		background-color:#cdcdcd;
+		height:340px;
+		text-align:center;
+		overflow:hidden;
+		border-radius:5px;
+	  }
+	  
+	    img.fp_img{ height:99%; }
+        img.fp_img_w{ width:95%; }
+	  div.fb_areasel{
+	    text-align:center;
+		color:#583822;
+	  }
+	    input#feedback_img_upload{  width:200px;}
+	  
+	  
+	  
+	  div.fb_descrip{
+	    margin:10px 25px;
+	  }
+	    div.fb_descrip div{  padding:5px 0;}
+    	
+		.fbd_title{ font-weight:bold; }
+		
+		input.fbd_type_other{  
+		  background-color:rgba(255,255,255,0);
+		  border:0px #FFFFFF solid;
+		  border-bottom:1px #444444 dotted;
+		  width:100px;
+		}
+		
+		
+		
+		textarea.feedback_content{
+		  border:1px #CDCDCD dotted;
+		  width:580px;
+		  line-height:1.5em;
+		  height:10em;
+		  color:#007bbb;
+		  resize: none;		  
+		  margin:0 7px;
+		}
+		
+		
+	div.feedback_bottom{
+	  position:relative;
+	}  	
+	  a.btn_feedback{
+	    position:absolute;
+	  }
+		
+		a#act_feedback_cancel{
+		  left:30px;  
+		  color:#a73836;
+		}  
+		
+		
+		a#act_feedback_submit{
+		  right:30px;
+		  color:#769164;
+		}
+		  span.btmark{
+		    position:relative;
+			top:3px;
+		  }
+	
+  .sysbtn{
+    display:inline-block;
+	min-width:50px;
+    min-height:25px;	
+	line-height:25px;	
+    text-align:center;
+	font-size:13px;
+	font-weight:900;
+	vertical-align:middle;
+	cursor:pointer;
+	border-radius:3px;
+	color:#757575;
+	border:1px #AAAAAA solid;
+	background-color:#e5e4e6;
+	background: linear-gradient(to bottom, rgba(242,242,242,1) 41%,rgba(206,206,206,1) 100%); /* W3C */
+  }
+  
+  .sysbtn:hover{
+	color:#444444;
+	background: rgb(239,239,239); /* Old browsers */
+	background: linear-gradient(to bottom, rgba(239,239,239,1) 41%,rgba(186,186,186,1) 100%); /* W3C */
+  }
+  
+  .sysbtn:active{
+	box-shadow:inset 0px 0px 2px #949495;
+  }
+  .sysbtn > i{
+	position:relative;
+    top:-2px;	
+  }
+  
+    .btn_plus{
+	  min-width:16px;
+      min-height:16px;	
+	  line-height:16px;	
+      font-size:20px;
+	  font-weight:900;
+	  text-shadow:0px 0px 3px #7b7c7d;
+	}
+		  
+	.btn_plus:hover{
+	  color:#444444;
+	  text-shadow:0px 0px 3px #444444;
+	}
+		  
+    .btn_act{
+	  min-width:35px;
+      height:20px;
+	  line-height:20px;	
+	}
+	
+	.btn_login{
+	  min-width:100px;
+	}
+	
+	.btn_feedback{
+	  min-width:100px;
+	  height:35px;
+	  line-height:35px;	
+	}
+	
+	.btn_fbop{
+	  min-width:80px;
+	  height:40px;
+	  line-height:40px;	
+	}
+	
+	.btn_mark{
+	  position:relative;
+	  width:16px;
+	  height:16px;
+	  display:block;
+	  margin:0 auto;
+	  top:5px;
+	}
+	
+	.mark30{
+      display:inline-block;
+	  width:30px;
+	  height:30px;  
+	  vertical-align:middle; 
+	  content:" ";
+    }
+	
+    .mark26{
+      display:inline-block;
+	  width:26px;
+	  height:26px;  
+	  vertical-align:middle; 
+	  content:" ";
+    }  
+  
+    .mark16{
+      display:inline-block;
+	  vertical-align:middle; 
+	  width:16px;
+	  height:16px;  
+    } 
+	
+	.btn_activate{
+	  background-color:red;
+	}
+	

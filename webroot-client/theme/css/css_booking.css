@@ -1,0 +1,1163 @@
+
+	  
+    /*  看板區塊  */
+    .system_border_area{
+	  background-color:#59b9c6;   
+	  height:80px;
+	  color:#FFFFFF;
+    }	  
+ 
+	  .border-block{
+		height:100%;  
+		display:flex;
+		align-items:center;
+		justify-content:space-between;
+	  }	
+	    
+		/* 進度表 */
+		.progress{
+		  flex:1;
+		  display:flex;
+		  align-items:center;
+		  margin:0 10px;
+		  counter-reset: step;
+		}
+		
+		.progress > li:nth-child(1){
+		  width:220px;
+		  margin-right:10px;
+		}
+		
+		.progress > li{
+		  display:inline-block;
+		  text-align:left;          	  
+		  position:relative;
+		  margin:5px 0;
+		}		
+			
+        .progress > li.step{
+		  flex:1 1 120px;
+		  cursor:pointer;
+		  font-size:0.95em;
+		  opacity:0.7;
+		}
+		
+		.progress > li.step:hover{
+		  opacity:1;
+		}
+		
+		.progress > li.step > h2{
+		  height:30px;
+		  line-height:30px;
+		  position:relative;
+		  background-color:#458f99;
+		  margin-left:30px;
+          margin-right:5px;	
+          color:rgba(255,255,255,0.8);
+		}
+				
+		.progress > li.step > h2::after{
+		  position: absolute;
+          top: 50%;
+          left: 100%;
+          content: " ";
+          height: 0;
+          width: 0;
+          pointer-events: none;
+          border: solid transparent;
+          border-left-color: #458f99;
+          border-width: 15px;
+          margin-top: -15px;
+		  z-index:3;
+		}  
+		
+		.progress > li.step > h2::before{
+			position: absolute;
+			top: 50%;
+			right: 100%;
+			content: " ";
+			height: 0;
+			width: 0;
+			pointer-events: none;
+			border: solid #458f99;
+			border-left-color: transparent;
+			border-width: 15px;
+			margin-top: -15px;
+			z-index:2;
+        }
+		.progress > li.step > h2 >span.name{
+		  position:relative;
+          left:-0.5em;	
+          z-index:3;;		  
+		}
+		
+		.progress > li.step.currency{
+		  opacity:1;
+		  cursor:default;
+		}
+		
+		.progress > li.step.currency > h2{
+		  background-color:#c7665a;	
+		  color:#FFFFFF;
+		}
+		.progress > li.step.currency > h2::after{
+		  border-left-color: #c7665a;	
+		}
+		.progress > li.step.currency > h2::before{
+		  border-color: #c7665a;
+		  border-left-color: transparent;	
+		}
+		
+		
+		.progress > li.step > i{  
+		  display:block;
+		  width:100%;
+		  position:absolute;
+		  font-size:0.8em;	
+		  padding:5px 15px 0;
+		}
+		
+		  li.step .name::before{
+		    counter-increment: step; 	
+		    content:counter(step) ". ";
+		  }
+		
+		  li.step .status{
+			display:inline-block;
+            width:24px;
+            height:24px;
+            position:absolute;
+            top:50%;
+            right:0;
+			margin-top:-12px;		
+		  }  
+		
+		.progress > li.step.checked > h2{
+		  background-color:#c7665a;	
+		  color:#FFFFFF;
+		}
+		.progress > li.step.checked > h2::after{
+		  border-left-color: #c7665a;	
+		}
+		.progress > li.step.checked > h2::before{
+		  border-color: #c7665a;
+		  border-left-color: transparent;	
+		}
+		
+		.progress > li.step.checked .status{
+		  background-image:url('../image/mark_O_V.png');	
+		}
+		.progress > li.step.error .status{
+		  background-image:url('../image/mark_O_X.png');	
+		}
+         
+		/* 申請查詢部分 */
+        .progress > li.forms{
+		  padding-right:10px;	
+		}
+          li.forms > select,li.forms > input{
+			border-radius:4px;  
+		  }		
+		  li.forms > input{
+			text-align:center;  
+		  }
+		 
+	
+    /*  內容區塊  */	
+    .system_body_area{
+	  background-color:#eee;
+    }	  
+    
+	  .content-block{
+	    display:flex;
+        align-items:stretch;
+	  }
+	
+		.function_area{
+		  width:230px;	
+		  background-color:#CDCDCD;
+		}
+		  
+		.function_area > h1{
+		  font-weight:bold;	
+		  padding:15px 10px;
+		  border-bottom:1px #adadad solid;
+		}
+		
+		.function_area > ul{
+		  display:block;	
+		}
+		
+		.function_area > ul > li{
+		  padding:15px 10px;	
+		  border-bottom:1px #adadad solid;
+		}
+	
+	
+		.workaround_area{
+		  flex:1;
+		  padding:0 20px;
+		}
+		
+		  .booking_step{
+			min-height:500px;
+			display:none;
+		  }
+		   
+		  .booking_step > h1{
+			padding:15px 10px;  
+			display:flex;
+            align-items:center;
+            justify-content:space-between; 		
+            		
+		  }
+		  .booking_step > h1 > .step_title{
+			font-weight:bold;    
+		  }
+		  .booking_step > h1 > .step_option{
+			display:inline-block;
+			min-height:30px;  
+		  }
+		  .booking_step > h1 > .step_option > button{
+			width:100px;
+			padding:5px 10px; 
+		  }
+	          
+		  .booking_step > section{
+			border:1px #CDCDCD solid;
+			padding:15px; 
+			margin-bottom:20px;		
+			background-color:#F6f6f6;
+			border-radius:3px;
+			position:relative;
+		  }	  
+		  
+            section > h2 {
+			  font-weight:bold;  
+			  border-bottom:1px #CDCDCD solid ;  
+			  margin:5px 0;
+			  padding:5px 0;
+		    }  		
+
+		  
+			ul.subarea{
+			  width:100%;	
+			  vertical-align:middle;	
+			  display:flex;
+			  flex-direction:column;
+			}
+			
+			ul.subarea > li{
+			  display:block;	
+			  padding:8px 0;
+			  position:relative;
+			}
+			  .apply_subarea > i{
+				font-size:0.9em;
+                color: #c85554;				
+			  }
+			
+			div.form_element input[type="text"],
+			div.form_element input[type="file"],
+			div.form_element input[type="date"],
+			div.form_element input[type="time"],
+			div.form_element input[type="email"],
+			div.form_element select,
+			div.form_element textarea{
+			  background-color:#FFFFFF;
+			  padding:5px;
+			  border:1px #e8e8e8 solid;
+			  border-radius:4px;
+			  color:#007bbb;
+			  width:100%;
+			  height:40px;
+			  line-height:40px;
+			  display:inline-flex;
+			  align-items:center;
+			}
+			div.form_element textarea{
+			  height:6em;	
+			  line-height:1.7em;	
+			  width:100%;
+			  resize: vertical;
+			}
+			div.form_element input._fail , 
+			div.form_element textarea._fail , 
+			div.form_element select._fail{
+			  border-color:#ff6347;	
+			}
+			  .warning{display:none;color:#ff6347; position:absolute; bottom:0; left:5px; font-size:0.9em;  }
+			  ._fail + .warning{display:inline-block;}
+			
+			
+			input[name='apply_reason']:checked+span::after{
+			  content:"";
+			  display:inline-block;
+			  margin-left:5px;
+			  width:16px; height:16px;
+			  background-image:url('../image/mark_upload_success.png');
+			}
+			
+			div.form_element input#applicant_name,
+			div.form_element input#applicant_mail,
+			div.form_element input#applicant_userid,
+			div.form_element input#applicant_birthday,
+			div.form_element input#applicant_serviceto,
+			div.form_element input#applicant_phonenumber,
+			div.form_element input#applicant_cellphone,
+			div.form_element input#applicant_faxnumber
+			{ width:300px;	}
+			
+			
+			
+			div.form_element input:disabled{
+			  background-color:#f5f5f5;	
+			}
+			
+			
+			div.form_row{
+			  display:flex; 	
+			  justify-content:space-between;
+			}
+			
+			  div.form_cell{
+				width:49%;
+				flex-shrink:1;
+				flex-grow:1;
+			  }
+			   
+			  #upload_form{
+				width:30%; 
+				margin-left:20px;			
+			  }
+			    
+				div.form_group{
+				  display:flex;  	
+                  justify-content:space-between;							  
+				}
+				div.form_group > div{
+				  width:49%;
+                  	  
+				}
+				
+				div.form_element{
+				  padding:5px 0;
+				  margin-bottom:10px;
+				}
+			  
+				div.form_element > label{
+				  display:block;	
+				  padding:0 0 4px 2px;	
+				  font-size:0.95em; 
+				  position:relative;
+				}
+				
+				div.form_element > div{
+				 
+				}
+			  
+				div.form_element > label > i{
+				  font-style: italic;
+				  font-size:0.8em;
+                  color:#666666;				  
+				}
+				
+				div.form_element > label > a.option{
+				  font-size:0.8em;
+                  color:#666666;				  
+				  position:absolute;
+				  top:1px;
+				  right:5px;
+				  text-decoration:underline;
+				}
+				
+				div.form_element > i{
+				  display:block;	
+				  font-style: italic;
+				  font-size:0.9em;
+                  color:#666666;	
+                  margin-top:7px;
+                  line-height:15px; 				  
+				}
+				
+				
+				
+				
+				div.form_set > *{
+				  margin-right:5px;	
+				} 
+				
+				.checkbox_set{
+				  display:flex;
+                  justify-content:flex-start;
+                  flex-wrap:wrap;  				  
+				}
+				
+				.checkbox_set > .option_set{
+				  min-width:33%;	
+				}
+				
+				.value_set{
+				  display:flex; 	
+				  align-items:center;
+				  justify-content:space-between;
+				  margin:5px 0;
+                  padding-bottom:20px;				  
+				  position:relative;
+				}
+				
+				.reason_set{
+				  display:flex;	
+				}
+				.reason_set > div:nth-child(1){
+				  flex:1;	
+				}
+				.reason_set > div:nth-child(2){
+				  width:300px;	
+				}
+				
+				  #apply_documents{
+					visibility:hidden;  
+				  }
+				  
+				  #attachment_list{
+					padding-top:5px;  
+				  }
+					li.attachment{
+					  display:flex;
+					  align-items:center;
+					  padding:3px 0;
+					  font-size:0.9em;
+					  border-bottom:1px #CDCDCD dashed;
+					}
+					li.attachment .option{width:20px;}
+					li.attachment .file{flex:1;  white-space:nowrap; overflow:hidden;}
+					li.attachment .time{opacity:0.5; font-size:0.8em; }
+					
+				
+			  div.option_set{
+				margin:5px 0 10px; 			
+			  }
+			  div.option_set > i{
+				margin-top:5px;
+				display:block;
+				color:#c85554;
+				padding-left:2em;			
+			  }
+			  div.option_set > i::before{
+				content:" - ";  
+			  }
+		      
+			  div.other_option{
+				display:flex;  
+                align-items:center;				
+			  }
+			  div.other_option > span{width:100px;}
+			  div.other_option > input[type='text']{flex:1;}
+			  
+			  
+			  ul.input_assist{
+				display:none;	
+				width:47%;	
+				position:absolute;
+				top:0;
+                left:15px;
+                padding:5px;				  
+				z-index:100;
+				border:1px #666666 solid;
+				border-radius:5px;
+				background-color:#ffffff;
+			  }
+			  
+			  ul.input_assist > li{
+				display:block;
+				height:20px;
+				line-height:20px;
+			  }
+			  
+			    li.get_belong{
+				  border-bottom:1px #CDCDCD solid;	
+				}
+				li.get_selecter{
+				  cursor:pointer;
+			    }
+			    li.get_selecter:hover{
+				  background-color:#bbdbf3;
+			    }
+			  
+			  
+			  
+			  
+			 
+				
+		
+	  /* == STEP01 申請區域選擇 == */ 
+	  #area_selecter{
+		  
+	  }
+        
+		.dates_apply{
+		  display:flex;	
+		}
+		  
+
+      /* == STEP2 申請宣告同意 == */
+	  #agrement_checker{}
+	  
+        .declaration{
+		  padding:10px; 	
+		  line-height:1.5em;
+		}
+		
+		.declaration h2{
+		  font-weight:bold;  
+		  margin:5px 0;
+	      padding:5px 0;
+	    } 
+		.declaration > p.baner{
+		  color:rgb(178,34,34)	
+		}
+		
+		.declaration > p.baner::first-letter {
+          font-size: 1.5em;
+		}
+		
+		.declaration > p.rule{
+		  margin-bottom:15px;
+		  text-indent: -2em; margin-left:4em;
+		}
+		
+		.agrement{
+		  padding:20px;
+          background-color:#b3c5c7;
+          text-align:center;	
+          font-weight:bold;
+          color:#583822;	
+		  border-radius:5px;
+          box-shadow:0 0px 4px -1px rgba(0,0,0,0.2);		  
+		}
+		
+	  /* == STEP3 申請人資料 == */  	
+	  .applicant_record{
+		display:flex; 		
+	  }
+	    .applicant{
+		  flex:1 1 40%;	
+		}
+		
+	    .history{
+		  flex:1 1 60%;	
+		  display:none;
+		}
+	    .history > h2{
+		  padding-bottom:10px;	
+		  border-bottom:1px #CDCDCD solid;	
+		}
+	    
+		  ul.apply_record{
+			  
+		  }
+	        li.applied{
+			  font-size:0.95em;
+			  padding:8px 0;
+			  display:flex;
+			  align-items:center;
+			  border-bottom:1px #aaaaaa dotted;
+			}
+		    li.applied > span.date{ width:100px; }
+			li.applied > span.area{ flex:1 }
+			li.applied > span.tool{ width:180px; }
+			
+			
+		  
+		  
+	  /* == STEP3 填寫申請資料 == */
+	  #booking_form{}
+	  #booking_form  > section h2{
+		font-weight:bold;  
+		border-bottom:1px #CDCDCD solid ;  
+		margin:10px 0;
+	    padding:5px 0;
+	  }
+	   
+	   
+	    .member-list{
+		  width:100%;
+		  border:1px #CDCDCD solid;  
+		  background-color:#FFFFFF;
+		 
+	    } 
+	  
+	    .member-list > tr{}
+	  
+	    .member-list td{
+		  padding:10px 5px;
+          border:1px #CDCDCD solid;
+		  position:relative;
+	    }
+	  
+	    .member-list tr.fields{
+		  font-weight:bold;  
+		  font-size:0.9em;
+		  background-color:#f8fbf8;
+	    }
+	    
+		.member-list tr.fields > td:nth-child(1){width:60px;}
+		.member-list tr.fields > td:nth-child(2){width:60px;text-align:center;}
+		.member-list tr.fields > td:nth-child(3){}
+		.member-list tr.fields > td:nth-child(4){width:80px;text-align:center;}
+		.member-list tr > td:nth-child(1),.member-list tr > td:nth-child(2),.member-list tr > td:nth-child(4){ text-align:center;}
+		
+		.mbr_info > div{display:flex; align-items:center;margin-bottom:3px;}
+		.mbr_info label{width:100px; text-align:right; padding:0 10px;}
+		
+		.long_input{flex:1;}
+		
+		  tr.fields > td::after{
+			content: '';
+			display: block;
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 1px;
+			height: 1px;
+			background-color: #eee;
+		  }
+		  
+		tr.member.template{ display:none;}  
+		tr.member a.option{display:none;}  
+        
+		tr.member[edit='1'] a.option.mdele,
+		tr.member[edit='1'] a.option.msave,
+		tr.member[edit='0'] a.option.medit
+		{ display:inline-block; }
+		
+		tr.member[edit='0'] > td.mbr_info > div:nth-child(n+3){display:none;}
+		
+		tr.member[edit='0'] input[type='text']{ border:1px #ffffff solid; border-bottom:1px #cdcdcd dashed; }
+		  
+		  
+		  span.mbr_data{
+			position:relative;  
+		  }
+		  
+		  span.mbr_data[fail='empty'] > input[type='text'],
+		  span.mbr_data[fail='double'] > input[type='text'],
+		  span.mbr_data[fail='lose'] > input[type='text'],
+		  span.mbr_data[fail='fail'] > input[type='text']
+		  span.mbr_data[fail='applied'] > input[type='text']
+		  {background-color:rgba(255,0,0,0.1);}
+		  
+		  span.mbr_data::after{
+			content:'';
+            font-size:0.8em;
+			position:absolute; bottom:0; right:5px;
+			display:inline-block;
+			color:red;
+			opacity:0;
+		  }
+		  
+		  span.mbr_data[fail='empty']::after{ content:'不可空白';opacity:0.5; }
+		  span.mbr_data[fail='double']::after{ content:'ID重複';opacity:0.5; }
+		  span.mbr_data[fail='lose']::after{ content:'請填寫區碼';opacity:0.5; }
+		  span.mbr_data[fail='fail']::after{ content:'ID錯誤';opacity:0.5; }
+		  span.mbr_data[fail='applied']::after{ content:'當日重複申請';opacity:0.5; }
+		  
+		
+	/* == STEP04 成員清單  == */
+    
+	.submit_step_info{
+	  display:flex;
+	  align-items:center;
+	  margin-bottom:30px;
+	}
+	
+	.submit_step_info > .process_info{
+	  display:inline-block;
+      color:#7d7d7d;
+	} 
+
+    .submit_step_info > .process_info[status='-1']{
+	  color:#cc3300;	
+	}
+    
+	.submit_step_info > .process_info[status='1']{
+	  color:#008db7;	
+	}	
+
+    .submit_step_info > .process_status{
+	  margin:0 10px;
+	} 	
+	
+	
+	#apply_submit:disabled{
+	  background-color:#CDCDCD;	
+	  color:#7e837f;
+	}
+	
+	
+	
+  
+  /* == STEP05 申請最後狀態 == */ 
+    
+	/* [ apply progress table ] */		  
+		  
+		  #act_license_download{
+			width:130px;  
+		  }
+		  
+		  #act_license_download:disabled{
+	        background-color:#CDCDCD;	
+	        color:#7e837f;
+			opacity:0.6;
+	      }
+	
+		  
+		  #apply_progress_info,#apply_status_info{
+			font-weight:bold;
+            color:blue;			
+		  }
+		  
+		  
+		  #apply_process_table{
+			width:100%;  
+			margin-bottom:20px;
+		  }
+		  
+		  #apply_process_table td{
+			padding:8px 5px;
+			vertical-align:top;
+		  }
+		  
+		  .process_header > td{
+			color:#333333;
+			text-align:center;	  
+			border-bottom:1px #333333 solid;  
+			width:20%;
+		  }
+		  
+		  .process_header[stage='1'] > td:nth-child(1){font-weight:bold; color:#FFFFFF; background-color:#c7665a; box-shadow:0 0 7px 2px rgba(0,0,0,0.4);}
+		  .process_header[stage='2'] > td:nth-child(2){font-weight:bold; color:#FFFFFF; background-color:#c7665a; box-shadow:0 0 7px 2px rgba(0,0,0,0.4);}
+		  .process_header[stage='3'] > td:nth-child(3){font-weight:bold; color:#FFFFFF; background-color:#c7665a; box-shadow:0 0 7px 2px rgba(0,0,0,0.4);}
+		  .process_header[stage='4'] > td:nth-child(4){font-weight:bold; color:#FFFFFF; background-color:#c7665a; box-shadow:0 0 7px 2px rgba(0,0,0,0.4);}
+		  .process_header[stage='5'] > td:nth-child(5){font-weight:bold; color:#FFFFFF; background-color:#c7665a; box-shadow:0 0 7px 2px rgba(0,0,0,0.4);}
+		  
+		  
+		  .process_task > td{
+			border:1px #dedede solid;  
+			font-size:0.9em;
+			height:80px;
+		  }
+		  
+		  td.nowstage{
+			background-color:#ffffff;  
+		  }
+		    span.rvlog{
+			  display:block;
+			  margin-bottom:5px;
+			}
+		    
+		  td.nowstage > span.rvlog:nth-child(1){
+			border-bottom:1px red solid;
+			padding:3px 0;
+			margin-bottom:3px
+		  }
+		  
+		  
+		  td[class^='stage'] > select,
+		  td[class^='stage'] > input,
+		  td[class^='stage'] > button{
+			width:100%;  
+		  }
+		  
+	        .progres_records{
+			  
+			}
+			  .prblock{display:block;}
+			  
+			  .prmain{
+				display:flex;
+			    align-items:center;
+				justify-content:space-between;
+				padding:0 5px;
+			  }
+			  .prnote{
+				padding:3px 0;
+				font-size:0.8em;
+                text-align:center;
+                color: 	#666666;				
+			  }
+	
+	.page-container{
+	  /*border:1px #333333 solid;*/
+	  width:21cm;/*限制為A4寬*/
+	  margin:0 auto;		
+	}
+	
+	.license_page{
+	  font-size:1.1em;
+	}
+	
+	.license_page > h1{
+	  font-size:1.5em;
+	  font-weight:bold;
+	  text-align:center;
+	}
+	  div.note{
+	    text-align:center; 	
+		margin:5px 0;
+		font-size:0.8em;
+		line-height:1.5em;
+	  }
+	
+	.license_page > h2{
+	  padding-left:6px;
+	  font-weight:bold;
+      line-height:1.5em; 	  
+	}
+	
+	.license_page > table{
+	  width:100%;
+	  border-collapse: collapse; 
+	}
+	
+	.license_page > table th,.license_page > table td{
+	  padding:10px 5px;
+	  border:1px #434343 solid;	
+	  text-align:left;
+	}
+	
+	.license_page > table.application th{
+	  font-weight:bold;	
+	  width:25%;
+	}
+	.license_page > table.application td{
+	  width:25%;	
+	}
+	
+	.license_page > table.application td.handwriting{
+	  font-size:0.8em;	
+	  height:6em;
+      vertical-align:bottom; 
+	  text-align:center;
+	  color:#666666;
+	}
+	
+	.license_page > hr{
+	  margin:35px 0;
+      border:1px #666666 dashed;	  
+	}
+	
+	.license_page > hr.break{
+	  page-break-after:always	
+	}
+	
+	
+	.license_page > table.application tbody.additional_fields th.field_set{
+	  text-align:center;	
+	}
+	.additional_fields td{
+	  font-size:0.9em;
+      line-height:1.3em;	  
+	}
+	
+	table.joing_member{
+	  font-size:0.8em;	
+	} 
+	table.joing_member th{
+	  font-weight:bold;	
+	}  
+	  tr.member_detail td:nth-child(1){ width:20px; text-align:center; }
+	  tr.member_detail td:nth-child(2){ width:50px; text-align:center; }
+	  tr.member_detail td:nth-child(3){ width:200px; }
+	  tr.member_detail td:nth-child(4){ min-width:200px; }
+	  tr.member_detail td:nth-child(5){ width:130px; }
+	    
+		td.member_info > div{
+		  display:flex;
+          align-items:center;
+          margin-bottom:3px; 		  
+		}
+	    td.member_info label{font-weight:bold;}
+		td.member_info label:after{
+		  display:inline-block;
+		  content:'：';
+		  padding:0 2px;
+		}
+		td.member_info span{padding-right:10px;}
+		
+	th.afield{ width:130px; font-weight:bold;}
+	td.acheck{ width:100px ;}
+  
+  
+    div.regulation{
+	  padding:5px;
+      border-top:1px #666666 solid; 	  
+	}
+    
+	div.regulation > p{
+	  margin-left:2em;	
+	  text-indent:-2em;
+      margin-bottom:10px;
+      line-height:1.5em;	  
+	}
+    div.regulation > ul{
+	  margin-left:2em;
+      margin-bottom:10px;	  
+	}
+  
+  
+    table.contect{
+	  	
+	}
+	
+	table.contect th{
+	  font-weight:bold;
+	  position:relative;
+	}
+	
+	table.contect th:after{
+	  content: '';
+	  display: block;
+	  position: absolute;
+	  left: 0;
+	  right: 0;
+	  bottom: 1px;
+	  height: 1px;
+	  background-color: #cdcdcd;
+	}
+  
+	
+	table.contect + h1{
+	  margin:50px 0;	
+	}
+	
+    
+	/* [ LANDING APPLIED PAGE CSS ] */
+	    
+	#applied_status{
+		
+	}  	
+	#applied_status > h2:nth-child(1){
+	  display:flex;
+      align-items:center;
+      justify-content:space-between;	  
+	}
+	
+	button#applied_search{
+	  width:100px;	
+	  padding:7px 0;
+	}
+		.area-block{
+		  display:flex;	
+		}
+		
+		.descrip{
+		  margin:10px;
+		  flex:1 1 50%;	
+		  position:relative;
+		}
+		  .photo_container{
+		    width:100%;
+			overflow:hidden;
+		  }
+		  .photo_container > img{
+			width:100%;
+            height:auto;			
+		  } 
+		  .area_descrip{
+			position:absolute;bottom:0;left:0;
+            width:100%;
+			background:rgba(0,0,0,0.7); 
+ 			color:#FFFFFF;
+			padding:10px;
+			line-height:1.5em;
+		  }
+		  
+		
+		
+		
+		.calendar{
+		  margin:10px;
+		  flex:1 1 50%;
+		}
+		  .option_block{
+			display:flex;  
+			margin:10px 0;
+		  }
+		  
+		    .locat_option{
+				
+			}
+			.locat_option > select{
+			  background-color:rgba(255,255,255,0);	
+				
+			}
+			
+			.date_option{
+			  flex:0 0 200px;	
+			  display:inline-flex;	
+			  align-items:center;
+			  justify-content:space-between;
+			}
+			  .date_change{width:20px; text-align:center;}
+			  .date_ynm{font-size:0.9em;}
+		  
+		  .week_block{
+			display:flex;  
+			justify-content:flex-start;
+			background-color:#FFFFFF;
+			margin-bottom:5px;
+			border-radius:3px;
+		  }
+		  
+		  .week_block > div{
+			width:14%;
+			height:30px; 
+            line-height:30px;
+            text-align:center;
+		    border:1px #FFFFFF solid;
+		  }
+		  
+		  .date_container{
+			display:flex;   
+            flex-wrap:wrap;
+			justify-content:flex-start;
+			
+		  }
+		    div.date_slot{
+			  flex-grow:0;
+			  width:14%; 
+			  height:50px;
+			  border:1px #dcdddd solid; 
+			  padding:5px;
+			  position:relative;
+			  display:flex;
+			  align-items:flex-end;
+			  justify-content:space-around;
+			  z-index:1;
+			  overflow:hidden;	
+			}
+		    div.date_slot > .date_quota{display:none;}
+			div.date_slot > .date_info{display:none;}
+			
+			span.date_no{
+			  position:absolute;
+              left:0px;
+			  top:0px;
+			  font-size:0.8em;
+		      display:inline-block;
+			  width:20px;
+			  height:20px;
+			  text-align:center;
+			  line-height:20px;
+			  border-radius:9px;
+			  z-index:6;
+		    }
+			
+			span.date_quota{
+			  color:#5f9ea0;	
+              font-size:0.8em;			  
+			}
+			
+			span.date_mask{
+              position:absolute;
+              top: -1px;
+              left:-2px;
+              right:-2px;			  
+              display:inline;
+              min-height:20px;
+			  padding:3px;
+              z-index:5;
+              border-radius:3px;			  
+			}
+			span.stop_info{
+			  font-size:0.8em;
+              color:#e8383d;
+              position:absolute;
+              top:25px;
+              left:2%;
+			  white-space:nowrap;  
+              z-index:11;
+              	  
+			}
+			
+		    div.date_slot[type='empty']{ opacity:0; }
+			div.date_slot[type='over'] > span.date_no{ text-decoration: line-through;opacity:0.3; }
+			div.date_slot[type='apply']{ cursor:pointer; }
+			div.date_slot[type='apply']:hover{ border-color:#ffa500; box-shadow:inset 0px 0px 10px -1px rgba(200,200,0,0.5); }
+			div.date_slot[type='over']  > span.date_quota ,
+			div.date_slot[type='apply'] > span.date_quota{ display:inline; }
+		    
+			div.date_slot[type='stop']::before{
+			  content:"╳";
+			  display:block;
+			  position:absolute;
+			  width:20px; height:20px;
+              top:2px; left:6px;
+			  z-index:7;	
+              color:rgba(50,50,50,0.6);			  
+			}
+			div.date_slot[type='stop'] > .date_mask{
+			  background-color:#e8383d;
+              color:#ffffff;	  
+			}
+			
+			div.date_slot[select='1']::after{
+			  content:"";
+			  display:block;
+			  width:24px;
+			  height:24px;
+			  background:url('../image/mark_O_V.png');
+			  position:absolute;
+			  right:0;
+			  z-index:1;
+			  top:0px;
+			}
+			
+          div.area_limit{
+			padding:8px 2px;
+            text-align:center;			
+		  }  		  
+            span#area_load{
+			  font-weight:bold;
+              color:#54917f;  			  
+			}  
+
+	
+	div.lotto_block{
+	  margin:10px 0;	
+	}
+	  table.booking_list{
+		width:98%;
+		padding:0 1%;
+	  }   
+	    table.booking_list td{ padding:7px 2px; min-height:30px;}
+		tr.data_field > td {border-bottom:2px #CDCDCD solid;}
+		tr.booking > td{border-bottom:1px #DDDDDD solid;}
+	    tr.booking > td:nth-child(1){  width:90px;  font-weight:bold; font-family: monospace; }
+		tr.booking > td:nth-child(2){  width:120px;  }
+		tr.booking > td:nth-child(3){  width:120px;  }
+		tr.booking > td:nth-child(4){  width:100px; text-align:center;  }
+		tr.booking > td:nth-child(5){  min-width:200px; }
+		tr.booking > td:nth-child(6){  width:50px; text-align:center;  }
+		  
+		tr.booking > td.lotto > i{display:none;}
+		tr.booking[lotto='1']  > td.lotto > i.iconv_lotto_O{display:inline-block;} 
+		tr.booking[accept='0'] > td.lotto > i.iconv_lotto_X{display:inline-block;} 
+		  i.iconv_lotto_O{background-image:url('../image/mark_O_V.png')}
+		  i.iconv_lotto_X{background-image:url('../image/mark_O_X.png')}
+		
+	  ul.lotto_logs{
+		padding:1%;  
+	  }	
+		li.process{
+		  padding:4px 0;	
+		  display:flex;
+		  align-items:center;
+		  border-bottom:1px #efefef dotted;;
+		}
+		
+		li.process > span:nth-child(n+2){padding-left:5px;}
+		li.process > span:nth-child(2){width:100px;}
+			

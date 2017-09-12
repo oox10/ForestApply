@@ -1,0 +1,337 @@
+HTTP/1.1 200 OK
+Date: Sun, 10 Sep 2017 05:43:28 GMT
+X-Powered-By: ASP.NET
+X-AspNet-Version: 4.0.30319
+Cache-Control: private
+Content-Type: text/html; charset=utf-8
+Content-Length: 31394
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>
+	林務局自然保留區暨自然保護區後端管理系統
+</title><link href="../css/style.css" rel="stylesheet" type="text/css" /><link href="../css/jquery.datepick.css" rel="stylesheet" type="text/css" /><link href="../css/jquery-ui-1.9.2.custom.css" rel="stylesheet" type="text/css" /><link href="../css/colorbox.css" rel="stylesheet" type="text/css" /><link href="../css/layout.css" rel="stylesheet" type="text/css" /><link href="../css/fonts.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/jquery.datepick.js"></script>
+    <script type="text/javascript" src="../js/jquery.datepick.tw.js"></script>
+    <script type="text/javascript" src="../js/jquery.colorbox-min.js"></script>
+    <script type="text/javascript" src="../js/jquery-ui-1.9.2.custom.min.js"></script>
+    <script type="text/javascript" src="../js/ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="../js/function.js"></script>
+    
+    <script type="text/javascript">
+<!--
+ $(document).ready(function () {           
+     
+});
+//-->
+        // 日期選擇器
+        $(function () {
+            $("input[class=chooseDate]").datepick({
+                beforeShow: function (input, inst) {
+                    inst.dpDiv.css({ marginTop: -(190 + input.offsetHeight) + 'px', marginLeft: (input.offsetWidth + 0) + 'px' });
+                }
+            });
+        });
+    </script>
+    <style type="text/css">
+        .style1
+        {
+            height: 24px;
+        }
+    </style>
+</head>
+<body>
+    <form name="aspnetForm" method="post" action="ADMReservedApply.aspx" id="aspnetForm">
+<div>
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['aspnetForm'];
+if (!theForm) {
+    theForm = document.aspnetForm;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<div>
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="52B20778" />
+	<input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="ZxL3+PRkS8nlW7fF4bIzY54HsMAyjJ6ndF/O06Ylze/mGT2lRj6n7bqMXMPBYjdmDuUmjXtfHG9mCbOMwAR3aIC0QvtkT35wBM0LvQl2TbMnntRNUf3h+debcndhnnxnDtvWJWVImWPwVBBfjnWrHVs7bextxqnzOdREaPJzpgbZL+ONxTGJdUfvyVKEVCaRCvi5NHiTfKPD/2zA2HAkQLOTS1OZocjOAifJSDFNfb72Jsh8aSsBcIqLji+lp+Mk78k1Pg+OI5aY0ujhLi69JPWsVX6XO/arIssZHGx2ShLrLgQkzeW7qBR4LPzcZUu85NMRKxxxG8+3PwWaq4fiplEOP+773dLxrA2VEwprRrCjyV0+7Q9M+ex3UzBjMVta/KRGB4zNN4OwToB0TH6830U15Fz0OzN1T5AQ/HLNJrUtjVgAvTlOrMV5x1wTe3hL/7JUXPHZLrRsjlym6+6OQvImZXSc33W4nC8wz97fvZxmWYLJl/fhQyzOlUMLLbGsARKywE/DrOyYT7c0qsz9TUaBciuwjhXV7GAJXz8lsZ52vEaGWUz14rPL0doh6Sd3BVI/644TXao70FlM6HPeypp7DNyawaDjgQ+qznKTPjbHQ12tEEzQooIggLKs/YHh1OzXKYe7WxFZSYWr+RiQplXnBEjYY7h/Puk8FXuqaOxIDQX78o36z/UyR4pYHRA8d5sknPApPs3I11UqkfGDLhmaZpU=" />
+</div>
+    <div id="bkWrapper">
+        <div id="bkheader1">
+        </div>
+        <!--bk_header-end-->
+        <div id="bkmenber">
+            <h1>
+                登入單位：臺灣大學測試帳號</h1>
+        </div>
+        <div id="menunav1">
+            <ul>
+                
+                        <li><a href="ADMLogin.aspx">
+                            登出系統</a></li>
+                    
+                        <li><a href="ADMSystem.aspx">
+                            系統参數設定</a></li>
+                    
+                        <li><a href="ADMArea.aspx">
+                            保留保護區管理</a></li>
+                    
+                        <li><a href="ADMUnit.aspx">
+                            所轄單位管理</a></li>
+                    
+                        <li><a href="ADMNews.aspx">
+                            最新消息資料</a></li>
+                    
+                        <li><a href="ADMReservedApply.aspx">
+                            保留區申請資料</a></li>
+                    
+                        <li><a href="ADMProtectedApply.aspx">
+                            保護區申請資料</a></li>
+                    
+            </ul>
+            <div style="height: 300px">
+            </div>
+        </div>
+        <!--menu_nav-end-->
+        <div id="maincontent">
+            
+    
+            <select name="ctl00$ContentPlaceHolder1$ddlArea" id="ctl00_ContentPlaceHolder1_ddlArea">
+	<option selected="selected" value="">所有保留區</option>
+	<option value="3">插天山自然保留區</option>
+	<option value="4">苗栗三義火炎山自然保留區</option>
+	<option value="5">淡水河紅樹林自然保留區</option>
+	<option value="6">坪林台灣油杉自然保留區</option>
+	<option value="7">烏石鼻海岸自然保留區</option>
+	<option value="8">南澳闊葉樹林自然保留區</option>
+	<option value="12">九九峰自然保留區</option>
+	<option value="13">台灣一葉蘭自然保留區</option>
+	<option value="15">出雲山自然保留區</option>
+	<option value="16">大武山自然保留區</option>
+	<option value="17">大武事業區台灣穗花杉自然保留區</option>
+	<option value="18">台東紅葉村台東蘇鐵自然保留區</option>
+	<option value="28">挖子尾自然保留區</option>
+	<option value="29">澎湖玄武岩自然保留區</option>
+	<option value="30">澎湖南海武岩自然保留區(頭巾、鐵砧)</option>
+	<option value="31">澎湖南海武岩自然保留區(東吉嶼、西吉嶼)</option>
+	<option value="32">測試自然保留區</option>
+
+</select>
+            申請者名稱：<input name="ctl00$ContentPlaceHolder1$searchCName" type="text" id="ctl00_ContentPlaceHolder1_searchCName" />
+            &nbsp;申請編號：<input name="ctl00$ContentPlaceHolder1$searchRId" type="text" id="ctl00_ContentPlaceHolder1_searchRId" /><p style="margin: 10px 0 10px 0" />
+            申請目的：<select name="ctl00$ContentPlaceHolder1$searchReason" id="ctl00_ContentPlaceHolder1_searchReason">
+	<option selected="selected" value="">全部</option>
+	<option value="1">原住民族為傳統祭典之需要</option>
+	<option value="2">學術機構或大專院校為學術研究之需要</option>
+	<option value="3">相關團體為環境教育之需要</option>
+	<option value="4">經主管機關認可之特殊需要</option>
+
+</select>
+            &nbsp;申請狀態：<select name="ctl00$ContentPlaceHolder1$searchStatus" id="ctl00_ContentPlaceHolder1_searchStatus">
+	<option selected="selected" value="">全部</option>
+	<option value="1">收件待審</option>
+	<option value="2">申請核准</option>
+	<option value="3">申請駁退</option>
+	<option value="4">申請註銷</option>
+	<option value="5">正取送審</option>
+	<option value="6">備取送審</option>
+	<option value="7">正取補件</option>
+	<option value="8">備取補件</option>
+	<option value="9">正取補件送審</option>
+	<option value="10">備取補件送審</option>
+	<option value="11">抽籤未中</option>
+	<option value="12">申請取消</option>
+	<option value="13">備取等待</option>
+	<option value="14">補件駁退</option>
+	<option value="15">備取成功</option>
+	<option value="16">備取失敗</option>
+
+</select>
+            &nbsp;陳核長官：<select name="ctl00$ContentPlaceHolder1$searchReviewStatus" id="ctl00_ContentPlaceHolder1_searchReviewStatus">
+	<option selected="selected" value="">全部</option>
+	<option value="1">是</option>
+	<option value="0">否</option>
+
+</select>
+            <p style="margin: 10px 0 10px 0" />
+            申請日期：<input name="ctl00$ContentPlaceHolder1$searchApplyDate" type="text" id="ctl00_ContentPlaceHolder1_searchApplyDate" class="chooseDate" style="width:90px;" />
+            &nbsp;進入日期第一天：<input name="ctl00$ContentPlaceHolder1$searchStartDate" type="text" id="ctl00_ContentPlaceHolder1_searchStartDate" class="chooseDate" style="width:90px;" />
+            &nbsp;進入日期最後一天：<input name="ctl00$ContentPlaceHolder1$searchEndDate" type="text" id="ctl00_ContentPlaceHolder1_searchEndDate" class="chooseDate" style="width:90px;" />
+            &nbsp;<input type="submit" name="ctl00$ContentPlaceHolder1$QueryBtn" value="查詢" id="ctl00_ContentPlaceHolder1_QueryBtn" />&nbsp;<input type="submit" name="ctl00$ContentPlaceHolder1$ExportBtn" value="匯出" id="ctl00_ContentPlaceHolder1_ExportBtn" />
+            <div>
+	<table cellspacing="1" cellpadding="0" border="0" id="ctl00_ContentPlaceHolder1_gv" style="background-color:#CCCCCC;width:100%;">
+		<tr align="center" style="background-color:#F7F7F7;font-weight:bold;height:22px;">
+			<th scope="col"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Sort$AreaName&#39;)">進入區域</a></th><th scope="col"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Sort$RId&#39;)">申請編號</a></th><th scope="col"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Sort$ApplyDate&#39;)">申請日期</a></th><th scope="col"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Sort$CName&#39;)">申請人</a></th><th scope="col"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Sort$StartDate&#39;)">進入期間</a></th><th scope="col"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Sort$ReviewStatus&#39;)">陳核長官</a></th><th scope="col"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Sort$Status&#39;)">狀態</a></th><th scope="col">&nbsp;</th>
+		</tr><tr style="background-color:White;height:22px;">
+			<td align="center">插天山自然保留區</td><td align="center">R10603330</td><td align="center">2017/7/27</td><td align="center">吳建榮</td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl02_Label1">2017/9/23</span>
+                            ~
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl02_Label2">2017/9/23</span>
+                        </td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl02_Label3">否</span>
+                        </td><td align="center">正取送審</td><td align="center" style="width:40px;"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Select$0&#39;)">審核</a></td>
+		</tr><tr style="background-color:#F7F7F7;height:22px;">
+			<td align="center">插天山自然保留區</td><td align="center">R10603418</td><td align="center">2017/8/1</td><td align="center">吳淑鈴</td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl03_Label1">2017/9/23</span>
+                            ~
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl03_Label2">2017/9/23</span>
+                        </td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl03_Label3">否</span>
+                        </td><td align="center">正取送審</td><td align="center" style="width:40px;"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Select$1&#39;)">審核</a></td>
+		</tr><tr style="background-color:White;height:22px;">
+			<td align="center">插天山自然保留區</td><td align="center">R10603518</td><td align="center">2017/8/24</td><td align="center">陳其清</td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl04_Label1">2017/9/23</span>
+                            ~
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl04_Label2">2017/9/23</span>
+                        </td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl04_Label3">否</span>
+                        </td><td align="center">正取送審</td><td align="center" style="width:40px;"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Select$2&#39;)">審核</a></td>
+		</tr><tr style="background-color:#F7F7F7;height:22px;">
+			<td align="center">插天山自然保留區</td><td align="center">R10603525</td><td align="center">2017/8/25</td><td align="center">陳英鴻</td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl05_Label1">2017/9/23</span>
+                            ~
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl05_Label2">2017/9/23</span>
+                        </td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl05_Label3">否</span>
+                        </td><td align="center">正取送審</td><td align="center" style="width:40px;"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Select$3&#39;)">審核</a></td>
+		</tr><tr style="background-color:White;height:22px;">
+			<td align="center">插天山自然保留區</td><td align="center">R10603538</td><td align="center">2017/8/25</td><td align="center">劉文生</td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl06_Label1">2017/9/23</span>
+                            ~
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl06_Label2">2017/9/23</span>
+                        </td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl06_Label3">否</span>
+                        </td><td align="center">正取送審</td><td align="center" style="width:40px;"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Select$4&#39;)">審核</a></td>
+		</tr><tr style="background-color:#F7F7F7;height:22px;">
+			<td align="center">插天山自然保留區</td><td align="center">R10603551</td><td align="center">2017/8/28</td><td align="center">胡朝養</td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl07_Label1">2017/9/23</span>
+                            ~
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl07_Label2">2017/9/23</span>
+                        </td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl07_Label3">否</span>
+                        </td><td align="center">正取送審</td><td align="center" style="width:40px;"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Select$5&#39;)">審核</a></td>
+		</tr><tr style="background-color:White;height:22px;">
+			<td align="center">插天山自然保留區</td><td align="center">R10603580</td><td align="center">2017/8/29</td><td align="center">袁倫祥</td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl08_Label1">2017/9/23</span>
+                            ~
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl08_Label2">2017/9/23</span>
+                        </td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl08_Label3">否</span>
+                        </td><td align="center">正取送審</td><td align="center" style="width:40px;"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Select$6&#39;)">審核</a></td>
+		</tr><tr style="background-color:#F7F7F7;height:22px;">
+			<td align="center">插天山自然保留區</td><td align="center">R10603599</td><td align="center">2017/8/31</td><td align="center"> 陳信宏</td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl09_Label1">2017/9/23</span>
+                            ~
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl09_Label2">2017/9/23</span>
+                        </td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl09_Label3">否</span>
+                        </td><td align="center">正取送審</td><td align="center" style="width:40px;"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Select$7&#39;)">審核</a></td>
+		</tr><tr style="background-color:White;height:22px;">
+			<td align="center">插天山自然保留區</td><td align="center">R10603603</td><td align="center">2017/9/1</td><td align="center">胡景良</td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl10_Label1">2017/9/23</span>
+                            ~
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl10_Label2">2017/9/23</span>
+                        </td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl10_Label3">否</span>
+                        </td><td align="center">正取送審</td><td align="center" style="width:40px;"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Select$8&#39;)">審核</a></td>
+		</tr><tr style="background-color:#F7F7F7;height:22px;">
+			<td align="center">插天山自然保留區</td><td align="center">R10603613</td><td align="center">2017/9/1</td><td align="center">王清相</td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl11_Label1">2017/9/23</span>
+                            ~
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl11_Label2">2017/9/23</span>
+                        </td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl11_Label3">否</span>
+                        </td><td align="center">正取送審</td><td align="center" style="width:40px;"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Select$9&#39;)">審核</a></td>
+		</tr><tr style="background-color:White;height:22px;">
+			<td align="center">苗栗三義火炎山自然保留區</td><td align="center">R10603610</td><td align="center">2017/9/1</td><td align="center">張雲興</td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl12_Label1">2017/9/23</span>
+                            ~
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl12_Label2">2017/9/23</span>
+                        </td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl12_Label3">否</span>
+                        </td><td align="center">正取送審</td><td align="center" style="width:40px;"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Select$10&#39;)">審核</a></td>
+		</tr><tr style="background-color:#F7F7F7;height:22px;">
+			<td align="center">插天山自然保留區</td><td align="center">R10603620</td><td align="center">2017/9/2</td><td align="center">吳俊明 </td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl13_Label1">2017/9/23</span>
+                            ~
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl13_Label2">2017/9/23</span>
+                        </td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl13_Label3">否</span>
+                        </td><td align="center">正取送審</td><td align="center" style="width:40px;"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Select$11&#39;)">審核</a></td>
+		</tr><tr style="background-color:White;height:22px;">
+			<td align="center">插天山自然保留區</td><td align="center">R10603644</td><td align="center">2017/9/4</td><td align="center">黃筱玉</td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl14_Label1">2017/9/23</span>
+                            ~
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl14_Label2">2017/9/23</span>
+                        </td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl14_Label3">否</span>
+                        </td><td align="center">正取送審</td><td align="center" style="width:40px;"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Select$12&#39;)">審核</a></td>
+		</tr><tr style="background-color:#F7F7F7;height:22px;">
+			<td align="center">插天山自然保留區</td><td align="center">R10603647</td><td align="center">2017/9/4</td><td align="center">王維新</td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl15_Label1">2017/9/23</span>
+                            ~
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl15_Label2">2017/9/23</span>
+                        </td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl15_Label3">否</span>
+                        </td><td align="center">正取送審</td><td align="center" style="width:40px;"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Select$13&#39;)">審核</a></td>
+		</tr><tr style="background-color:White;height:22px;">
+			<td align="center">插天山自然保留區</td><td align="center">R10603655</td><td align="center">2017/9/4</td><td align="center">王恩志</td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl16_Label1">2017/9/23</span>
+                            ~
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl16_Label2">2017/9/23</span>
+                        </td><td align="center">
+                            <span id="ctl00_ContentPlaceHolder1_gv_ctl16_Label3">否</span>
+                        </td><td align="center">正取送審</td><td align="center" style="width:40px;"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Select$14&#39;)">審核</a></td>
+		</tr><tr align="center" style="background-color:White;">
+			<td colspan="8"><table border="0">
+				<tr>
+					<td><span>1</span></td><td><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Page$2&#39;)">2</a></td><td><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Page$3&#39;)">3</a></td><td><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Page$4&#39;)">4</a></td><td><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Page$5&#39;)">5</a></td><td><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Page$6&#39;)">6</a></td><td><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Page$7&#39;)">7</a></td><td><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Page$8&#39;)">8</a></td><td><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Page$9&#39;)">9</a></td><td><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Page$10&#39;)">10</a></td><td><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Page$11&#39;)">...</a></td>
+				</tr>
+			</table></td>
+		</tr>
+	</table>
+</div>
+        
+    
+    
+    
+    
+    
+
+        </div>
+        <!--main_content-end-->
+        <div id="clear">
+        </div>
+        <!--clear-end-->
+        <div id="bkfooter1">
+            <ul>
+                <li>建議最佳瀏覽解析度 1024x768，IE7、Firefox 2.0 以上</li>
+                <li>Copyright © 2012 Forestry Bureau 行政院農業委員會林務局 版權所有</li>
+                <li>地址：10050 台北市杭州南路1段2號 電話：02-23515441 服務信箱：service@forest.gov.tw</li>
+            </ul>
+        </div>
+        <!--footer_bg-end-->
+    </div>
+    <!--bk_wrap-end-->
+    
+    </form>
+</body>
+</html>

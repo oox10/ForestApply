@@ -1,0 +1,29 @@
+/*== [ Admin Staff Css  ] ==*/	  
+	
+/* [ page option ]  */
+    .topic_banner{
+     align-items:center;		
+	}
+	
+	button#act_sync_active{
+	  width:150px;
+	  height:40px;   
+    }
+    
+/* [ record list ]  */
+ 
+	tr.data_record:nth-child(odd){ background-color:#f9f9f9; }
+	tr.data_record td{ cursor:pointer; }
+	tr.data_record td:nth-child(1){  width:140px; font-size:0.8em;}
+	tr.data_record td:nth-child(2){  width:100px;  }
+	tr.data_record td:nth-child(3){  width:170px; }
+	tr.data_record td:nth-child(4){  width:250px;}
+	tr.data_record td:nth-child(5){  min-width:100px; }
+	tr.data_record td:nth-child(6){  width:100px; text-align:center;}
+	
+	tr._target td:nth-child(1){background-color:#84b9cb;color:#FFFFFF;}
+	
+/* [ Module Relate Block ] */		
+
+
+
