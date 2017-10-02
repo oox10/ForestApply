@@ -50,7 +50,7 @@
 				if(!isset($_SESSION[_SYSTEM_NAME_SHORT]['ADMIN']['ADMIN_LOGIN_TOKEN'])){
 					
 				  // 檢查是否為查驗單位直通
-				  if(  $controller=='Booking' && $action=='R3check' ){
+				  if(  $controller=='Booking' && ($action=='R3check' || $action=='R5review') ){
 					$_SESSION[_SYSTEM_NAME_SHORT]['RrDIRECT'] = $_SERVER["QUERY_STRING"]; // 暫存搜尋條件
 				  }
 				  
