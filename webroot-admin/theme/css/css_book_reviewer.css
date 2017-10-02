@@ -1,0 +1,197 @@
+/*== [ Admin Book Css  ] ==*/	  
+	
+	
+	
+	
+	
+	
+	
+/* [ page option ]  */
+  
+  div.system_main_area {
+    min-width:500px;
+  }	
+  
+  div.system_content_area{
+	left:0;	
+  }
+	
+	div.tool_banner > h1{
+	  height:100%;	
+	  display:flex;
+      align-items:center;
+	}
+	  div.system_title{
+		margin-left:10px;  
+		line-height:1.2em;  
+		font-weight:bold;
+		font-size:1.3em;
+	  }
+	    span.sub_title{	
+		  font-size:0.7em;
+		  font-weight:normal;
+		}
+	
+	span.tool_right{
+	  position:absolute;
+      right:20px;
+      top:0;	  
+	}
+	
+	div.topic_banner{
+	  padding:0 30px;	
+	}
+	
+	div.topic_header{
+	  margin:20px 0;	
+	  flex:0 0 190px;	
+	}
+	
+	button#act_set_gmember{
+	  width:150px;
+	  height:40px;   
+    }
+	
+/* [ Record Filter ] */ 	
+	.record_filter{
+	  flex:1 1 1000px;
+	  margin:5px 0;
+	  display:flex;
+	  align-items:center;
+	}
+	    
+	  .filter_set{
+		position:relative;
+		flex:1;
+		display:flex;
+		align-items:center;
+	    flex-wrap:wrap;
+	  }
+	  .filter_set > li{
+		margin-right:5px;  
+		display:flex;
+		align-items:center;
+		min-height:30px;
+		flex-wrap:wrap;
+	  }
+	  
+	  .filter_set > li > span{
+		display:inline-flex;
+        align-items:center;		
+	  }
+	  
+	    
+	.record_filter input[type='text'],
+	.record_filter input[type='date'],
+	.record_filter select{
+	  padding:5px;	
+	  border-radius:3px;	
+	  color:#0073a8;
+	}
+        .singel_area_type{cursor:pointer;}
+		.singel_area_type:hover{ text-decoration:underline;}
+		
+		.search_terms{width:150px;}
+		
+		span.input_date{ position:relative;	 }
+		span.input_date > input[type='text']{ padding-left:25px; width:141px;}
+		span.input_date > i.fa{position:absolute; left:5px; top:5px;}
+	    
+		select.apply_status{
+		  width:150px;	
+		}
+	    
+		
+	  .filter_option{
+		display:inline-block;
+        flex:0 0 100px;		
+	  }	
+	  
+	  button#filter_submit{
+		width:100px;	
+		padding:10px 5px; 
+		margin:0 10px;
+	  }
+	  a#reset_filter{
+		text-align:center;
+		display:block;
+        margin:10px 10px 0;
+        font-size:0.9em;		
+	  }
+	    
+	  #act_batch_accept{
+		padding:4px 5px;  
+	  }
+	  
+	  .apply_review_logs{
+		padding:8px 0;  
+	  }
+      .apply_review_logs > li{ display:block; line-height:1.3em; border-bottom:1px #CDCDCD dotted;}
+	  .apply_review_logs > li > label{ font-weight:bold; }
+	  
+	  
+      
+       	  
+	
+	
+/* [ record list ]  */
+ 
+	tr.data_record:nth-child(odd){ background-color:#f9f9f9; }
+	tr.data_record td{ }
+	tr.data_record td:nth-child(1){  width:30px; text-align:center; }
+	tr.data_record td:nth-child(2){  width:30px; text-align:right; }
+	tr.data_record td:nth-child(3){  width:120px; text-align:center;  }
+	tr.data_record td:nth-child(4){  width:100px; min-width:100px; font-weight:bold; font-family: monospace; }
+	tr.data_record td:nth-child(5){  min-width:200px;}
+	tr.data_record td:nth-child(6){  width:190px; font-size:0.9em; text-align:center;  }
+	tr.data_record td:nth-child(7){  width:100px; }
+	tr.data_record td:nth-child(8){  width:100px; min-width:100px; text-align:center;}
+	tr.data_record td:nth-child(9){  width:230px; min-width:100px;}
+	
+	tr._target td:nth-child(1){background-color:#84b9cb;color:#FFFFFF;}
+	
+	td[field='r_review'] > img{display:none;}
+	td[field='r_review'][review='1']> img{display:inline-block;}
+	
+	  .review_option{
+		display:flex;
+	    align-items:center;
+		justify-content:space-between; 
+	  }
+	
+	  .apply_reject_reason{
+		width:100%;  
+		min-height:5em;
+        resize: vertical;		
+	  }  
+	
+			
+    /* [ record form ] */
+    div.record_body h1{
+		font-weight:bold;	
+		margin:10px 0;	
+		padding:10px;
+		background-color:#474a4d;
+		border-radius:3px;
+		color:#FFFFFF;
+		position:relative;
+		display:flex;
+		justify-content:space-between;
+		align-items:center;
+	}
+	
+	table.applyform{
+	  width:100%;
+      color:#666666;	  
+	}
+	table.applyform  th,table.applyform  td{
+	  padding:10px 5px;	
+	  border:0;
+	  border-bottom:1px #cdcdcd dashed;
+	}
+	table.applyform td{
+	  color:#003C9D ;	
+	}
+	
+	table.applyform  th{font-weight:bold; text-align:left;}
+	

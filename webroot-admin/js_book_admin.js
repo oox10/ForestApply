@@ -556,6 +556,22 @@
 		})
 	  });
 	  
+	  // 陳核部分
+	  $.each(Progres.admin,function(pstage,plist){
+		if(!$('tr.process_task#admin').length){
+		  return false;	
+		}
+		var log_dom = $('tr.process_task#admin').find('td.stage'+pstage);
+		if(log_dom.hasClass('_variable')) log_dom.empty();
+		$.each(plist,function(i,log){
+          var record = $('<span/>').addClass('rvlog').attr('title',log.time).html(log.time.substr(0,10).replace(/\-/g,'')+' '+log.status);
+		  if(log.note.length){
+			record.html(record.html()+'<br>'+log.note);  
+		  }
+          record.prependTo(log_dom);  		  
+		})
+	  });
+	  
 	  
 	  // mark stage now
 	  $('td[class^="stage"]').removeClass('nowstage');

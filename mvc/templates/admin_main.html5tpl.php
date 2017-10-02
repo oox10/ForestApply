@@ -101,13 +101,13 @@
 			</li>
 		    <li>
 			  <div class='counter'><?php echo isset($dashboard['module']['metadata']) ? $dashboard['module']['metadata']:0;?></div>
-			  <h1>資料總數</h1>
+			  <h1>開放區域</h1>
 			  <span class='module_iconv'><i class="fa fa-archive" aria-hidden="true"></i></span>
 			  <span class='module_reset'></span>
 			</li>
 		    <li>
 			  <div class='counter'><?php echo isset($dashboard['module']['gathering']) ? $dashboard['module']['gathering']:0;?></div>
-			  <h1>新增徵集</h1>
+			  <h1>最新申請</h1>
 			  <span class='module_iconv'><i class="fa fa-picture-o" aria-hidden="true"></i></span>
 			  <span class='module_reset'></span>
 			</li>
@@ -123,42 +123,6 @@
 		<div class='main_content' >
 		  <div class='datainfo_area'>
 			  <h1> 系統內容資訊 </h1>
-			  <div class='collection_info'>
-				<div class='data_amount' id='amount_chart'>
-				  asdfasdf
-				</div>
-				<div class='data_control'>
-				  
-				  <h1>
-				    <span>同步資訊</span>
-					<button type='button' id='act_sync_now' class=' active'> 立即同步 </button>  
-				  </h1>
-				  <ul class='logs sync_log'>
-				  <?php foreach($datalogs['sync'] as $logs): ?>	  
-				    <li>
-					  <span><?php echo $logs['time']; ?></span>
-					  <span><?php echo $logs['name']; ?></span>
-					  <span><?php echo $logs['result']; ?></span>
-					</li> 
-				  <?php endforeach; ?>
-				  </ul>
-				  
-				  <h1>
-				    <span>備份資訊</span> 
-				    <button type='button' id='act_dump_now' class='active'> 立即備份 </button>
-				  </h1>
-				  <ul class='logs dump_log'>
-				  <?php foreach($datalogs['dump'] as $logs): ?>	  
-				    <li>
-					  <span><?php echo substr($logs['time'],0,10); ?></span>
-					  <span><?php echo $logs['name']; ?></span>
-					  <span><?php echo $logs['result']; ?></span>
-					</li> 
-				  <?php endforeach; ?>	  
-				  </ul>
-				  
-				</div>
-			  </div>
 		  </div>
 		  
 		  <div class='contents_area post_container'>

@@ -310,14 +310,17 @@
 		}
 		
 		
-		$apply_process   = $booking['_progres'] ? json_decode($booking['_progres'],true) : ['client'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
+		$apply_process   = $booking['_progres'] ? json_decode($booking['_progres'],true) : ['client'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]],'admin'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
+		
+		
+		
 		$apply_new_stage = $booking['_stage'];
 		
 		$ballot_flag   = $booking['_ballot'];
 		$ballot_result = $booking['_ballot_result'];
 		
 		$to_sent_mail  = false;
-		$apply_new_status  = '';
+		$apply_new_status  =  $booking['_status'];
 		$is_final      = false;
 		
 		//$apply_review['status']
@@ -325,6 +328,33 @@
 		
 		// 設定審查狀態
 		switch($apply_review['status']){
+		  
+		  case '外審同意':
+		    if(!isset($apply_process['admin'])) $apply_process['admin'] = [ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]];
+			$apply_process['admin'][0][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'外審同意','note'=>'經'.$this->USER->UserID.'同意申請','user'=>$this->USER->UserID,'logs'=>'');
+            $review_note = date('Y-m-d H:i:s').':外審同意 by '.$this->USER->UserID;
+			$check_note = trim($booking['check_note']);
+			$check_note = $check_note ? $review_note."\n".$check_note : $review_note;
+			
+			$DB_UPD = $this->DBLink->prepare(SQL_AdBook::UPDATE_BOOK_DATA(array('check_note'))); 
+			$DB_UPD->bindValue(':apply_code' , $booking['apply_code']);
+		    $DB_UPD->bindValue(':check_note' , $check_note );
+		    $DB_UPD->execute();
+			
+			break;
+		  
+		  case '外審異議':
+		    if(!isset($apply_process['admin'])) $apply_process['admin'] = [ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]];
+			$apply_process['admin'][0][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'外審不同意','note'=>'理由：'.$apply_review['notes'],'user'=>$this->USER->UserID,'logs'=>'');
+            $review_note = date('Y-m-d H:i:s').'外審不同意 by '.$this->USER->UserID."\n"."理由：".$apply_review['notes'];
+			$check_note = trim($booking['check_note']);
+			$check_note = $check_note ? $review_note."\n".$check_note : $review_note;
+			
+			$DB_UPD = $this->DBLink->prepare(SQL_AdBook::UPDATE_BOOK_DATA(array('check_note'))); 
+			$DB_UPD->bindValue(':apply_code' , $booking['apply_code']);
+		    $DB_UPD->bindValue(':check_note' , $check_note );
+		    $DB_UPD->execute();
+			break;
 		  
 		  case '審查通過':
           case '不須審查':		  
@@ -393,7 +423,9 @@
 			$apply_new_stage = 5;
 			$is_final = true;
 			break;
-             			
+          
+          
+			
 		  default:
             throw new Exception('_APPLY_SUBMIT_FAIL');  
 			break;
@@ -1034,6 +1066,301 @@
       }
 	  return $result;
 	}
+	
+	//-- Admin Book : Get Group Roles Book List  // 外審人員確認單
+	// [input] : SearchString ;
+	// 外審人員僅能就尚未進入審查之資料進行標示
+	
+	public function Admin_Book_Get_List_For_Preview( $SearchString='' ){
+	  
+	  $result_key = parent::Initial_Result('records');
+	  $result     = &$this->ModelResult[$result_key];
+	  
+	  $apply_search = json_decode(base64_decode(str_replace('*','/',rawurldecode($SearchString))),true); 
+	  
+	  try{
+	    
+		$area_list = array(); // 存放區域資料
+		$area_sets = array(); // 存放區域索引
+		
+		$user_groups = array(); // 存放使用者群組
+		if(isset($this->USER->PermissionQue)){
+		  $user_groups = array_keys($this->USER->PermissionQue);	
+		}
+		
+		// 取得管制區域列表
+		$DB_OBJ = $this->DBLink->prepare(parent::SQL_Permission_Filter(SQL_AdBook::SELECT_USER_AREA()));
+		if(!$DB_OBJ->execute()){
+		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
+		}
+		
+		while($tmp = $DB_OBJ->fetch(PDO::FETCH_ASSOC)){
+		  $area_list[$tmp['ano']] = $tmp;
+		  $area_sets[$tmp['ano']] = $tmp['area_code']; 
+		}
+		
+		
+		// 搜尋條件
+		$condition = array();
+		$orderby   = 'date_enter DESC,date_exit DESC';
+		
+		// 條件篩選 
+		// 外審人員條件僅限制搜尋申請日期
+		
+		if(is_array($apply_search)){
+		  foreach( $apply_search as $filter_target => $filter_set ){   // 取名為filter 是因為篩選欄位設定與meta欄位不完全一樣，需要重新轉換
+		    switch($filter_target){
+			  case 'range_start':  
+			    if( strtotime($filter_set) ){
+				  $condition[] = "date_exit >='".$filter_set."' ";	
+				}
+				break;
+			  case 'range_end':  
+			    if( strtotime($filter_set) ){
+				  $condition[] = "date_enter <='".$filter_set."' ";	
+				}
+				break;
+			}
+		  }
+		}else{
+		  $apply_search['range_start'] = date('Y-m-d');
+		  $apply_search['range_end'] = date('Y-m-d');
+		  $condition[] = "date_exit >='".date('Y-m-d')."' ";	
+		  $condition[] = "date_enter <='".date('Y-m-d')."' ";		
+		}
+		
+		// 取得篩選後申請資料
+		$records = array(); // 存放列表資料
+		
+		$sqlsearch = count($condition) ? join(' AND ',$condition) : 1;
+		$sqlsearch = "((".$sqlsearch.") OR apply_date <= '".date('Y-m-d')."') AND _status IN('收件待審','正取送審')";
+		
+		
+		$DB_BOOK = $this->DBLink->prepare(SQL_AdBook::SELECT_AREA_BOOKING(array_keys($area_list),$sqlsearch,$orderby));
+		if(!$DB_BOOK->execute()){
+		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
+		}
+		while($tmp = $DB_BOOK->fetch(PDO::FETCH_ASSOC)){
+		  
+		  $record = array();
+		  $record['abno'] = $tmp['abno'];
+		  $record['r_apply_date'] = $tmp['apply_date'];
+		  $record['r_apply_code'] = $tmp['apply_code'];
+		  $record['r_apply_area'] = $area_list[$tmp['am_id']]['area_name'];
+		  $record['r_apply_user'] = $tmp['applicant_name'];
+		  $record['r_countmbr']   = $tmp['member_count'];
+		  $record['r_apply_period'] = $tmp['date_enter'].' ~ '.$tmp['date_exit'];
+		  $record['r_status']     = $tmp['_status'];
+		  
+		  $record['r_application'] = json_decode($tmp['apply_form'],true);
+		  $record['r_members'] = [];
+		  $members = json_decode($tmp['member'],true);
+		  foreach($members as $m){
+			$mbr = array();
+            $mbr['role'] = $m['member_role'];
+ 			$mbr['name'] = $m['member_name'];
+ 			$mbr['sex']  = isset($m['member_sex']) ? $m['member_sex'] : '未填' ;
+ 			$mbr['addr'] = mb_substr($m['member_addr'],0,10);
+ 		    $record['r_members'][] = $mbr;  
+		  }
+		  
+		  $apply_process  = json_decode($tmp['_progres'],true);
+		  $record['r_reviewlogs'] = isset($apply_process['admin'])&&is_array($apply_process['admin']) ? array_reverse($apply_process['admin'][1]) : [];
+		  
+		  $records[] = $record;
+		}
+		
+		$result['action'] = true;		
+		$result['data']['list']   = $records;	
+		$result['data']['filter'] = $apply_search;
+		
+		$result['session']['ADAREASMAP'] = $area_sets;	
+		
+	  } catch (Exception $e) {
+        $result['message'][] = $e->getMessage();
+      }
+	  return $result;
+	}
+	
+	//-- Admin Booking Local master Review Book Data //外審人員審查申請  僅可設定 : 外審同意 | 外審異議
+	// [input] : DataCode    :  area_booking.apply_code;
+	// [input] : ReviewData  :  base64M_encode => array();
+	// [input] : AreaAccessMap       :  array(abno=>1); // from get list save to session 
+	public function ADBook_LocalAD_Review_Book_Data($DataCode='',$ReviewData=array(),$AreaAccessMap=array()){
+		
+	  $result_key = parent::Initial_Result('review');
+	  $result  = &$this->ModelResult[$result_key];
+	  try{  
+		
+		$apply_review = json_decode(base64_decode(str_replace('*','/',rawurldecode($ReviewData))),true); 
+		
+		
+		// 檢查序號
+	    if(!preg_match('/^[\d\w]{8}$/',$DataCode)){
+		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
+		}
+		
+		// 取得資料
+		$booking = NULL;
+		$DB_GET	= $this->DBLink->prepare( SQL_AdBook::GET_BOOKING_RECORD() );
+		$DB_GET->bindParam(':abno'   , $DataCode , PDO::PARAM_INT);	
+		if( !$DB_GET->execute() || !$booking = $DB_GET->fetch(PDO::FETCH_ASSOC)){
+		  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
+		}
+		
+		// 檢查是否有存取權限
+	    if(!isset($AreaAccessMap[intval($booking['am_id'])])){
+		  throw new Exception('_SYSTEM_ERROR_PERMISSION_DENIAL');
+		}
+		
+		
+		$apply_process   = $booking['_progres'] ? json_decode($booking['_progres'],true) : ['client'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]],'admin'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
+		
+		$apply_new_stage = $booking['_stage'];
+		$ballot_flag   = $booking['_ballot'];
+		$ballot_result = $booking['_ballot_result'];
+		
+		$to_sent_mail  = false;
+		$apply_new_status  =  $booking['_status'];
+		$is_final      = false;
+		
+		
+		// 設定審查狀態
+		switch($apply_review['status']){
+		  
+		  case '外審同意':
+		    if(!isset($apply_process['admin'])) $apply_process['admin'] = [ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]];
+			$apply_process['admin'][1][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'外審同意','note'=>'經'.$this->USER->UserID.'同意申請','user'=>$this->USER->UserID,'logs'=>'');
+            $review_note = date('Y-m-d H:i:s').':外審同意 by '.$this->USER->UserID;
+			$check_note = trim($booking['check_note']);
+			$check_note = $check_note ? $review_note."\n".$check_note : $review_note;
+			
+			$DB_UPD = $this->DBLink->prepare(SQL_AdBook::UPDATE_BOOK_DATA(array('check_note'))); 
+			$DB_UPD->bindValue(':apply_code' , $booking['apply_code']);
+		    $DB_UPD->bindValue(':check_note' , $check_note );
+		    $DB_UPD->execute();
+			
+			break;
+		  
+		  case '外審異議':
+		    if(!isset($apply_process['admin'])) $apply_process['admin'] = [ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]];
+			$apply_process['admin'][1][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'外審不同意','note'=>'理由：'.$apply_review['notes'],'user'=>$this->USER->UserID,'logs'=>'');
+            $review_note = date('Y-m-d H:i:s').'外審不同意 by '.$this->USER->UserID."\n"."理由：".$apply_review['notes'];
+			$check_note = trim($booking['check_note']);
+			$check_note = $check_note ? $review_note."\n".$check_note : $review_note;
+			
+			$DB_UPD = $this->DBLink->prepare(SQL_AdBook::UPDATE_BOOK_DATA(array('check_note'))); 
+			$DB_UPD->bindValue(':apply_code' , $booking['apply_code']);
+		    $DB_UPD->bindValue(':check_note' , $check_note );
+		    $DB_UPD->execute();
+			break;
+		  
+		  default:
+            throw new Exception('_APPLY_SUBMIT_FAIL');  
+			break;
+		}
+		
+		
+		// UPDATE status & progress 
+		$DB_UPD = $this->DBLink->prepare(SQL_Client::UPDATE_APPLY_STATUS()); 
+	    $DB_UPD->bindValue(':apply_code', $booking['apply_code']);
+		$DB_UPD->bindValue(':status'    , $apply_new_status);
+		$DB_UPD->bindValue(':progres'   , json_encode($apply_process));
+		if( !$DB_UPD->execute() ){
+		  throw new Exception('_APPLY_SUBMIT_FAIL');  
+		}
+		
+		// Update stage
+		$DB_UPD = $this->DBLink->prepare(SQL_Client::UPDATE_APPLY_STAGE()); 
+	    $DB_UPD->bindValue(':apply_code',$booking['apply_code']);
+		$DB_UPD->bindValue(':stage'     , $apply_new_stage );
+		if( !$DB_UPD->execute() ){
+		  throw new Exception('_APPLY_SUBMIT_FAIL');  
+		}
+		
+		// final
+		$result['data']   = array_reverse($apply_process['admin'][1]);
+		$result['action'] = true;
+		
+	  } catch (Exception $e) {
+        $result['message'][] = $e->getMessage();
+      }
+	  return $result;  
+	}
+	
+	
+	//-- Admin Booking Local master Review Book Data //外審人員審查批次同意
+	// [input] : ReviewData  :  base64M_encode => array();
+	// [input] : AreaAccessMap       :  array(abno=>1); // from get list save to session 
+	public function ADBook_LocalAD_Batch_Review_Accept($ReviewData='',$AreaAccessMap=array()){
+		
+	  $result_key = parent::Initial_Result('review');
+	  $result  = &$this->ModelResult[$result_key];
+	  try{  
+		
+		$apply_list = json_decode(base64_decode(str_replace('*','/',rawurldecode($ReviewData))),true); 
+		
+		foreach($apply_list as $apply_code){
+			// 檢查序號
+			if(!preg_match('/^[\d\w]{8}$/',$apply_code)){
+			  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
+			}
+			
+			// 取得資料
+			$booking = NULL;
+			$DB_GET	= $this->DBLink->prepare( SQL_AdBook::GET_BOOKING_RECORD() );
+			$DB_GET->bindParam(':abno'   , $apply_code , PDO::PARAM_INT);	
+			if( !$DB_GET->execute() || !$booking = $DB_GET->fetch(PDO::FETCH_ASSOC)){
+			  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
+			}
+			
+			// 檢查是否有存取權限
+			if(!isset($AreaAccessMap[intval($booking['am_id'])])){
+			  throw new Exception('_SYSTEM_ERROR_PERMISSION_DENIAL');
+			}
+			
+			$apply_process     = $booking['_progres'] ? json_decode($booking['_progres'],true) : ['client'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]],'admin'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
+			$apply_new_stage   = $booking['_stage'];
+			$apply_new_status  = $booking['_status'];
+			
+			if(!isset($apply_process['admin'])) $apply_process['admin'] = [ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]];
+			$apply_process['admin'][1][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'外審同意','note'=>'經'.$this->USER->UserID.'同意申請','user'=>$this->USER->UserID,'logs'=>'');
+			$review_note = date('Y-m-d H:i:s').':外審同意 by '.$this->USER->UserID;
+			$check_note = trim($booking['check_note']);
+			$check_note = $check_note ? $review_note."\n".$check_note : $review_note;
+			
+			$DB_UPD = $this->DBLink->prepare(SQL_AdBook::UPDATE_BOOK_DATA(array('check_note'))); 
+			$DB_UPD->bindValue(':apply_code' , $booking['apply_code']);
+			$DB_UPD->bindValue(':check_note' , $check_note );
+			$DB_UPD->execute();
+			
+			// UPDATE status & progress 
+			$DB_UPD = $this->DBLink->prepare(SQL_Client::UPDATE_APPLY_STATUS()); 
+			$DB_UPD->bindValue(':apply_code', $booking['apply_code']);
+			$DB_UPD->bindValue(':status'    , $apply_new_status);
+			$DB_UPD->bindValue(':progres'   , json_encode($apply_process));
+			if( !$DB_UPD->execute() ){
+			  throw new Exception('_APPLY_SUBMIT_FAIL');  
+			}
+			
+			// Update stage
+			$DB_UPD = $this->DBLink->prepare(SQL_Client::UPDATE_APPLY_STAGE()); 
+			$DB_UPD->bindValue(':apply_code',$booking['apply_code']);
+			$DB_UPD->bindValue(':stage'     , $apply_new_stage );
+			if( !$DB_UPD->execute() ){
+			  throw new Exception('_APPLY_SUBMIT_FAIL');  
+			}
+		
+		}
+		// final
+		$result['action'] = true;
+		
+	  } catch (Exception $e) {
+        $result['message'][] = $e->getMessage();
+      }
+	  return $result;  
+	}
+	
 	
 	
   }

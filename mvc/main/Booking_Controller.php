@@ -114,6 +114,32 @@
 	  self::data_output('html','admin_book4check',$this->Model->ModelResult);
 	}
 	
+	
+	// PAGE: book search page for outreview R04
+	public function R5review( $SearchString='' ){
+	  $this->Model->GetUserInfo();	
+	  $this->Model->Admin_Book_Get_Active_Area_List();
+	  $this->Model->Admin_Book_Get_List_For_Preview($SearchString);
+	  
+	  
+	  self::data_output('html','admin_book4review',$this->Model->ModelResult);
+	}
+	
+	
+	// AJAX:Local Admin Review Apply Data // 外審人員審查
+	public function localreview($DataNo,$ReviewData){
+	  $access = isset($_SESSION[_SYSTEM_NAME_SHORT]['ADAREASMAP']) ? $_SESSION[_SYSTEM_NAME_SHORT]['ADAREASMAP'] : array();	
+	  $this->Model->ADBook_LocalAD_Review_Book_Data($DataNo,$ReviewData,$access);
+	  self::data_output('json','',$this->Model->ModelResult);
+	}
+	
+	// AJAX:Local Admin Review Apply Data // 外審人員批次同意
+	public function locreviewaccept($ReviewData){
+	  $access = isset($_SESSION[_SYSTEM_NAME_SHORT]['ADAREASMAP']) ? $_SESSION[_SYSTEM_NAME_SHORT]['ADAREASMAP'] : array();	
+	  $this->Model->ADBook_LocalAD_Batch_Review_Accept($ReviewData,$access);
+	  self::data_output('json','',$this->Model->ModelResult);
+	}
+	
   }
   
   

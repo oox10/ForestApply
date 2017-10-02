@@ -303,6 +303,14 @@
 				    <td class='stage4 _variable ' > </td>
 					<td class='stage5 _variable ' > </td>
 				  </tr>
+				  <tr class='process_task' id='admin' > 
+				    <td class='role' >外審/系統操作 : </td>
+				    <td class='stage1 _variable' colspan=2>
+					</td>
+				    <td class='stage3 _variable' >
+					</td>
+				    <td class='stage4 _variable' colspan=2></td>
+				  </tr>
 				  <?php if(isset($user_info['permission']['interface_mask']['admin_book.html5tpl.php']['review']) && intval($user_info['permission']['interface_mask']['admin_book.html5tpl.php']['review'])): ?> 
 				  <tr class='process_task' id='review' > 
 				    <td class='role' >管理人:<span class='_variable' id='apply_checker' ></span></td>
@@ -340,14 +348,7 @@
 					</td>
 				  </tr>
 				  <?php endif; ?>
-				  <tr class='process_task' id='boss' > 
-				    <td class='role' ></td>
-				    <td class='step1' colspan=2></td>
-				    <td class='step3' >
-					  
-					</td>
-				    <td class='step4' colspan=2></td>
-				  </tr>
+				  
 				  
 				</table>
 				
