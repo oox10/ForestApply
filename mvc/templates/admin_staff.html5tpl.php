@@ -30,8 +30,11 @@
 	<?php
 	$user_info 		= isset($this->vars['server']['data']['user']) 		? $this->vars['server']['data']['user'] 	: array('user'=>array('user_name'=>'Anonymous'),'group'=>array());
 	$role_list  	= isset($this->vars['server']['data']['roles']) 	? $this->vars['server']['data']['roles'] 	: array();  
-	$data_list  	= isset($this->vars['server']['data']['accounts']) 	? $this->vars['server']['data']['accounts'] : array();  
+	$data_list  	= isset($this->vars['server']['data']['list']['records']) 	? $this->vars['server']['data']['list']['records'] : array();  
 	$data_count 	= count($data_list);
+	
+	$area_list  	= isset($this->vars['server']['data']['list']['areas']) 	? $this->vars['server']['data']['list']['areas'] : array();  
+	
 	
 	$ui_config      = isset($user_info['permission']['interface_mask']) ? $user_info['permission']['interface_mask'] : array();
 	
@@ -209,8 +212,18 @@
 				  <div class='data_value '> 
 				    <?php foreach($role_list as $role) : ?>  
 				    <div  >
-					  <!-- 單腳色模式 -->
-					  <input type='<?php echo $role['rno']!='R09' ? 'radio':'checkbox'; ?>' class='_variable _update'    name='roles'  value='<?php echo $role['rno'];?>' >  <?php echo $role['name'];?> : <i><?php echo $role['descrip'];?></i>
+					  <!-- 單角色模式 -->
+					  
+					  <input type='<?php echo $role['rno']!='R09' ? 'radio':'checkbox'; ?>' class='_variable _update' role='<?php echo $role['rno'];?>'   name='roles'  value='<?php echo $role['rno'];?>' > 
+					  <span><?php echo $role['name'];?> : <i><?php echo $role['descrip'];?></i></span>
+					  <?php if($role['rno']=='R05'): // 查驗人員必須指定區域 ?>
+					  <select class='_variable  _update' id='user_info' >
+					    <option value='' selected disabled >指定查驗區域</option>
+					  <?php foreach($area_list as $area):?>
+                        <option value='<?php echo $area['area_code'];?>'><?php echo $area['area_name'];?></option>
+					  <?php endforeach; ?>					  
+					  </select>
+					  <?php endif; ?>
 					</div>
 				  <?php endforeach; ?>  
 				  </div> 

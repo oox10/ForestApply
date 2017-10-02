@@ -63,7 +63,7 @@
 	
 	//-- Admin Staff : Get Staff Admin Data
 	public static function ADMIN_STAFF_GET_STAFF_ADMIN_DATA(){
-	  $SQL_String = "SELECT uno,user_id,date_open,date_access,ip_range,user_status,user_idno,user_name,user_staff,user_organ,user_tel,user_mail FROM user_login LEFT JOIN user_info ON uid=uno WHERE uno=:uno AND user_status >= 0;";
+	  $SQL_String = "SELECT uno,user_id,date_open,date_access,ip_range,user_status,user_idno,user_name,user_staff,user_organ,user_tel,user_mail,user_info FROM user_login LEFT JOIN user_info ON uid=uno WHERE uno=:uno AND user_status >= 0;";
 	  return $SQL_String;
 	}
 	
@@ -79,7 +79,17 @@
 	  return $SQL_String;
 	}
 	
+	//-- Admin Staff : Get All Admin Area  
+	public static function GET_ALL_ADMIN_AREAS(){
+	  $SQL_String = "SELECT area_code,area_name FROM area_main WHERE _keep=1;";
+	  return $SQL_String;
+	}
 	
+	//-- Admin Staff : Get Staff  Admin Area 
+	public static function GET_STAFF_ADMIN_AREAS(){
+	  $SQL_String = "SELECT area_code,area_name FROM area_main WHERE owner=:owner AND _keep=1;";
+	  return $SQL_String;
+	}
 	
 	
 	//-- Admin Staff : Modify Staff Data

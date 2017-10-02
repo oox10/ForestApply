@@ -107,8 +107,11 @@
 		  align-items:center;				  
 		}
 		
-		
-		
+		 
+		 #user_info{
+		    display:none;	
+	     }
+		 input[role='R05']:checked + span + select#user_info{display:inline-block;} 
 		
 	
 /* [ Module Relate Block ] */		
@@ -203,5 +206,5 @@
 
 	#member_list td{ padding:10px 0 ; border-bottom:1px #CDCDCD double; color:#555555; }
 
-
+   
 

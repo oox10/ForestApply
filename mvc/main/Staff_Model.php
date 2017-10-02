@@ -40,7 +40,7 @@
 	// [input] : NULL;
 	public function ADStaff_Get_Staff_List(){
 	  
-	  $result_key = parent::Initial_Result('accounts');
+	  $result_key = parent::Initial_Result('list');
 	  $result  = &$this->ModelResult[$result_key];
 	  
 	  try{
@@ -61,10 +61,10 @@
 		  // 查詢資料庫
 		  $DB_OBJ = $this->DBLink->prepare(parent::SQL_Permission_Filter(SQL_AdStaff::ADMIN_STAFF_SELECT_ALL_STAFF()));	 
 		}else{
-		  // 查詢資料庫
+	      // 查詢資料庫
 		  $DB_OBJ = $this->DBLink->prepare(parent::SQL_Permission_Filter(SQL_AdStaff::ADMIN_STAFF_SELECT_TARGET_STAFF()));	
 		  $DB_OBJ->bindValue(':uno',$this->USER->UserNO);
-		} 
+		}
 		 
 		
 		if(!$DB_OBJ->execute()){
@@ -109,9 +109,26 @@
 		  $staff['account_start'] = $status_info ? false : true ;
 		  $staff['account_info']  = $staff['account_start'] ? '' : self::Message_Translate($status_info) ;
 		}
+		
+		
+		// 取得使用者群組區域 adareas
+		$staff_data['adareas'] = array();
+		if( (array_key_exists('R00',$this->USER->PermissionNow['group_roles']) && $this->USER->PermissionNow['group_roles']['R00'] ) OR 
+		    (array_key_exists('R01',$this->USER->PermissionNow['group_roles']) && in_array($this->USER->PermissionNow['group_code'],array('adm','forest')) )    ){
+		  $DB_GET	= $this->DBLink->prepare( SQL_AdStaff::GET_ALL_ADMIN_AREAS() );
+		}else{
+		  $DB_GET	= $this->DBLink->prepare( SQL_AdStaff::GET_STAFF_ADMIN_AREAS() );
+		  $DB_GET->bindParam(':owner' , $user['gid'] , PDO::PARAM_INT);
+		}
+		if( !$DB_GET->execute()){
+		  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
+		}
+		$adminareas = $DB_GET->fetchAll(PDO::FETCH_ASSOC); 
+		
 		$result['action'] = true;		
-		$result['data']   = $staff_list;		
-	  
+		$result['data']['records']   = $staff_list;		
+	    $result['data']['areas']   = $adminareas;		
+	    
 	  } catch (Exception $e) {
         $result['message'][] = $e->getMessage();
       }
@@ -147,7 +164,6 @@
 		  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
 		}
 	    
-		
 		// 取得使用者 role
 		$staff_data['roles'] = array();
 		$DB_GET	= $this->DBLink->prepare( SQL_AdStaff::ADMIN_STAFF_GET_STAFF_GROUP_ROLES() );
@@ -166,6 +182,9 @@
 		  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
 		}
 		$staff_data['groups'] = $DB_GET->fetchAll(PDO::FETCH_ASSOC);
+		
+		
+		
 		
 		// final
 		$result['action'] = true;
