@@ -54,25 +54,27 @@ class Landing_Controller extends Admin_Controller{
 	// ACTION: client search page
 	public function verify($UserSubmit){
 	  $result = $this->Model->Check_User_Applied_Data($UserSubmit);	
-	  if($result['action']){
-		self::data_output('session','APPLYTOKEN',$this->Model->ModelResult);
-		self::redirectTo('index.php?act=Landing/license/'.$result['code']);  
-	  }else{
+	  if(!$result['action']){
 		$this->Model->Access_Get_Active_Area_List();  
 		self::data_output('html','wrong',$this->Model->ModelResult);  
+	    exit(1);
 	  }
+	  
+	  self::data_output('session','APPLYTOKEN',$this->Model->ModelResult);
+	  self::redirectTo('index.php?act=Landing/license/'.$result['code']);
+	  
 	}
 	
 	// PAGE: client link to license page
 	public function direct($ApplyCode='',$AccessKey=''){
 	  $result = $this->Model->Check_User_Applied_Link($ApplyCode,$AccessKey);	
-	  if($result['action']){
-		self::data_output('session','APPLYTOKEN',$this->Model->ModelResult);
-		self::redirectTo('index.php?act=Landing/license/'.$ApplyCode);  
-	  }else{
+	  if(!$result['action']){
 		$this->Model->Access_Get_Active_Area_List();
 		self::data_output('html','wrong',$this->Model->ModelResult);  
-	  }
+		exit(1);
+	  }	
+	  self::data_output('session','APPLYTOKEN',$this->Model->ModelResult);
+	  self::redirectTo('index.php?act=Landing/license/'.$ApplyCode);  
 	}
 	
 	
@@ -166,13 +168,13 @@ class Landing_Controller extends Admin_Controller{
 	public function license($ApplyNo,$ShowType='preview'){
 	  $apply_token = isset($_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN']) ? $_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN'] : false;	
 	  $result = $this->Model->Apply_License_Status_Read($ApplyNo,$apply_token);	
-	  if($result['action']){
-		$this->Model->Access_Get_Active_Area_List(); 
-		$this->Model->Apply_Feform_Application_Page($ApplyNo,$ShowType); 
-	    self::data_output('html','client_license',$this->Model->ModelResult);  
-	  }else{
+	  if(!$result['action']){
 		self::redirectTo('index.php');  
+		exit(1);
 	  }
+	  $this->Model->Access_Get_Active_Area_List(); 
+	  $this->Model->Apply_Feform_Application_Page($ApplyNo,$ShowType); 
+	  self::data_output('html','client_license',$this->Model->ModelResult);  
 	} 
 	
 	
@@ -200,10 +202,11 @@ class Landing_Controller extends Admin_Controller{
 	  $this->Model->Access_Get_Active_Area_List();
 	  if(!$result['action'] || !$active['action']){
 		self::data_output('html','wrong',$this->Model->ModelResult);    
-	  }else{
-		$this->Model->Apply_Feform_Application_Page($ApplyNo,'license');
-	    self::data_output('pdf','print_user_license',$this->Model->ModelResult);  
-	  } 
+	    exit(1);
+	  }
+	  $this->Model->Apply_Feform_Application_Page($ApplyNo,'license');
+	  self::data_output('pdf','print_user_license',$this->Model->ModelResult);  
+	   
 	}
 	
 	
