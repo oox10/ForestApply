@@ -94,12 +94,19 @@
 	  
 	  try{    
 	    
+		
+		// 確認區域代號
+		if(!preg_match('/^[\w\d]{8}$/',$AreaCode)){
+		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');  	
+		}
+		
 		// 查詢基本資料
+		$area = false;
 		$DB_OBJ = $this->DBLink->prepare(SQL_Client::GET_TARGET_AREA_DATA());
-		if(!$DB_OBJ->execute(array('area_code'=>$AreaCode))){
+		if(!$DB_OBJ->execute(array('area_code'=>$AreaCode))  || !$area = $DB_OBJ->fetch(PDO::FETCH_ASSOC)){
 		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
 		}
-		$area = $DB_OBJ->fetch(PDO::FETCH_ASSOC);
+		
 		$area['refer'] = json_decode($area['refer_json'],true);
 		$area['forms'] = array();
 		$area_form_config = json_decode($area['form_json'],true);

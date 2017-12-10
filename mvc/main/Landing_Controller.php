@@ -80,14 +80,21 @@ class Landing_Controller extends Admin_Controller{
 	/***--- BOOKING ACTION SET ---***/
 	
 	// PAGE: client booking page
-	public function reserve($ApplyCode){
+	public function reserve($AreaCode){
 	  $MonthStart = '_now'; //default month
       $MonthLength=1;  
 	  $this->Model->Access_Get_Active_Area_List();
-	  $this->Model->Access_Get_Select_Area_Info($ApplyCode);
-	  $this->Model->Access_Get_Select_Area_Date($ApplyCode,$MonthStart,$MonthLength);
-	  $this->Model->Access_Get_Area_DatePicker_Config($ApplyCode);
+	  
+	  $active = $this->Model->Access_Get_Select_Area_Info($AreaCode);
+	  if(!$active['action']){
+		self::data_output('html','wrong',$this->Model->ModelResult);   
+	    exit(1);
+	  }
+	  
+	  $this->Model->Access_Get_Select_Area_Date($AreaCode,$MonthStart,$MonthLength);
+	  $this->Model->Access_Get_Area_DatePicker_Config($AreaCode);
 	  self::data_output('html','client_booking',$this->Model->ModelResult);
+	  
 	}
 	
 	// AJAX : 查詢申請人資料
@@ -95,7 +102,6 @@ class Landing_Controller extends Admin_Controller{
 	  $this->Model->Applicant_Record_Search($ApplicantData);
 	  self::data_output('json','',$this->Model->ModelResult);
 	}
-	
 	
 	// AJAX : 初始化申請
 	public function initial($ApplicantData,$ApplyCode=''){   
