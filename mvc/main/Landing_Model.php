@@ -676,9 +676,12 @@
 	  $result  = &$this->ModelResult[$result_key];
 	  
       // [name] => MyFile.jpg  / [type] => image/jpeg  /  [tmp_name] => /tmp/php/php6hst32 / [error] => UPLOAD_ERR_OK / [size] => 98174
-	  // Allowed extentions.
-      $allowedExts = array("pdf","jpg","png");
+	  
+	  
+	  // Allowed file type.
+	  $allowedMime = array('application/pdf','image/png','image/jpeg');
       
+	  
       // Get filename.
       $temp = explode(".", $FILES["file"]["name"]);
 
@@ -701,11 +704,10 @@
 		if(!isset($ApplyToken['CODE']) || $ApplyToken['CODE']!=$ApplyCode){
 		  throw new Exception('_SYSTEM_ERROR_PERMISSION_CHECK_FAIL');		
 		}
-		
-		
+		 
 		// 檢查檔案
-		if (!in_array(strtolower($extension), $allowedExts)) {
-	      throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
+		if (!in_array(strtolower($mime), $allowedMime)) {
+	      throw new Exception('_APPLY_UPLOAD_FILE_NOT_ALLOW');
 	    }	
 		
         if( $FILES["file"]["error"] ){
