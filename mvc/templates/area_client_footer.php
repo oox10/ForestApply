@@ -30,7 +30,7 @@
 			</tr>
 			<tbody>
 			<?php foreach($area_contect as $gcode=>$ginfo): ?>    
-			<?php  if(count($ginfo['areas']) && count($ginfo['contect']) ): ?>   
+			<?php  if(count($ginfo['areas']) && isset($ginfo['contect']) && count($ginfo['contect']) ): ?>   
 				<tr>
 					<td><?php echo $ginfo['organ']; ?> - <?php echo $ginfo['contect'][0]['user_organ']; ?></td>
 					<td><?php echo $ginfo['contect'][0]['user_tel']; ?></td>
