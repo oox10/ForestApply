@@ -158,7 +158,7 @@
 		}
         
 		// update booking  
-		$DB_UPD = $db->DBLink->prepare( "UPDATE area_booking SET _stage:_stage,_status=:_status,_final=:_final,_progres=:_progres WHERE abno=:abno;" );  
+		$DB_UPD = $db->DBLink->prepare( "UPDATE area_booking SET _stage=:_stage,_status=:_status,_final=:_final,_progres=:_progres WHERE abno=:abno;" );  
 		$DB_UPD->bindValue(':abno',$tconf['abno']);
 		$DB_UPD->bindValue(':_stage',5);
 		$DB_UPD->bindValue(':_status',$lotto_result);
