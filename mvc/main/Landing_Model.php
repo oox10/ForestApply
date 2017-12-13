@@ -1829,7 +1829,7 @@
 		  $license[3] .= "  <table class='contect' >";
 		  $license[3] .= "    <tr ><th>管理單位</th><th>聯絡電話</th><th>轄管自然保留區名稱</th></tr>";	
 		  foreach($area_contect as $gcode=>$ginfo){
-			if(count($ginfo['areas']) && count($ginfo['contect']) ){
+			if(count($ginfo['areas']) && isset($ginfo['contect']) && count($ginfo['contect']) ){
 			   $license[3] .= "    <tr ><td>".$ginfo['organ']." - ".$ginfo['contect'][0]['user_organ']."</td><td>".$ginfo['contect'][0]['user_tel']."</td><td>".join('<br/>',$ginfo['areas'])."</td></tr>";
 			}   
 		  }
