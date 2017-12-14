@@ -1776,7 +1776,7 @@
 		$admin_check_link   = _SYSTEM_MANAGE_ADDRESS.'index.php?act=Booking/R3check/'.$admin_check_key ;
 		
 		$license[0] .= "  <div style='position:relative;'>"; 
-		$license[0] .= "  <span style='position:absolute; top:-30px;right:0;'><img src='".(new chillerlan\QRCode\QRCode( $admin_check_link , new chillerlan\QRCode\Output\QRImage))->output()."' style='height:140px;'/></span>";
+		$license[0] .= "  <span style='position:absolute; top:-10px;right:0;'><img src='".(new chillerlan\QRCode\QRCode( $admin_check_link , new chillerlan\QRCode\Output\QRImage))->output()."' style='height:110px;'/></span>";
 		$license[0] .= "  </div>"; 
 		$license[0] .= "  <h1>".$booking['area_type']."進入許可證</h1>"; 
 		$license[0] .= "  <div class='note'> 收執聯<br/>（請保留本聯，進入時隨身攜帶以備查驗） </div>"; 
@@ -1812,7 +1812,7 @@
 		// apply license part 3 // 隊員名單
 		$license[2] = "  <h2>隊員名單：</h2> ";
 		$license[2] .= "  <table class='joing_member table-unbreak-container' >";
-		$license[2] .= "    <tr ><th>NO.</th><th>角色</th><th>姓名</th><th>基本資料</th><th>緊急聯繫人資料</th></tr>";
+		$license[2] .= "    <tr ><th>NO.</th><th>角色</th><th>姓名</th><th>基本資料</th><th>緊急聯繫人</th></tr>";
 		foreach($joinmember as $mbrno => $member){
           $license[2] .= "  <tbody class=''><tr class='member_detail'>";	
 		  $license[2] .= "    <td>".($mbrno+1)."</td>"; 

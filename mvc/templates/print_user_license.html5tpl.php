@@ -14,7 +14,7 @@
 			html,body{font-family:"新細明體","Microsoft JhengHei";}html{overflow-x:hidden}
 			
 			body{
-			  background:url('theme/image/forest_apply_logo.png'); /*浮水印*/
+			  background:url('forest_apply_logo.png'); /*浮水印*/
 			  background-repeat: repeat-y;	
               background-size: contain;
 			}
@@ -43,7 +43,7 @@
 			table.check_table td{border:1px #000000 solid; padding:8px 5px ;}
 			table.check_table td:nth-child(1){width:25%;font-weight:bold;}
 		    td.:nth-child(1){width:25%;font-weight:bold;}
-			td.edit_block{height:70px;}
+			td.edit_block{height:30px;}
 			
 		    /* license preview */
 			.license_page{
@@ -52,7 +52,7 @@
 			}
 			
 			.license_page > h1{
-			  font-size:2em;
+			  font-size:1.8em;
 			  font-weight:bold;
 			  text-align:center;
 			}
@@ -71,7 +71,8 @@
 			
 			.license_page > table{
 			  width:100%;
-			  border-collapse: collapse; 
+			  border-collapse: collapse;
+              font-size:0.9em;			  
 			}
 			
 			.license_page > table th,.license_page > table td{
@@ -90,7 +91,7 @@
 			
 			.license_page > table.application td.handwriting{
 			  font-size:0.8em;	
-			  height:6em;
+			  height:4em;
 			  vertical-align:bottom; 
 			  text-align:center;
 			  color:#666666;
@@ -99,8 +100,7 @@
 			  font-size:1.5em;
               text-align:center;
               margin-top:30px;
-              font-weight:bold;
-              			  
+              font-weight:bold; 			  
 			}
 			.license_page > hr{
 			  margin:35px 0;
@@ -126,9 +126,9 @@
 			}  
 			  tr.member_detail td:nth-child(1){ width:20px; text-align:center; }
 			  tr.member_detail td:nth-child(2){ width:50px; text-align:center; }
-			  tr.member_detail td:nth-child(3){ width:190px; }
-			  tr.member_detail td:nth-child(4){ min-width:200px; }
-			  tr.member_detail td:nth-child(5){ width:120px; }
+			  tr.member_detail td:nth-child(3){ width:100px; }
+			  tr.member_detail td:nth-child(4){ min-width:200px; font-size:0.9em;}
+			  tr.member_detail td:nth-child(5){ width:100px; }
 				
 				td.member_info > div{
 				  display:flex;

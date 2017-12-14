@@ -22,13 +22,12 @@
 	  $new_file_folder = _SYSTEM_FILE_PATH.'license/review/';
 	  $new_file_name   = time().'-'.$license_data['BOOKED_CODE'];
 	  $new_file_export = $new_file_name.'.pdf';
-	  $new_file_temp   = $new_file_name.'.html';
+	  $new_file_temp   = $new_file_folder.$new_file_name.'.html';
 	  
 	  file_put_contents( $new_file_temp , $pdf_page_generate);
 	  exec(_SYSTEM_PDF_CONVERT.$new_file_temp.' '.$new_file_folder.$new_file_export,$output);  // 做完才結束
 	  unlink($new_file_temp);
 	  return readfile($new_file_folder.$new_file_export);
-	  
 	}
 	
 	public function render(){
