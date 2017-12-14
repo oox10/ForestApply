@@ -85,7 +85,9 @@ class Landing_Controller extends Admin_Controller{
 	public function reserve($AreaCode){
 	  $MonthStart = '_now'; //default month
       $MonthLength=1;  
+	  
 	  $this->Model->Access_Get_Active_Area_List();
+	  $this->Model->Access_Get_System_Page_Content();
 	  
 	  $active = $this->Model->Access_Get_Select_Area_Info($AreaCode);
 	  if(!$active['action']){
@@ -172,6 +174,7 @@ class Landing_Controller extends Admin_Controller{
 		self::redirectTo('index.php');  
 		exit(1);
 	  }
+	  $this->Model->Access_Get_System_Page_Content();
 	  $this->Model->Access_Get_Active_Area_List(); 
 	  $this->Model->Apply_Feform_Application_Page($ApplyNo,$ShowType); 
 	  self::data_output('html','client_license',$this->Model->ModelResult);  
@@ -194,7 +197,7 @@ class Landing_Controller extends Admin_Controller{
 	  self::data_output('json','',$this->Model->ModelResult);
 	}
 	
-	// AJAX: Download Apply License // 下載陳核單 
+	// AJAX: Download Apply License // 下載許可證 
 	public function download($ApplyNo){
 	  $apply_token = isset($_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN']) ? $_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN'] : false;
 	  $result = $this->Model->Apply_Record_Read( $ApplyNo, $apply_token );

@@ -28,6 +28,13 @@
 	  return $SQL_String;
 	}  
 	
+	//-- Client Page :  get page contents 
+	public static function INDEX_GET_PAGE_CONTENT(){
+	  $SQL_String = "SELECT page_title,page_content FROM system_pages WHERE 1;";
+	  return $SQL_String;
+	}
+	
+	
 	//-- Client Landing :  get area contact information
 	public static function INDEX_CONTECT_ORGAN(){
 	  $SQL_String = "SELECT ug_code,ug_name FROM user_group WHERE ug_pri=3 ORDER BY ug_no ASC;";

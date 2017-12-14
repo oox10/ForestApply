@@ -28,6 +28,36 @@
 	  return $result;   
 	}
 	
+	//-- Get Client System Page Contents // 頁面內容設定
+	// [input] : NULL 
+	public function Access_Get_System_Page_Content(){
+	  $result_key = parent::Initial_Result('page');
+	  $result  = &$this->ModelResult[$result_key];
+	  
+	  try{    
+		// 查詢資料庫
+		$DB_OBJ = $this->DBLink->prepare(SQL_Client::INDEX_GET_PAGE_CONTENT());
+		if(!$DB_OBJ->execute()){
+		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
+		}
+		
+		$pages = [];
+        while($tmp = $DB_OBJ->fetch(PDO::FETCH_ASSOC)){
+		  $pages[$tmp['page_title']] = htmlspecialchars_decode($tmp['page_content'],ENT_QUOTES);
+		}
+		$result['data']   = $pages;	
+		$result['action'] = true;		
+		
+		
+	  } catch (Exception $e) {
+        $result['message'][] = $e->getMessage();
+      } 
+	  return $result;   
+	}
+	
+	
+	
+	
 	
 	//-- Get Client Page Area List
 	// [input] : NULL 

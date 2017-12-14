@@ -39,6 +39,7 @@
 	
 	$area_contect = isset($this->vars['server']['data']['area']['contect']) ? $this->vars['server']['data']['area']['contect'] : array(); 
 	
+	
 	?>
 	<style>
 	/*四季背景*/
