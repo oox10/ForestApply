@@ -64,9 +64,9 @@
 	
 	<style>
 	  body{
-	    background:url('theme/image/index_background_<?php echo intval((date('m')%12)/3); ?>.jpg') no-repeat center center fixed; 
-        background-repeat: no-repeat;
-        background-position:middle;
+	    background:url('theme/image/index_background_f<?php echo intval(((date('m')%12)/3)); ?>.jpg') no-repeat center center fixed; 
+		background-repeat: no-repeat;
+        background-position:top;
         background-size: cover; 
       }
 	  

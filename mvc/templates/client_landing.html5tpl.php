@@ -52,9 +52,8 @@
 	<style>
 	/*四季背景*/
 	body{
-	/*background:url('theme/image/index_background_<?php echo intval((date('m')%12)/3); ?>.jpg') no-repeat center center fixed; */
-	background:url('theme/image/index_background_f3.jpg') no-repeat center center fixed; 
-    background-repeat: no-repeat;
+	background:url('theme/image/index_background_f<?php echo intval((date('m')%12)/3); ?>.jpg') no-repeat center center fixed;
+	background-repeat: no-repeat;
     background-position:top;
     background-size: cover; 
     }
