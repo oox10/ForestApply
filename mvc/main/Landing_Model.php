@@ -942,7 +942,7 @@
 		}
 		
 		// 更新與紀錄狀態
-		$apply_process = $booking['_progres'] ? json_decode($booking['_progres'],true) : ['client'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
+		$apply_process = $booking['_progres'] ? json_decode($booking['_progres'],true) : ['client'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]],'admin'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
 		$apply_process['client'][0][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'更新資料','note'=>'','logs'=>'');
 		$apply_process['review'][2]   = [];
 		
@@ -1561,7 +1561,7 @@
 		}
 		
 		// 更新與紀錄狀態
-		$apply_process = $booking['_progres'] ? json_decode($booking['_progres'],true) : ['client'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
+		$apply_process = $booking['_progres'] ? json_decode($booking['_progres'],true) : ['client'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]],'admin'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
 		  
 		if(!$booking['_stage']){  // 若 stage 為 0 : 起始狀態
 		  
@@ -1588,7 +1588,8 @@
 		
 		}else{
 		  $apply_process['client'][0][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'更新資料','note'=>'','logs'=>'');
-		  $apply_status = $booking['_status'];
+		  $apply_process['client'][$booking['_stage']][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'更新資料','note'=>'','logs'=>'');
+		  $apply_status = '更新資料';
 		}
 		
 		
@@ -1643,7 +1644,7 @@
 		}
 		
 		// 更新與紀錄狀態
-		$apply_process = $booking['_progres'] ? json_decode($booking['_progres'],true) : ['client'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
+		$apply_process = $booking['_progres'] ? json_decode($booking['_progres'],true) : ['client'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]],'admin'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
 		$apply_process['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'取消申請','note'=>'使用者取消申請','logs'=>'');
 		$apply_status  = '取消申請';
 		$apply_stage   = 5;

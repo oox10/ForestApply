@@ -156,7 +156,7 @@ class Landing_Controller extends Admin_Controller{
 	
 	
 	// AJAX : 遞交申請資料
-	public function submit($ApplyNo){   
+	public function submit($ApplyNo){
 	  //提取資料必須先登入或先前有註冊
 	  $apply_token = isset($_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN']) ? $_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN'] : false;	
 	  $result = $this->Model->Apply_Record_Check($ApplyNo,$apply_token);

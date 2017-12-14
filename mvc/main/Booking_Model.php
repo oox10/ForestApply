@@ -262,7 +262,7 @@
 		$result['data']['attachment'] = isset($apply_data['attach']) ? $apply_data['attach'] : array();
 		
 		// for progress
-		$result['data']['progress'] = $record['_progres'] ? json_decode($record['_progres'],true) :  ['client'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
+		$result['data']['progress'] = $record['_progres'] ? json_decode($record['_progres'],true) :  ['client'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]],'admin'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
 		$result['data']['stagenow'] = $record['_stage'];
 		
 		// for applicant history 
@@ -504,7 +504,7 @@
 		}
 		
 		
-		$apply_process   = $booking['_progres'] ? json_decode($booking['_progres'],true) : ['client'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
+		$apply_process   = $booking['_progres'] ? json_decode($booking['_progres'],true) : ['client'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]],'admin'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
 		$apply_new_stage = $booking['_stage'];
 		
 		$ballot_flag   = $booking['_ballot'];
@@ -718,7 +718,7 @@
           
 		  case 3: 
 		    $mail_title_type = '審查通知'; 
-		    if(isset($progress['client'][$booking['_stage']])){
+		    if(isset($progress['review'][$booking['_stage']])){
 			  $message_conf = array_pop($progress['client'][$booking['_stage']]);
 			  $mail_status_type = $message_conf['status'];
 			  $mail_status_info = $message_conf['note'];	
@@ -742,7 +742,7 @@
 		// 設定信件內容
         $to_sent = $booking['applicant_mail'];
 		
-        $mail_title = _SYSTEM_HTML_TITLE." / ".$mail_title_type." / 申請編號:".$booking['apply_code'];        
+        $mail_title = _SYSTEM_HTML_TITLE." / ".$mail_title_type." / 申請編號：".$booking['apply_code'];        
 		
         $mail_content  = "<div>申請人 您好：</div>";
 		$mail_content .= "<div>台端於 <strong>".$booking['apply_date']."</strong> 申請進入『".$area_meta['area_name']."』 </div>";
@@ -766,7 +766,7 @@
 		$mail_content .= "<div> </div>";
 		$mail_content .= "<div>四、為維護自然生態，各保護區設有進入人數之承載量管制，若申請截止日(依據各區設定)總人數逾越承載量，系統將進行隨機抽籤，並發給審查通知或結果通知等狀態之電子郵件通知。</div>";
 		$mail_content .= "<div> </div>";
-		$mail_content .= "<div>※本郵件由系統自動發送，請勿直接回覆，如有任何問題，請洽各審查管理機關(構)，聯絡電話請按此查詢。</div>";
+		$mail_content .= "<div>※本郵件由系統自動發送，請勿直接回覆，如有任何問題，請洽各區域管理機關(構)查詢。</div>";
 		$mail_content .= "<div> </div>";
 		$mail_content .= "<div>林務局"._SYSTEM_HTML_TITLE." 敬啟</div>";
 		$mail_content .= "<div><a href='"._SYSTEM_SERVER_ADDRESS."' target=_blank >"._SYSTEM_SERVER_ADDRESS."</a></div>";
