@@ -32,6 +32,11 @@
 			  <li  title='發布消息'	class='option func_activate'	id='Post'	><i class="fa fa-pencil-square-o" aria-hidden="true"></i> <span >發布消息</span> </li>
 			  <?php endif; ?>
 			  
+			  <?php if($admin_filter || (isset($_SESSION[_SYSTEM_NAME_SHORT]['ADMIN']['PERMISSION'][strtolower('Page')]) && intval($_SESSION[_SYSTEM_NAME_SHORT]['ADMIN']['PERMISSION'][strtolower('Page')])!=0) ): ?>
+			  <li  title='網站內容編輯'	class='option func_activate'	id='Page'	><i class="fa fa-file-text-o" aria-hidden="true"></i> <span >網站內容編輯</span> </li>
+			  <?php endif; ?>
+			  
+			  
 			  <?php if($admin_filter || (isset($_SESSION[_SYSTEM_NAME_SHORT]['ADMIN']['PERMISSION'][strtolower('Mailer')]) && intval($_SESSION[_SYSTEM_NAME_SHORT]['ADMIN']['PERMISSION'][strtolower('Mailer')])!=0 )): ?>
 			  <li  title='信件寄送'  class='option func_activate'	id='Mailer'	><i class="fa fa-envelope-o" aria-hidden="true"></i> <span >信件寄送</span> </li>
 			  <?php endif; ?>
