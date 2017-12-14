@@ -46,14 +46,7 @@
 	  }
 	  self::data_output('json','',$this->Model->ModelResult); 
 	}
-	
-	
-    // AJAX: 刪除消息
-	public function dele($DataNo){
-	  $this->Model->ADPost_Del_Post_Data($DataNo);
-	  self::data_output('json','',$this->Model->ModelResult);
-	}
-	
+	 
 	
   }
   
