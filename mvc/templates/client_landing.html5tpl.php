@@ -181,7 +181,7 @@
 	    <div class='billboard' more='0' >
 	      <h1>
 		    <label>最新消息</label>
-		    <?php if(count($post_list )>6): ?>
+		    <?php if(count($post_list )>5): ?>
 			<span class='more option' id='act_switch_post_mode' ><i class="fa fa-angle-double-right" aria-hidden="true"></i> <i class='more' title='顯示所有公告'>MORE</i><i class='hide' title='顯示前列公告'>HIDE</i> </span>	
 			<?php endif; ?>
 		  </h1>
