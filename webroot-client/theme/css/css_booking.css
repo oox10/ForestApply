@@ -192,7 +192,14 @@
 		  padding:15px 10px;	
 		  border-bottom:1px #adadad solid;
 		}
-	
+	    .function_area > ul a{
+		  color:#000000;
+		}
+		.function_area > ul a:hover{
+		  text-decoration:underline;	
+		}
+		
+		
 	
 		.workaround_area{
 		  flex:1;
