@@ -822,6 +822,7 @@
 		if(!isset($apply_data['reason']) && count($apply_data['reason']))  throw new Exception('_APPLY_SUBMIT_REASON_EMPTY'); 
 		if(!isset($apply_data['dates']) )  throw new Exception('_APPLY_SUBMIT_DATES_EMPTY');
 		
+		
 		// 查詢區域基本資料
 		$area_code = isset($apply_data['area']['code']) ? $apply_data['area']['code'] : '';
 		
@@ -846,7 +847,6 @@
 		$area_form_config = $areainfo['area']['forms'];
 		$reason_conf  = isset($area_form_config['application_reason']['elements']) ? $area_form_config['application_reason']['elements'] : array();
 		foreach($reason_conf as $reason_set ){
-		  
 		  if(in_array($reason_set['name'],$submit_reason) && strstr($reason_set['conf'],'limit') ){
 			$apply_bollet = 1;  
 		  }
@@ -857,8 +857,7 @@
 		  
 		  if(in_array($reason_set['name'],$submit_reason) && strstr($reason_set['conf'],'crossday') ){
 			$apply_crossd = 1;  
-		  }
-		  
+		  } 
 		}
 		
 		//查驗附件
@@ -873,7 +872,6 @@
 		$max_apply_time = strtotime('+'.($areainfo['area']['accept_max_day']+1).' day',$todaytime);
 		
 		foreach($apply_data['dates'] as $s=> $apply_dates){
-          
           if( !isset($apply_dates[0]) || !strtotime($apply_dates[0]) ){
 			throw new Exception('_APPLY_SUBMIT_DATES_FAILS');    
 		  }
@@ -901,7 +899,6 @@
 			$apply_date['exit'] = $apply_date['enter'];  
 			$apply_data['dates'][$s][1] = $apply_date['enter'];
 		  }
-		  
 		}
 		
 		// 檢查進入日期是否重複申請
@@ -921,9 +918,15 @@
 		  throw new Exception('_APPLY_TARGET_DATE_DOUBLED');		
 		}
 		
-		
 		// 確認是否抽籤
 		$bollet_date = $apply_bollet ? date('Y-m-d',strtotime('-'.($areainfo['area']['accept_min_day']-1).' day',strtotime($apply_date['enter']))) : '0000-00-00';
+		
+		// 檢查目前狀態，補件狀態不可調整部分欄位
+		if($booking['_stage'] > 1){
+          if($booking['apply_reason'] !=$apply_reason || $booking['date_enter']!=$apply_date['enter'] ){
+			throw new Exception('_APPLY_SUBMIT_STABLE_FIELD_CHANGE');  
+		  }
+		}
 		
 		// restore to db  / 存入資料庫
 		$application = json_encode($apply_data,JSON_UNESCAPED_UNICODE);
@@ -1455,10 +1458,11 @@
 		$joinmember= json_decode($booking['member'],true);
 		$application = json_decode($booking['apply_form'],true);
 		
-		$result['data']['applicant'] = $applicant;
-		$result['data']['joinmember'] = $joinmember;
-		$result['data']['application'] = $application;
+		$result['data']['applicant']	= $applicant;
+		$result['data']['joinmember']	= $joinmember;
+		$result['data']['application']	= $application;
 		$result['data']['status'] = $booking['_status'];
+		$result['data']['stage']  = $booking['_stage'];
 		$result['data']['final']  = $booking['_final'];
 		
 		$result['action'] = true;
@@ -1563,7 +1567,7 @@
 		// 更新與紀錄狀態
 		$apply_process = $booking['_progres'] ? json_decode($booking['_progres'],true) : ['client'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]],'admin'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
 		  
-		if(!$booking['_stage']){  // 若 stage 為 0 : 起始狀態
+		if($booking['_stage']<2){  // 若 stage 為 0 : 起始狀態
 		  
 		  $apply_status  = '收件待審';
 		  $apply_process['client'][1][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'收件待審','note'=>'','logs'=>'');
@@ -1587,11 +1591,15 @@
 		  }
 		
 		}else{
+		  
 		  $apply_process['client'][0][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'更新資料','note'=>'','logs'=>'');
-		  $apply_process['client'][$booking['_stage']][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'更新資料','note'=>'','logs'=>'');
 		  $apply_status = '更新資料';
-		}
+		  if($booking['_stage']==3){
+			$apply_process['client'][$booking['_stage']][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'資料補充','note'=>'','logs'=>'');  
+		    $apply_status = '資料補充';
+		  }
 		
+		}
 		
 		$DB_UPD = $this->DBLink->prepare(SQL_Client::UPDATE_APPLY_STATUS()); 
 	    $DB_UPD->bindValue(':apply_code', $booking['apply_code']);

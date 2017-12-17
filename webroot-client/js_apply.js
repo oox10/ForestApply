@@ -884,7 +884,6 @@ $(window).load(function () {   //  || $(document).ready(function() {
 			
 			var apply_data = response.data.applied;
 			
-			
 			// 載入申請人資料
 			$.each(apply_data.applicant,function(uf,uv){
 			  if($('#'+uf).length){
@@ -978,6 +977,14 @@ $(window).load(function () {   //  || $(document).ready(function() {
 			
 			// 載入名單
 			load_apply_member(apply_data.joinmember);
+			
+			
+			
+			// 進入審核後不可變更相關欄位鎖定相關申請項目
+			if(parseInt(apply_data.stage) > 2 ){
+			  $("input[name='apply_reason'],#apply_date_1s").prop('readonly',true).prop('disabled',true);  
+			}
+			
 			
 			
 			// 定位申請狀態

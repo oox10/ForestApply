@@ -105,7 +105,7 @@
 	public static function INITIAL_APPLY_ACCOUNT(){
 	  $SQL_String = "INSERT INTO area_booking VALUES(NULL,:am_id,:apply_code,:apply_date,:applicant_name,:applicant_mail,:applicant_id,:applicant_info,".
 	                                                 "'','0000-00-00','0000-00-00','[]',:member_list,1,'',".
-	                                                 "0,'0000-00-00',0,0,0,'{\"client\":[[],[],[],[],[],[]],\"review\":[[],[],[],[],[],[]]}','申請進入','','".date('Y-m-d H:i:s')."',NULL,'','',1) ".
+	                                                 "0,'0000-00-00',0,0,0,'{\"client\":[[],[],[],[],[],[]],\"review\":[[],[],[],[],[],[]],\"admin\":[[],[],[],[],[],[]]}','申請進入','','".date('Y-m-d H:i:s')."',NULL,'','',1) ".
 													 "ON DUPLICATE KEY UPDATE applicant_name=:applicant_name,applicant_mail=:applicant_mail,applicant_id=:applicant_id,applicant_info=:applicant_info".";";
 	  return $SQL_String;
 	}
