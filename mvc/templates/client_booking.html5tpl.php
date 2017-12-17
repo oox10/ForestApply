@@ -514,8 +514,8 @@
 						  <div><label>緊急聯絡人</label><span class='mbr_data'><input type='text' placeholder='緊急聯絡人' class='member_contacter' /></span> <label>聯絡人電話</label><span class='mbr_data'><input type='text' placeholder='聯絡人電話' class='member_contactto' /></span></div>
 						</td>
 						<td >
-						  <a class='option msave' ><i class="fa fa-floppy-o" aria-hidden="true"></i></a>
-						  <a class='option medit' ><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+						  <a class='option msave' ><i class="fa fa-minus-square-o" aria-hidden="true"></i></a>
+						  <a class='option medit' ><i class="fa fa-plus-square-o" aria-hidden="true"></i></a>
 						</td>
 					</tr>			
 				  </table>

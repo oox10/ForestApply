@@ -1713,8 +1713,8 @@
 		
 		// check applied is freeze
 		$cancel_deline = strtotime('-'.$booking['cancel_day'].' day',strtotime($booking['date_enter'].' 23:59:59'));
-		$result['data']['_isdone']  = strtotime('now') > $cancel_deline ? true : false;
-		
+		 
+		$result['data']['_isdone']  = strtotime('now') > $cancel_deline || ($booking['_final']=='取消申請') ? true : false;
 		
 		
 		$result['action'] = true;

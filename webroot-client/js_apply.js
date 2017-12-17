@@ -334,7 +334,6 @@ $(window).load(function () {   //  || $(document).ready(function() {
 		return false;  
 	  }
 	  
-	  
 	  $('._fail').removeClass('_fail');
 	  apply['form'] = {};
 	  
@@ -813,6 +812,11 @@ $(window).load(function () {   //  || $(document).ready(function() {
 	    return false;   
 	  }
 	  
+	  
+	  if(!confirm("取消後本次申請單將被註銷並無法復原，確定要取消目前的申請單？，")){
+		return false;  
+	  }
+	  
 	  // active ajax
       $.ajax({
         url: 'index.php',
@@ -823,13 +827,16 @@ $(window).load(function () {   //  || $(document).ready(function() {
         error: 		function(xhr, ajaxOptions, thrownError) {  console.log( ajaxOptions+" / "+thrownError);},
 	    success: 	function(response){
 		  if(response.action){  
-		    var dt = new Date();
+		    
+			var dt = new Date();
 			var today = dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+dt.getDate();
-		  
-			$('#apply_progress_info').html('最終階段');
+		    $('#apply_progress_info').html('最終階段');
 			$('#apply_status_info').html('取消申請');
 			$('.process_header').attr('stage',5);
 			$('#client').find('td.stage5').prepend("<div class='progres_record'><div class='prmain'><span class='logtime' title=''> "+today+" </span><span class='loginfo'>取消申請</span></div></div>");
+		    
+			$('#act_apply_tocancel').remove();
+		  
 		  }else{
 			system_message_alert('',response.info);
 		  }
