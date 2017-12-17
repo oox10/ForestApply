@@ -557,6 +557,7 @@
 	  });
 	  
 	  // 陳核部分
+	  if(typeof Progres.admin == 'undefined')  Progres.admin = {};
 	  $.each(Progres.admin,function(pstage,plist){
 		if(!$('tr.process_task#admin').length){
 		  return false;	
