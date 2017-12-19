@@ -130,11 +130,13 @@ class Landing_Controller extends Admin_Controller{
 	}
 	
 	// FILE: 下載空白人員清單
-	public function getlist($ApplyNo=0){
+	public function getlist($ApplyNo=0,$ExportType='xls'){
 	  $apply_token = isset($_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN']) ? $_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN'] : false;	
 	  $this->Model->Apply_Get_Member_Record($ApplyNo,$apply_token);
-      $this->Model->Apply_Built_Member_List_File('template_apply_member_list.xls');
-      self::data_output('file','',$this->Model->ModelResult);
+	  
+	  $this->Model->Apply_Built_Member_List_File('template_apply_member_list.'.strtolower($ExportType));
+      
+	  self::data_output('file','',$this->Model->ModelResult);
 	}
 	
 	// AJAX: 上傳與處理清單

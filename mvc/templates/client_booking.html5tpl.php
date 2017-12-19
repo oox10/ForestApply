@@ -177,7 +177,7 @@
 		  </ul>
 		  <h1> 相關連結與下載 </h1>
 		  <ul>  
-		    <li>&#187;<a href='docs/保護留區申請進入名單表格.xls' target='_blank' >申請成員表單</a></li>
+		    <li>&#187;申請成員表單 : <a href='docs/保護留區申請進入名單表格.ods' target='_blank' >ods</a> , <a href='docs/保護留區申請進入名單表格.xlsx' target='_blank' >xlsx</a> </li>
 			<li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAllIf.aspx?PCode=M0040032' target='_blank'>自然保留區法規</a></li>
 		    <li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAllIf.aspx?PCode=M0040036' target='_blank'>自然保護區法規</a></li>
 			<li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAllIf.aspx?PCode=M0120001' target='_blank'>野生動物保護區法規</a></li>
@@ -486,7 +486,7 @@
 			  </span>
 			</h1>
 			<section>  
-				<h2>6. 進入人員名冊 ( <a class='option' id='act_member_list_file' >下載空白名冊檔案</a> )</h2>
+				<h2>6. 進入人員名冊 ( 下載名冊檔案 : <a class='option act_member_list_file' data-format='ods' >ods</a>, <a class='option act_member_list_file' data-format='xlsx' >xls</a> )</h2>
 				<div  class='form_element'>
 				  <form id='apply_member_upload_form' action="index.php?act=Landing/uplmbr/" method="post" enctype="multipart/form-data" target="upload_target" >
                     <input id='apply_member_upload' name="file" type="file" />
@@ -658,7 +658,7 @@
 			
 			
 		  </div>
-		  <iframe id="upload_target" name="upload_target" src="loader.php" style='display:block;'></iframe>	
+		  <iframe id="upload_target" name="upload_target" src="loader.php" style='display:none;'></iframe>	
 		
 		</div>
 		

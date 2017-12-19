@@ -1047,8 +1047,21 @@
 		  $memberlist = $this->ModelResult['members']['data']['memberlist'];
 		}
 		
-		$objReader = PHPExcel_IOFactory::createReaderForFile($template);
+		$file_info = pathinfo($template);
+	    
+		switch($file_info['extension']){
+		  case 'ods': 		  
+			$objReader = new PHPExcel_Reader_OOCalc();
+		    //$objReader = PHPExcel_IOFactory::createReaderForFile($template);
+		    break;
+		  case 'xls': default:
+		    $objReader = PHPExcel_IOFactory::createReaderForFile($template);
+			break;
+		}		
+		
 		$objPHPExcel = $objReader->load($template);
+		
+		
 		//0角色	1姓名 2身分證號	3生日	4性別	5服務單位	6通訊地址	7聯絡電話	8聯絡手機	9緊急連絡人姓名	10緊急連絡人電話
         
 		// 輸入總表單
@@ -1115,26 +1128,35 @@
 		}	
 		
 		// 匯出欄位
-		$export_file = _SYSTEM_FILE_PATH.'member/tmp_'.time().'.xlsx';
-		$export_file_name = 'ReservedMember.xlsx';
+		$export_file = _SYSTEM_FILE_PATH.'member/tmp_'.time();
+		$export_file_name = 'ReservedMember';
+		
 		if($applycode){
 		  if(!is_dir(_SYSTEM_CLIENT_PATH.$applycode)){
 		    mkdir(_SYSTEM_CLIENT_PATH.$applycode, 0777, true);	  
 	      }	
-		  $export_file = _SYSTEM_CLIENT_PATH.$applycode.'/tmp_'.time().'.xlsx';
-		  $export_file_name = 'ReservedMember-'.$applycode.'-'.date('Ymd').'.xlsx';
+		  $export_file = _SYSTEM_CLIENT_PATH.$applycode.'/tmp_'.time();
+		  $export_file_name = 'ReservedMember-'.$applycode.'-'.date('Ymd');
 		}
 		
-		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-		$objWriter->save( $export_file ); 
+		switch($file_info['extension']){
+		  case 'ods': 		  
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'OpenDocument');
+		    break;
+		  case 'xls': default:
+		    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+			break;
+		}
+		
+		$objWriter->save( $export_file.'.'.$file_info['extension'] ); 
 		$objPHPExcel->disconnectWorksheets();
 		
 		// final
 		$result['action'] = true;
 		$this->ModelResult['members']['action'] = true; // 要把存取資料錯誤移除，以免跳轉至錯誤頁面
-		$result['data']['name']     = $export_file_name;
-		$result['data']['size']     = filesize($export_file);
-    	$result['data']['location'] = $export_file;
+		$result['data']['name']     = $export_file_name.'.'.$file_info['extension'];
+		$result['data']['size']     = filesize($export_file.'.'.$file_info['extension']);
+    	$result['data']['location'] = $export_file.'.'.$file_info['extension'];
 		
 	  } catch (Exception $e) {
         $result['message'][] = $e->getMessage();
@@ -1157,7 +1179,7 @@
 	  
       // [name] => MyFile.jpg  / [type] => image/jpeg  /  [tmp_name] => /tmp/php/php6hst32 / [error] => UPLOAD_ERR_OK / [size] => 98174
 	  // Allowed extentions.
-      $allowedExts = array("xls","xlsx");
+      $allowedExts = array("xls","xlsx",'ods');
       
       // Get filename.
       $temp = explode(".", $FILES["file"]["name"]);
@@ -1229,6 +1251,8 @@
 		$mbr_file = _SYSTEM_CLIENT_PATH.$ApplyCode.'/'.$FileName;
 		
 		$excelReader = PHPExcel_IOFactory::createReaderForFile($mbr_file);
+		//$excelReader = new PHPExcel_Reader_OOCalc();
+		
 	    $excelReader->setReadDataOnly(true);
 		$objPHPExcel = $excelReader->load($mbr_file);
 		$objPHPExcel->setActiveSheetIndex(0);

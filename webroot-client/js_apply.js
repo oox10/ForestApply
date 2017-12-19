@@ -558,9 +558,10 @@ $(window).load(function () {   //  || $(document).ready(function() {
 	//-- step 04 member list
     
 	//-- get member list
-	$('#act_member_list_file').click(function(){
-      var apply_id  =  location.hash.replace(/^#/,'');	  
-	  window.open("index.php?act=Landing/getlist/"+apply_id);
+	$('.act_member_list_file').click(function(){
+      var apply_id  =  location.hash.replace(/^#/,'');	
+      var export_type = $(this).data('format');	  
+	  window.open("index.php?act=Landing/getlist/"+apply_id+'/'+export_type);
 	});
 	
 	
@@ -586,7 +587,7 @@ $(window).load(function () {   //  || $(document).ready(function() {
 		return false;		
 	  }
 	  
-	  if( /\.xls(x)?$/.test(file_name)===false ){
+	  if( /\.xls(x)?$/.test(file_name)===false && /\.ods?$/.test(file_name)===false){
 		system_message_alert('','檔案名稱錯誤，請上傳正確資料');  
 		$(this).val('');
 	    return false;	
