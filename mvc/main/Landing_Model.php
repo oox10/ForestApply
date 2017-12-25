@@ -2187,11 +2187,17 @@
 		}
 		
 		$lotto_date = '';
-		if( !strtotime($LottoDate) || strtotime('now') < strtotime($LottoDate) ){
-		  $lotto_date = date('Y-m-d',strtotime('-'.$area['accept_min_day']));	
+		if( !strtotime($LottoDate) ){
+		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 		}else{
-		  $lotto_date =date('Y-m-d',strtotime($LottoDate));	
+		  $lotto_date = date('Y-m-d',strtotime($LottoDate));	
 		}
+		
+		
+		if(strtotime($lotto_date) < strtotime('2017-12-31 23:59:59')){
+		  throw new Exception('_APPLY_LOTTO_UNRECORDED'); 	
+		}
+		
 		
 		// 查詢資料庫
 		//aid,date_tolot,time_lotto,lotto_pool,lotto_num,logs_process,_loted,area_type,area_name,area_load,accept_max_day,accept_min_day,wait_list
