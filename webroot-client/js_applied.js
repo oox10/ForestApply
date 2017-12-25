@@ -27,7 +27,7 @@ $(window).load(function () {   //  || $(document).ready(function() {
 	}
 	
 	//-- reinsert calendar
-	function reform_calendar(areaid,calfrom,calnums){
+	function reform_calendar(areaid,calfrom,calnums,target){
 	  $.ajax({
         url: 'index.php',
 		type:'POST',
@@ -48,16 +48,19 @@ $(window).load(function () {   //  || $(document).ready(function() {
 			  date_container.empty();
 			  $.each(dates,function(d,slot){
 				
+				var css = slot.date==target ? "background-color:#BBFFEE;" : '';
+				
 				var info_alert = '';
 				info_alert = slot.type=='apply' ? '申請進入' : '不開放申請';
 				info_alert = slot.type=='stop'  ? '不開放申請:'+slot.info : info_alert;
 				
-				var datedom = $("<div/>").addClass('date_slot').attr({"type":slot.type,"data-date":slot.date,"data-quota":slot.quota,"data-info":slot.info,'title':info_alert}).attr('select','0');
+				var datedom = $("<div/>").addClass('date_slot').attr({"type":slot.type,"data-date":slot.date,"data-quota":slot.quota,"data-info":slot.info,'title':info_alert,'style':css}).attr('select','0');
                 datedom.append('<span class="date_no">'+slot.date.substr(-2,2)+'</span>');
                 datedom.append('<span class="date_mask"></span>');
                 datedom.append('<span class="date_quota" title="已申請人數:'+slot.booked+'">'+( parseInt(slot.booked) ? slot.booked+' 人':"0")+'</span>');			
 				datedom.append('<span class="date_info"></span>');			
                 datedom.appendTo(date_container);
+				
 			  });
 			  calindex++;
 			});
@@ -158,7 +161,7 @@ $(window).load(function () {   //  || $(document).ready(function() {
 			  
 			  var search_month = inter_date.substr(0,4)+'-'+inter_date.substr(5,2);
 			  
-			  reform_calendar(area_code,search_month,1);
+			  reform_calendar(area_code,search_month,1,inter_date);
 			  
 			  $('#area_booking_today').empty();
 			  
@@ -183,6 +186,10 @@ $(window).load(function () {   //  || $(document).ready(function() {
 		    }else{
 			  system_message_alert('',response.info);
 		    }
+			
+			
+			
+			
 	      },
 		  complete:		function(){   }
 	  }).done(function() { system_loading();   });

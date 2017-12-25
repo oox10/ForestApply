@@ -78,7 +78,6 @@
 		}
 		
         while( $tmp = $DB_OBJ->fetch(PDO::FETCH_ASSOC) ){
-		  
 		  $contect[$tmp['ug_code']] = array();
 		  $DB_USER = $this->DBLink->prepare(SQL_Client::GET_ORGAN_CONTECT_INFO());
 		  $DB_USER->bindValue(':gid',$tmp['ug_code']);
@@ -86,7 +85,6 @@
 		  $contect[$tmp['ug_code']]['organ'] = $tmp['ug_name'];
 		  $contect[$tmp['ug_code']]['areas'] = array();
 		  $contect[$tmp['ug_code']]['contect'] = $DB_USER->fetchAll(PDO::FETCH_ASSOC);
-		  
 		}
 		
 		// 查詢資料庫
@@ -321,11 +319,11 @@
 			}
 			
 			// 確認日期是否超過申請日
-		    if($this_date_time <= $min_apply_time || $this_date_time > $max_apply_time ){
+		    if( $this_date_time > $max_apply_time ){  
 			  $dat_sloct['type']='over';
 			  $dat_sloct['info']='-';	
               $apply_calendar[$ynm_string][] = $dat_sloct;
-			  continue;			
+			  continue;	
 			}
 			
 			// 確認申請時間是否已超出負荷
@@ -336,8 +334,8 @@
 			}else{
 			  $dat_sloct['quota']=$areainfo['area']['area_load'];	
 			}
-			$dat_sloct['type']='apply';
-			$dat_sloct['info']='';
+			$dat_sloct['type']= ($this_date_time <= $min_apply_time) ? 'over' : 'apply';
+			$dat_sloct['info']= '';
 			$apply_calendar[$ynm_string][] = $dat_sloct;
 		  
 		  }
