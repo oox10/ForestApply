@@ -34,17 +34,22 @@
 	$data_area  	= isset($this->vars['server']['data']['areas'] ) 	? $this->vars['server']['data']['areas'] : array();
 	
 	$data_list  	= isset($this->vars['server']['data']['records']['list']) 	? $this->vars['server']['data']['records']['list'] : array();
-	$data_count 	= count($data_list);
+	$data_count 	= isset($this->vars['server']['data']['records']['count']) 	? $this->vars['server']['data']['records']['count'] : 0;  
+	$data_pageing 	= isset($this->vars['server']['data']['records']['range'])  ? $this->vars['server']['data']['records']['range'] : '1-20';
+	$data_start 	= isset($this->vars['server']['data']['records']['start'])  ? $this->vars['server']['data']['records']['start'] : 1;
 	
 	$data_limit  	= isset($this->vars['server']['data']['records']['limit']) 	? $this->vars['server']['data']['records']['limit'] : '';
-	$data_filter 	= isset($this->vars['server']['data']['records']['filter']) 	? $this->vars['server']['data']['records']['filter'] : array();
+	$data_filter 	= isset($this->vars['server']['data']['records']['filter']) ? $this->vars['server']['data']['records']['filter'] : array('apply_unfinish'=>true);
 	
-	$page_info 		= isset($this->vars['server']['info']) ? $this->vars['server']['info'] : '';  
+	
+	$page_conf  	= isset($this->vars['server']['data']['page'])    ? $this->vars['server']['data']['page'] : array();
+	
+	$active_result 	= isset($this->vars['server']['info']) ? $this->vars['server']['info'] : '';  
 	$user_roles     = array();
 	
-	$apply_stage    = 2;
-	
 	$atnow = '';
+	
+	
 	
 	?>
   </head>
@@ -127,6 +132,18 @@
 					</optgroup>
 				</select>
 			  </li>
+			  <li> 
+				<label>日期篩選：</label>
+				<select class='apply_status' id='filter_date_type' >
+				  <option value='' disabled selected> 選擇日期種類 </option>
+				  <option value='apply_date' <?php if( isset($data_filter['apply_date']) ) { $date_filter=$data_filter['apply_date'];echo "selected"; } ?> >篩選申請日期</option>
+				  <option value='date_enter' <?php if( isset($data_filter['date_enter']) ) { $date_filter=$data_filter['date_enter'];echo "selected"; } ?> >篩選進入日期</option>
+				  <option value='date_exit'  <?php if( isset($data_filter['date_exit']) ) { $date_filter=$data_filter['date_exit'];echo "selected"; } ?> >篩選離開日期</option>
+				  <option value='' > 不篩選日期 </option>
+				</select>：				
+				<span class='input_date' ><input type='text' id='search_date_start' placeholder='日期-起' size='10' value='<?php echo isset($date_filter)&&isset($date_filter['date_start']) ? $date_filter['date_start'] : '';  ?>' /><i class="fa fa-calendar" aria-hidden="true"></i></span>
+				<span class='input_date' ><input type='text' id='search_date_end'   placeholder='日期-迄' size='10' value='<?php echo isset($date_filter)&&isset($date_filter['date_end']) ? $date_filter['date_end'] : '';  ?>' /><i class="fa fa-calendar" aria-hidden="true"></i></span> 
+			  </li>
 			  <li > 
 			    <label>條件篩選：</label>
 				<select class='apply_status' id='filter_apply_status' >
@@ -150,22 +167,14 @@
 				    <option value='' > 不篩選狀態 </option>
 				  </optgroup>
 				</select>，
-				<input type='checkbox' id='filter_is_review' value='review'  <?php echo isset($data_filter['apply_review'])&&$data_filter['apply_review']? 'checked':'';?> >陳核，
-				<input type='checkbox' id='filter_is_check'  value='checked' <?php echo isset($data_filter['apply_checked'])&&$data_filter['apply_checked']? 'checked':'';?> >審查，
-				<input type='text' id='filter_search_terms'  value='<?php echo isset($data_filter['apply_search']) ? $data_filter['apply_search']:''; ?>' placeholder='或請輸入其他關鍵字' /> 
+				<input type='text' id='filter_search_terms'    value='<?php echo isset($data_filter['apply_search']) ? $data_filter['apply_search']:''; ?>' placeholder='搜尋關鍵字' />， 
+				<label>其他狀態：</label>
+				<input type='checkbox' id='filter_is_review'   value='review'   <?php echo isset($data_filter['apply_review'])&&$data_filter['apply_review']? 'checked':'';?> >陳核，
+				<input type='checkbox' id='filter_is_check'    value='checked'  <?php echo isset($data_filter['apply_checked'])&&$data_filter['apply_checked']? 'checked':'';?> >審查，
+				<input type='checkbox' id='filter_is_unfinish' value='unfinish' <?php echo isset($data_filter['apply_unfinish'])&&$data_filter['apply_unfinish']? 'checked':'';?> >未結案
+				
 			  </li>
-			  <li> 
-				<label>日期篩選：</label>
-				<select class='apply_status' id='filter_date_type' >
-				  <option value='' disabled selected> 選擇日期種類 </option>
-				  <option value='apply_date' <?php if( isset($data_filter['apply_date']) ) { $date_filter=$data_filter['apply_date'];echo "selected"; } ?> >篩選申請日期</option>
-				  <option value='date_enter' <?php if( isset($data_filter['date_enter']) ) { $date_filter=$data_filter['date_enter'];echo "selected"; } ?> >篩選進入日期</option>
-				  <option value='date_exit'  <?php if( isset($data_filter['date_exit']) ) { $date_filter=$data_filter['date_exit'];echo "selected"; } ?> >篩選離開日期</option>
-				  <option value='' > 不篩選日期 </option>
-				</select>：				
-				<span class='input_date' ><input type='text' id='search_date_start' placeholder='日期-起' size='10' value='<?php echo isset($date_filter)&&isset($date_filter['date_start']) ? $date_filter['date_start'] : '';  ?>' /><i class="fa fa-calendar" aria-hidden="true"></i></span>
-				<span class='input_date' ><input type='text' id='search_date_end'   placeholder='日期-迄' size='10' value='<?php echo isset($date_filter)&&isset($date_filter['date_end']) ? $date_filter['date_end'] : '';  ?>' /><i class="fa fa-calendar" aria-hidden="true"></i></span> 
-			  </li>
+			  
 			</ul>
 			<span class='filter_option' >  
 			  <button id='filter_submit'  type='button' class='active'><i class="fa fa-search" aria-hidden="true"></i> 篩選 </button> 
@@ -186,14 +195,40 @@
 			<div class='record_body'>
 		      <div class='record_control'>
 			    <span class='record_limit'>  
-			      顯示 : <select class='record_view' ><option value=10> 10 </option><option value=20  > 20 </option><option value=50 > 50 </option><option value='all' > ALL </option></select> 筆
+			      每頁 :
+				  <select class='record_pageing' >
+				    <option value='1-20'   <?php echo $data_pageing=='1-20'? 'selected':''; ?> > 20 </option>
+				    <option value='1-50'   <?php echo $data_pageing=='1-50'? 'selected':''; ?> > 50 </option>
+					<option value='1-100'  <?php echo $data_pageing=='1-100'? 'selected':''; ?> > 100 </option>
+				    <option value='1-500'  <?php echo $data_pageing=='1-500'? 'selected':''; ?> > 500 </option>
+				  </select> 筆
+				  / 共 <span> <?php echo $data_count; ?></span>  筆
 			    </span>
 			    <span class='record_pages'>
-				  <a class='page_tap page_to' page='prev' > &#171; </a>
-				  <span class='page_select'></span>
-				  <a class='page_tap page_to' page='next' > &#187; </a>
+				  <a class='page_tap page_to' page='<?php echo $page_conf['prev'];?>' > &#171; </a>
+				  <span class='page_select'>
+				  <?php foreach($page_conf['list'] as $p=>$limit ): ?>
+				  <a class="page_tap <?php echo $p==$page_conf['now'] ? 'page_now':'page_to'; ?>" page="<?php echo $limit;?>" ><?php echo $p; ?></a>
+				  <?php endforeach; ?>
+				  </span>
+				  <a class='page_tap page_to' page='<?php echo $page_conf['next'];?>' > &#187; </a>
+				  ，跳至
+				  <select class='page_jump'>
+				    <optgroup label="首尾頁">
+					  <option value='<?php echo $page_conf['top'];?>' >首頁</option>
+					  <option value='<?php echo $page_conf['end'];?>' >尾頁</option>
+					</optgroup>
+					<optgroup label="-">
+					  <?php foreach($page_conf['jump'] as $p=>$limit ): ?>
+				      <option value="<?php echo $limit; ?>"  <?php echo $p==$page_conf['now'] ? 'selected':''; ?> ><?php echo 'P.'.$p; ?></option>
+				      <?php endforeach; ?>
+                    </optgroup>					  
+				  </select>
 				</span>
 			  </div>
+			  
+			  
+			  
 			  <table class='record_list'>
 		        <tr class='data_field'>
 			      <td title='編號'		>no.</td>
@@ -210,7 +245,7 @@
 			    <tbody class='data_result' mode='list' >   <!-- list / search--> 
 			    <?php foreach($data_list as $i=> $data): ?>  
 			      <tr class='data_record ' no='<?php echo $data['r_apply_code'];?>' page='' >
-                    <td field='no'  	   	    ><?php echo $i+1; ?> </td>
+                    <td field='no'  	   	    ><?php echo $i+$data_start; ?> </td>
 			        <td field='r_apply_code' 	><input type='checkbox' name=''  value='<?php echo intval($data['abno']);?>' /><?php echo $data['r_apply_code']; ?></td>
 				    <td field='r_apply_date'	><?php echo $data['r_apply_date']; ?></td>
 				    <td field='r_apply_area'	><?php echo $data['r_apply_area']; ?></td>
@@ -237,16 +272,35 @@
 				</tbody>
 				<tbody class='data_target'></tbody>
 			  </table>
+			  
 			  <div class='record_control'>
 			    <span class='record_result'>  
-			      顯示 <span> 1 </span> - <span> 10 </span> /  共 <span> <?php echo $data_count; ?></span>  筆
-			    </span>
+			      顯示 <span> <?php echo $data_pageing; ?> </span> /
+				  共 <span> <?php echo $data_count; ?></span>  筆
+				</span>
 				<span class='record_pages'>
-				  <a class='page_tap page_to' page='prev' > &#171; </a>
-				  <span class='page_select'></span>
-				  <a class='page_tap page_to' page='next' > &#187; </a>
+				  <a class='page_tap page_to' page='<?php echo $page_conf['prev'];?>' > &#171; </a>
+				  <span class='page_select'>
+				  <?php foreach($page_conf['list'] as $p=>$limit ): ?>
+				  <a class="page_tap <?php echo $p==$page_conf['now'] ? 'page_now':'page_to'; ?>" page="<?php echo $limit;?>" ><?php echo $p; ?></a>
+				  <?php endforeach; ?>
+				  </span>
+				  <a class='page_tap page_to' page='<?php echo $page_conf['next'];?>' > &#187; </a>
+				  ，跳至
+				  <select class='page_jump'>
+				    <optgroup label="首尾頁">
+					  <option value='<?php echo $page_conf['top'];?>' >首頁</option>
+					  <option value='<?php echo $page_conf['end'];?>' >尾頁</option>
+					</optgroup>
+					<optgroup label="-">
+					  <?php foreach($page_conf['jump'] as $p=>$limit ): ?>
+				      <option value="<?php echo $limit; ?>"  <?php echo $p==$page_conf['now'] ? 'selected':''; ?> ><?php echo 'P.'.$p; ?></option>
+				      <?php endforeach; ?>
+                    </optgroup>					  
+				  </select>
 				</span>
 			  </div>
+			  
 		    </div>
 		  </div>
 		</div>

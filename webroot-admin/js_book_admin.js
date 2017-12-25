@@ -26,6 +26,29 @@
 	});
     
 	
+	//-- 設定分頁 資料超過上萬，分頁自訂
+	$(document).off('click','.page_to');
+	
+	//-- 切頁換頁
+	$('.page_to').click(function(){
+	  if(!$(this).attr('page')){
+	    return false;
+	  }	
+	  var link = location.search.replace('/#.*?$/','').split('/');
+	  link[3] = $(this).attr('page');
+	  location.search = link.join('/');
+	});
+	
+	$('.page_jump').change(function(){
+	  if(!$(this).val()){
+	    return false;
+	  }	
+	  var link = location.search.replace('/#.*?$/','').split('/');
+	  link[3] = $(this).val();
+	  location.search = link.join('/');
+	});
+	
+	
 	//-- select singel area type
 	$('#filter_area_type').change(function(){
 	  var area_type = $(this).val();	
@@ -74,6 +97,9 @@
 	  if( $('#filter_is_check').prop('checked')){
 		filter['apply_checked'] = 1;  
 	  }
+	  if( $('#filter_is_unfinish').prop('checked')){
+		filter['apply_unfinish'] = 1;  
+	  }
 	  
 	  if($('#filter_date_type').val()){
 		if( !$('#search_date_start').val() && !$('#search_date_end').val() ){
@@ -85,7 +111,7 @@
 		filter[$('#filter_date_type').val()]['date_end'] = $('#search_date_end').val();
 	  }
 	  var pass_data = encodeURIComponent(Base64M.encode(JSON.stringify(filter)));
-	  location.href = 'index.php?act=Booking/search/'+area_types+'/'+pass_data;
+	  location.href = 'index.php?act=Booking/search/'+area_types+'/'+$('.record_pageing').val()+'/'+pass_data;
 	});
 	
 	
@@ -608,11 +634,7 @@
 	  });
 	}
 	
-	
-	
-	
-	//-- 設定分頁
-	$('.record_view').val(20).trigger('change');
+	 
   
   });	
   

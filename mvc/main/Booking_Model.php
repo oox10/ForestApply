@@ -11,6 +11,12 @@
 	  //parent::initial_user($_SESSION[_SYSTEM_NAME_SHORT]['ADMIN']['USER']);
 	}
 	
+	
+	protected $ResultCount;   // 查詢結果數量
+	protected $PageNow;       // 當前頁數 
+	protected $LengthEachPage;// 每頁筆數
+	
+	
 	//-- Get Book Checker Active Area List
 	// [input] : NULL 
 	public function Admin_Book_Get_Active_Area_List(){
@@ -36,20 +42,114 @@
 	}
 	
 	
+	//-- Admin Meta Page Data OList 
+	// [input] : $PagerMaxNum => int // 頁面按鈕最大數量
+	public function Admin_Get_Page_List( $PagerMaxNum=1 ){
+		
+	  $result_key = parent::Initial_Result('page');
+	  $result  = &$this->ModelResult[$result_key];
+      
+	  try{
+        
+		$page_show_max = intval($PagerMaxNum) > 0 ? intval($PagerMaxNum) : 1;
+		
+		
+	    $pages = array();
+		
+		$pages['all'] = array(1=>'');
+		
+		
+		// 必要參數，從ADMeta_Get_Meta_List而來
+		$this->ResultCount;   // 查詢結果數量
+	    $this->PageNow;   
+	    $this->LengthEachPage;
+		
+		$total_page = ( $this->ResultCount / $this->LengthEachPage ) + ($this->ResultCount%$this->LengthEachPage ? 1 :0 );
+		
+		// 建構分頁籤
+		for($i=1;$i<=$total_page;$i++){
+		  $pages['all'][$i] = (($i-1)*$this->LengthEachPage+1).'-'.($i*$this->LengthEachPage);
+		}
+		
+		$pages['top']   = reset($pages['all']);
+		$pages['end']   = end($pages['all']);
+		$pages['prev']  = ($this->PageNow-1 > 0 ) ? $pages['all'][$this->PageNow-1] : $pages['all'][$this->PageNow];
+		$pages['next']  = ($this->PageNow+1 < $total_page ) ? $pages['all'][$this->PageNow+1] : $pages['all'][$this->PageNow];
+		$pages['now']   = $this->PageNow;  
+		
+		$check = ($page_show_max-1)/2;
+	    if($total_page < $page_show_max){
+		  $pages['list'] = $pages['all'];  	
+		}else {  
+          if( ($this->PageNow - $check) <= 1 ){    // 抓最前面 X 個
+            $start = 0;
+		  }else if( ($this->PageNow + $check) > $total_page ){  // 抓最後面 X 個
+            $start = $total_page-(2*$check)-1;    
+		  }else{
+            $start = $this->PageNow - $check -1;
+		  }
+	      $pages['list'] = array_slice($pages['all'],$start,$page_show_max,TRUE);
+		}
+		
+		// 建構選項
+		$effect_page = count($pages['all']);
+		
+		if(count($pages['all']) > 500 ){
+			for($x=1;$x<=$effect_page;$x++){
+			  if($x==1 || $x==$effect_page || abs($x-$this->PageNow)<20){
+				$pages['jump'][$x] = $pages['all'][$x];
+			  }else if(abs($x-$this->PageNow)<100 && $x%10===0){
+				$pages['jump'][$x] = $pages['all'][$x];
+			  }else if(abs($x-$this->PageNow)<1000 && $x%200===0){
+				$pages['jump'][$x] = $pages['all'][$x];
+			  }else if(abs($x-$this->PageNow)>=1000 &&  abs($x-$this->PageNow)<10000 && $x%1000===0){
+				$pages['jump'][$x] = $pages['all'][$x];
+			  }else if(abs($x-$this->PageNow)>=10000 && $x%10000===0){
+				$pages['jump'][$x] = $pages['all'][$x];
+			  }
+			}
+		  
+		}else{
+		  $pages['jump'] = $pages['all'];	
+		}
+		unset($pages['all']);
+		
+		$result['data']   = $pages;
+		$result['action'] = true;
+		
+	  } catch (Exception $e) {
+        $result['message'][] = $e->getMessage();
+      }
+	  return $result;
+	
+	}
+	
+	
+	
 	
 	//-- Admin Book Get Book List 
 	// [input] : NULL;
-	public function Admin_Book_Get_List($BookType,$SearchString){
+	public function Admin_Book_Get_List($BookType,$Pageing='1-20',$SearchString){
 	  
 	  $result_key = parent::Initial_Result('records');
 	  $result     = &$this->ModelResult[$result_key];
-	  
 	  
 	  $area_types   = array();
 	  $apply_search = json_decode(base64_decode(str_replace('*','/',rawurldecode($SearchString))),true); 
 	  
 	  try{
 	    
+		
+		// 計算頁數
+		$Pageing = trim($Pageing);
+		if(!preg_match('/^\d+\-\d+$/', $Pageing )) $Pageing = '1-20';	
+		list($p_start,$p_end) = explode('-',$Pageing);
+		$this->LengthEachPage = $p_end - $p_start + 1;
+		$this->PageNow     	  = intval($p_end/($this->LengthEachPage));   
+	    $this->ResultCount    = 0;
+		
+		
+		// 取得資料
 		$area_list = array(); // 存放區域資料
 		$area_sets = array(); // 存放區域索引
 		
@@ -76,7 +176,7 @@
 		// 搜尋條件
 		$condition = array();
 		$orderby   = '_time_update DESC';
-		$limitto   = 'LIMIT 0,20';
+		
 		
 		// 類型篩選
 		if(count($area_types)){
@@ -112,16 +212,27 @@
 		  }
 		}
 		
-		
 		// 取得篩選後申請資料
 		$records = array(); // 存放列表資料
-		
 		$sqlsearch = count($condition) ? join(' AND ',$condition) : ('_stage < 5');
 		
-		$DB_BOOK = $this->DBLink->prepare(SQL_AdBook::SELECT_AREA_BOOKING(array_keys($area_list),$sqlsearch,$orderby));
+		
+		// 計算總數
+		$DB_BOOK = $this->DBLink->prepare(SQL_AdBook::COUNT_AREA_BOOKING(array_keys($area_list),$sqlsearch));
 		if(!$DB_BOOK->execute()){
 		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
 		}
+		$this->ResultCount = $DB_BOOK->fetchcolumn();
+		
+		
+		// 執行查詢
+		$sqllimit = [($this->PageNow-1)*$this->LengthEachPage,$this->LengthEachPage];
+		$DB_BOOK = $this->DBLink->prepare(SQL_AdBook::SELECT_AREA_BOOKING(array_keys($area_list),$sqlsearch,$orderby,$sqllimit));
+		if(!$DB_BOOK->execute()){
+		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
+		}
+		
+		
 		while($tmp = $DB_BOOK->fetch(PDO::FETCH_ASSOC)){
 			
 		  if(isset($area_type)){
@@ -173,6 +284,9 @@
 		$result['data']['list']   = $records;	
 		$result['data']['filter'] = $apply_search;
 		$result['data']['limit']  = $BookType;
+		$result['data']['count']  = $this->ResultCount ;
+		$result['data']['start']  = $p_start;
+		$result['data']['range']  = '1-'.($p_end-$p_start+1);
 		
         $result['session']['ADAREASMAP'] = $area_sets;	
         		

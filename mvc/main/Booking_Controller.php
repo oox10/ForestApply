@@ -27,18 +27,20 @@
 	/*[ Book Action Set ]*/ 
 	
 	// PAGE: book initial page
-	public function index($AreaType='ALL',$SearchString=''){
+	public function index($AreaType='ALL',$Pageing='1-20',$SearchString=''){
 	  $this->Model->GetUserInfo();	
 	  $this->Model->Admin_Book_Get_Active_Area_List();
-	  $this->Model->Admin_Book_Get_List($AreaType,$SearchString);
+	  $this->Model->Admin_Book_Get_List($AreaType,$Pageing,$SearchString);
+	  $this->Model->Admin_Get_Page_List(5);
 	  self::data_output('html','admin_book',$this->Model->ModelResult);
 	}
 	
 	// PAGE: book search page
-	public function search($AreaType='ALL',$SearchString=''){
+	public function search($AreaType='ALL',$Pageing='1-20',$SearchString=''){
 	  $this->Model->GetUserInfo();	
 	  $this->Model->Admin_Book_Get_Active_Area_List();
-	  $this->Model->Admin_Book_Get_List($AreaType,$SearchString);
+	  $this->Model->Admin_Book_Get_List($AreaType,$Pageing,$SearchString);
+	  $this->Model->Admin_Get_Page_List(5);
 	  self::data_output('html','admin_book',$this->Model->ModelResult);
 	}
 	
