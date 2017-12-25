@@ -129,7 +129,7 @@
 			  <h1>申請單查詢</h1>		
               <div class='form_raw' data-field='booking_code' >
 			    <label>申請編號</label>
-				<input type='text' id='applied_code'  placeholder="8個英數字母"   />
+				<input type='text' id='applied_code'  placeholder="8個英數字元；舊系統為R開頭9位英數字元"   />
 			  </div>	
 			  <div class='form_raw ' data-field='booking_check'>
 			    <label>申請人EMAIL</label>
@@ -153,9 +153,9 @@
 			    <label>申請人信箱</label>
 				<input type='email' placeholder="電子郵件信箱" />
 			  </div>
-			  <div class='form_raw fail' data-field='booking_check'>
+			  <div class='form_raw' data-field='booking_check'>
 			    <label>申請進入日期</label>
-				<input type='text' placeholder="西元年月日共10碼" readonly=true/>
+				<input type='text' placeholder="西元年月日共10碼" />
 			  </div>
 			  <div class='form_func'>
 			    <a class='option return' id='act_gohome' > 回到首頁 </a>

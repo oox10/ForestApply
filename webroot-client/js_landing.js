@@ -76,7 +76,7 @@
 	  $('.form_raw.fail').removeClass('fail');
 	  var applied = {};
 	  
-	  if( !$('#applied_code').val() || $('#applied_code').val().length !=8 ){
+	  if( !$('#applied_code').val() || ($('#applied_code').val().length !=8 && $('#applied_code').val().length !=9)){
 		$('#applied_code').focus().parents('.form_raw').addClass('fail');
 		system_message_alert('','請輸入正確的申請編號')  
 	    return false;

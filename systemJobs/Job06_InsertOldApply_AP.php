@@ -186,6 +186,40 @@
 		  $_time_update = $apply_date.' 00:00:00';
 		  $_checker		= '';
 		  
+		  switch($_status){
+			case '收件待審':
+            
+            case '申請核准':
+			
+			case '正取送審'
+              
+			收件待審
+			申請核准
+			
+			正取送審
+			備取送審
+			抽籤未中
+			
+			正取補件
+			備取補件
+			正取補件送審
+			備取補件送審
+			補件駁退
+			
+			備取等待
+			備取成功
+			備取失敗
+			
+			申請取消
+			申請駁退
+			申請註銷
+			
+		  }
+		  
+		  
+		  
+		  
+		  
 		  $db_update->bindValue(':am_id',$am_id);
 		  $db_update->bindValue(':apply_code',$apply_code);
 		  $db_update->bindValue(':apply_date',$apply_date);
@@ -211,7 +245,6 @@
 		  $db_update->bindValue(':_time_update',$_time_update);
 		  $db_update->bindValue(':_checker',$_checker);
 		  
-		  
 		  if(!$db_update->execute()){
 		    
 			file_put_contents('import.txt',$apply_file."\n",FILE_APPEND);
@@ -221,6 +254,9 @@
 		  }else{
 			echo "０";  
 		  }
+		
+		  
+		
 		}
 	  }
 	  

@@ -362,8 +362,8 @@
   echo "start process - ".date('c')."start: \n";
   
   $today = intval(date('Ymd'));
-  $time_start = strtotime('2017-01-01');
-  $time_finish= strtotime('2017-11-01');
+  $time_start = strtotime('2017-11-01');
+  $time_finish= strtotime('2017-12-25');
   
   try{
 	  
