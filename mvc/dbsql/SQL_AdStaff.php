@@ -49,6 +49,14 @@
 	  return $SQL_String;
 	}
 	
+	//-- Admin Staff : Get Group Account
+	public static function ADMIN_STAFF_SELECT_GROUP_STAFF(){
+	  $SQL_String = "SELECT uno,user_id,user_status,date_open,date_access,user_name,user_mail,user_staff,user_organ,user_tel FROM  permission_matrix LEFT JOIN user_login ON uid=uno LEFT JOIN user_info ON user_info.uid=user_login.uno WHERE master=1 AND gid =:gid;";
+	  return $SQL_String;
+	}
+	
+	
+	
 	//-- Admin Staff : Get Staff Output
 	public static function ADMIN_STAFF_SELECT_OUTPUT_STAFF(){
 	  $SQL_String = "SELECT user_id, user_name, user_organ, user_tel, user_mail, user_education, user_age, user_note, date_register,date_access,user_status FROM  user_login LEFT JOIN user_info ON uid=uno WHERE 1;";

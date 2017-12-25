@@ -60,6 +60,10 @@
 		    (array_key_exists('R01',$this->USER->PermissionNow['group_roles']) && in_array($this->USER->PermissionNow['group_code'],array('adm','forest')) )    ){
 		  // 查詢資料庫
 		  $DB_OBJ = $this->DBLink->prepare(parent::SQL_Permission_Filter(SQL_AdStaff::ADMIN_STAFF_SELECT_ALL_STAFF()));	 
+		}else if ( array_key_exists('R01',$this->USER->PermissionNow['group_roles']) ){
+		  // 查詢資料庫
+		  $DB_OBJ = $this->DBLink->prepare(parent::SQL_Permission_Filter(SQL_AdStaff::ADMIN_STAFF_SELECT_GROUP_STAFF()));	  	
+		  $DB_OBJ->bindValue(':gid',$this->USER->PermissionNow['group_code']);
 		}else{
 	      // 查詢資料庫
 		  $DB_OBJ = $this->DBLink->prepare(parent::SQL_Permission_Filter(SQL_AdStaff::ADMIN_STAFF_SELECT_TARGET_STAFF()));	
