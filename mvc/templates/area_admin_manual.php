@@ -61,17 +61,18 @@
 			  <?php endif; ?>
 			</ul>
 		  </li>
+		  <?php if($admin_filter || (isset($_SESSION[_SYSTEM_NAME_SHORT]['ADMIN']['PERMISSION'][strtolower('Archive')]) && intval($_SESSION[_SYSTEM_NAME_SHORT]['ADMIN']['PERMISSION'][strtolower('Archive')])!=0) ): ?>	  
 		  <li class='option_group'>
 		    <div class='opgroup_name '>
 			  <i class="fa fa-database" aria-hidden="true"></i> <span>知識管理</span>
 			</div>
 		    <ul class='group_manuel'>
-			  <?php //if($admin_filter || (isset($_SESSION[_SYSTEM_NAME_SHORT]['ADMIN']['PERMISSION'][strtolower('Booking')]) && intval($_SESSION[_SYSTEM_NAME_SHORT]['ADMIN']['PERMISSION'][strtolower('Booking')])!=0) ): ?>	  
 			  <li  title=''	 class='option func_activate'	id='Archive'	><i class="fa fa-archive" aria-hidden="true"></i> <span >檔案資料庫</span> </li>
 			  <li  title=''	 class='option func_activate'	id='Classify'	><i class="fa fa-folder-open-o" aria-hidden="true"></i> <span >類別編輯</span> </li>
-			  <?php //endif; ?>
+			  
 			</ul>
 		  </li>
+		  <?php endif; ?>
 		  <li>
 		    <div class='opgroup_name '>
 			  <i class="fa fa-tasks" aria-hidden="true"></i> <span>使用者功能</span>
