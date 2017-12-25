@@ -23,7 +23,7 @@
 	}
 	
 	//-- Admin Book : Get Access Areas booking
-	public static function SELECT_AREA_BOOKING($AdminAreas=array(),$Condition='1',$OrderBy='_time_update DESC'){
+	public static function SELECT_AREA_BOOKING($AdminAreas=array(),$Condition='_stage < 5',$OrderBy='_time_update DESC'){
 	  $SQL_String = "SELECT area_booking.*,area_main.area_type FROM area_booking LEFT JOIN area_main ON ano=am_id WHERE am_id IN(".join(',',$AdminAreas).") AND ".$Condition." AND area_booking._keep=1 ORDER BY ".$OrderBy." ;";
 	  return $SQL_String;
 	}

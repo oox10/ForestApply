@@ -530,61 +530,7 @@
 			</h1>
 		  </div>
 		  
-		  <!-- 文件預覽 -->
-		  <?php 
-			/*
-		  <div class='booking_step' id='submit_process'>
-		    <h1>
-			  <span class='step_title'>申請步驟 4 - 申請資料處理.. </span>
-			  <span class='step_option'></span>
-			</h1>
-			
-			<section>
-				<h2 >檢核申請資料 </h2>
-				<div class='submit_step_info' id="check_submit">
-				  <span class='process_info' ></span>
-				  <span class='process_status'></span>
-				</div>
-				
-				<h2 >寄發申請確認信 </h2>
-				<div  class='submit_step_info'  id="sent_accept_mail">
-				  <span class='process_info' ></span>
-				  <span class='process_status'></span>
-				</div>
-				
-				<h2> 申請資料預覽 </h2>
-				<div  class='submit_step_info'  id="preview_submit">
-				  <div  class='submit_step_info'  id="apply_content">
-				    <h3 >1. 申請資料 </h3>
-					<span class='process_info' ></span>
-				    <span class='process_status'></span>
-				  </div>
-				 <div  class='submit_step_info'  id="apply_member">
-				    <h3 >3. 隊員名單 </h3>
-				    <span class='process_info' ></span>
-				    <span class='process_status'></span>
-				  </div>
-				</div>
-			</section>
-			
-			<pre>
-			申請文件預覽
-			
-			顯示遞交處理中與步驟..
-			1.檢查欄位
-			2.後端建立申請帳號
-			3.資料歸檔
-			4.發送確認信
-			5.完成申請
-			
-			---------------------------
-			失敗: 回到上一步，並顯示錯誤訊息 標示錯誤位置
-			---------------------------
-			成功: 跳至等待審核結果狀態
-			</pre>
-		  </div>
-		  */
-		  ?>
+		  
 		  
 		  
 		  
@@ -630,32 +576,7 @@
 			</section>
 			
 			
-			<?php 
-			/*
-			<pre>
-			
-			顯示審核進度
-			
-			申請文件預覽
-			
-			1.申請遞交 / 2.通知管理者審核 / 3.管理者處理中 / 
-			- 4.審核退回 | 審核完成等待抽籤 | 審核完成
-			
-			顯示審核結果
-			a. 通過
-			b. 補件
-			  - 補件原因 >> 補件按鈕
-			
-			c. 不通過
-			  - 資料審核不通過
-			  - 超過上限，抽籤結果未中
-			    
-			其他功能
-			重新發送通知信
-			</pre>
-			*/
-			?>
-			
+			 
 			
 		  </div>
 		  <iframe id="upload_target" name="upload_target" src="loader.php" style='display:none;'></iframe>	

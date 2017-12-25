@@ -1,10 +1,10 @@
 <?php
-  //NTU 自動簽到退作業
+  //保護區抓取
   date_default_timezone_set("Asia/Taipei");
   
   define('_SYSTEM_ROOT_PATH',dirname(__FILE__).'\\');
   
-  class ntulogin_2015{
+  class forest_sync{
 	  
 	protected  $_USER_NAME = '';
 	protected  $_USER_PASS = '';
@@ -18,6 +18,7 @@
 	public      $stpe_list     	 = array();
 	
 	public      $search_date     = '';
+	public      $search_time     = 0;
 	
 	function __construct($UserName,$UserPASS){
 	  $this->_USER_NAME = $UserName; 
@@ -28,9 +29,7 @@
 		$this->stpe_list     = array('btnLogin'=>0,'Submit'=>0,'btnSignOut'=>0,'btnLogout2myntu'=>0);
 	  }	
 	  file_put_contents(_SYSTEM_ROOT_PATH.'cookie_tmp\cookie.txt','');  
-	  
-	  $this->search_date     = (date('Y')-1911).'-'.date('m').'-'.date('d',strtotime('-3 day'));
-	  
+	  $this->search_time     = strtotime('now');
 	}
 	
 	
@@ -50,7 +49,7 @@
 	public function load_page($Address,$Refer,$PostField=array()){
 	  echo date('Y-m-d H:i:s')."-----------------------------\n";
 	  echo "PAGE : ".$Address."\n";
-	  echo "Post : ".join('&',$PostField)."\n";
+	  //echo "Post : ".join('&',$PostField)."\n";
 	  
 	  $this->page_content    = '';	
 	  $this->page_refer 	 = $Address;
@@ -85,7 +84,7 @@
 	  file_put_contents(_SYSTEM_ROOT_PATH.'pages_tmp\page_'.$this->page_count.'.html',$this->page_content);
 	  echo "SAVE : ".'page_'.$this->page_count.'.html'."\n";
 	  $this->page_count++;
-	  sleep(2);
+	  //sleep(2);
 	  return 1;
 	}
 	
@@ -147,8 +146,11 @@
 			$this->page_post[] = 'ibLogin.y=53';	
 			break;
 			
-		  case 'ADMReservedApply.aspx':
-		    $this->page_form['address'] = 'http://pa.forest.gov.tw/ForestApply/admin/ADMReservedApply.aspx'; 	
+		  case 'ADMProtectedApply.aspx':
+		   
+            $this->search_date = (date('Y',$this->search_time)-1911).'-'.date('m-d',$this->search_time);
+		
+		    $this->page_form['address'] = 'http://pa.forest.gov.tw/ForestApply/admin/ADMProtectedApply.aspx'; 	
             $this->page_post[] = 'ctl00%24ContentPlaceHolder1%24searchApplyDate='.$this->search_date ; 
 			$this->page_post[] = 'ctl00%24ContentPlaceHolder1%24QueryBtn='.rawurlencode('查詢'); 
 			break;
@@ -163,6 +165,73 @@
 	}
 	
 	
+	public function fetch_apply(){
+	 	  
+	  try{
+	    
+		if(!$this->page_content){
+		  throw new Exception('NO PAGE CONTENT');  	
+		}
+        
+		
+		$apply_data = ['application'=>[],'members'=>[]];
+		
+		$page_content = preg_replace('/[\r\n\t\s]+/',' ',$this->page_content);
+		
+		// 申請資料
+		if(preg_match_all("/<td a.*?>(.*?)<\/td> <td>(.*?)<\/td>/",$page_content,$matchs,PREG_SET_ORDER)){
+		  foreach($matchs as $m){
+			$apply_data['application'][trim(str_replace(':','',$m[1]))] = trim(strip_tags($m[2]));  
+		  }
+		}else{
+		  preg_match_all("/<td a.*?>(.*?)<\/td> <td>(.*?)<\/td>/",$page_content,$matchs,PREG_SET_ORDER);
+		  foreach($matchs as $m){
+			$apply_data['application'][trim(str_replace(':','',$m[1]))] = trim(strip_tags($m[2]));  
+		  }
+		}
+		
+		// 申請欄位
+		if(preg_match_all("/<td align=\"right\" height=\"24\" valign=\"top\" nowrap>(.*?)<\/td> <td colspan=\"3\">(.*?)<\/td>/",$page_content,$matchs,PREG_SET_ORDER)){
+		  foreach($matchs as $m){
+			$apply_data['application'][trim(str_replace(':','',$m[1]))] = trim(strip_tags($m[2]));
+			//file_put_contents('logs.txt',$m[1].':'.strip_tags($m[2])."\n",FILE_APPEND);  
+		  }
+		}
+		// 申請成員
+		if(preg_match("/<table .*? id=\"ctl00_ContentPlaceHolder1_fv_gvMember\".*?>(.*?)<\/table>/",$page_content,$membertable)){
+		  if(preg_match_all("/<td .*?>(.*?)<\/td>/",$membertable[1],$matchs,PREG_SET_ORDER)){
+		  	$member=[];
+			foreach($matchs as $m){  
+			  if(preg_match('/span/',$m[1])){
+			    $member = array_merge($member,explode(';',strip_tags(preg_replace('/<br \/>/',';',$m[1])))); 
+			    //file_put_contents('logs.txt',join(';',$member)."\n",FILE_APPEND);
+			    $apply_data['members'][] = $member;
+				$member = [];
+				continue;
+			  }
+			  $member[] = trim($m[1]);
+			}
+		  }
+		}
+		
+		
+		if(!isset($apply_data['application']['申請日期'])){
+		  
+		  file_put_contents('logs.txt',print_r($page_content,true),FILE_APPEND);
+		  file_put_contents('logs.txt',print_r($apply_data,true),FILE_APPEND);
+		  exit(1);
+		}
+		
+		$applied_file = date('Ymd',strtotime($apply_data['application']['申請日期'])).'-'.$apply_data['application']['申請編號'].'.json';
+		file_put_contents('applied_record/'.$applied_file,json_encode($apply_data,JSON_UNESCAPED_UNICODE));
+		
+		echo $applied_file.' - got.'."\n";
+		
+	  } catch (Exception $e) {
+        echo 'ERROR:'.$e->getMessage().' '.date('Ymd H:i:s')."\n";
+      }
+	}
+	
 	public function analysis_apply(){
 	 	  
 	  try{
@@ -171,38 +240,7 @@
 		  throw new Exception('NO PAGE CONTENT');  	
 		}
         
-		// initial page
-		self::initial_variable();
 		
-		// get next address
-		if(preg_match('/<form.*?action="?(.*?)"?\s+/',$this->page_content,$action)){
-		  $this->page_form['action'] = $action[1];  
-		}
-	    
-		
-		if(preg_match('/<title>(.*?)<\/title>/',preg_replace('/[\r\n]+/',' ',$this->page_content),$title)){
-		  $this->page_form['title'] = trim($title[1]);
-		}
-		
-		if(preg_match('/<input type="submit".*?id="(.*?)"/',$this->page_content,$submit)){
-		  $this->page_form['submit'] = $submit[1];
-		}
-		
-		echo "CONT : ";
-		echo mb_convert_encoding($this->page_form['title'],'BIG5','UTF8')." / " .$this->page_form['action']."\n\n";
-		
-		// get post data
-		preg_match_all('/<input type="(hidden|submit)".*?name="(.*?)".*?value="(.*?)"/',$this->page_content,$matchs,PREG_SET_ORDER);
-	    $page_post = array(); 
-		// built post data
-	    if(count($matchs)){
-		  foreach($matchs as $post){
-            
-			if($post[2]!='__EVENTTARGET' && $post[2]!='__EVENTARGUMENT' &&  $post[2]!='ctl00$ContentPlaceHolder1$QueryBtn' &&  $post[2]!='ctl00$ContentPlaceHolder1$ExportBtn' ){
-			  $this->page_post[] = $post[2].'='.rawurlencode($post[3]);	
-			}
-		  }    
-	    }
 	    
 		// get record data
 		//__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Select$10&#39;)
@@ -218,19 +256,12 @@
                         </td><td align="center">正取送審</td><td align="center" style="width:40px;"><a href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv&#39;,&#39;Select$10&#39;)">審核</a></td>
 		</tr>
 		*/
-		echo "analysis:\n";
+		echo "analysis page link:\n";  //分析頁籤
 		$apply_link = array();
 		$page_link = array();
 		if(preg_match_all('/__doPostBack\(&#39;(.*?)&#39;,&#39;(.*?)&#39;\)/',$this->page_content,$apply_rows,PREG_SET_ORDER)){
 		  foreach($apply_rows as $apply){
-            
-			if(preg_match('/^Select/',$apply[2])){
-			  $apply_link[] = [
-			    '__EVENTTARGET='.rawurlencode($apply[1]),
-			    '__EVENTARGUMENT='.rawurlencode($apply[2]),
-			    'ctl00%24ContentPlaceHolder1%24searchApplyDate='.$this->search_date,
-			  ];
-			}else if(preg_match('/^Page/',$apply[2])){
+            if(preg_match('/^Page/',$apply[2])){
 			  $page_link[] = [
 			    '__EVENTTARGET='.rawurlencode($apply[1]),
 			    '__EVENTARGUMENT='.rawurlencode($apply[2]),
@@ -242,26 +273,79 @@
 		}
 		
 		$now_page = 1;
-		do{
+		$page_count = count($page_link);
+		for($p=0 ; $p<=$page_count ; $p++ ){
+		    
+			
+			// 建立 post data
+			
+			// initial page
+			self::initial_variable();
+			
+			// get next address
+			if(preg_match('/<form.*?action="?(.*?)"?\s+/',$this->page_content,$action)){
+			  $this->page_form['action'] = $action[1];  
+			}
+			
+			
+			if(preg_match('/<title>(.*?)<\/title>/',preg_replace('/[\r\n]+/',' ',$this->page_content),$title)){
+			  $this->page_form['title'] = trim($title[1]);
+			}
+			
+			if(preg_match('/<input type="submit".*?id="(.*?)"/',$this->page_content,$submit)){
+			  $this->page_form['submit'] = $submit[1];
+			}
+			
+			echo "CONT : ";
+			echo mb_convert_encoding($this->page_form['title'],'BIG5','UTF8')." / " .$this->page_form['action']."\n\n";
+			
+			// get post data
+			preg_match_all('/<input type="(hidden|submit)".*?name="(.*?)".*?value="(.*?)"/',$this->page_content,$matchs,PREG_SET_ORDER);
+			$page_post = array(); 
+			// built post data
+			if(count($matchs)){
+			  foreach($matchs as $post){
+				
+				if($post[2]!='__EVENTTARGET' && $post[2]!='__EVENTARGUMENT' &&  $post[2]!='ctl00$ContentPlaceHolder1$QueryBtn' &&  $post[2]!='ctl00$ContentPlaceHolder1$ExportBtn' ){
+				  $this->page_post[] = $post[2].'='.rawurlencode($post[3]);	
+				}
+			  }    
+			}
+			
+			
+			// 分析申請資料連結
+		    echo "\nanalysis apply page:\n";
+			$apply_link = array();
+			if(preg_match_all('/__doPostBack\(&#39;(.*?)&#39;,&#39;(.*?)&#39;\)/',$this->page_content,$apply_rows,PREG_SET_ORDER)){
+			  foreach($apply_rows as $apply){
+				if(preg_match('/^Select/',$apply[2])){
+				  $apply_link[] = [
+					'__EVENTTARGET='.rawurlencode($apply[1]),
+					'__EVENTARGUMENT='.rawurlencode($apply[2]),
+					'ctl00%24ContentPlaceHolder1%24searchApplyDate='.$this->search_date,
+				  ];
+				}
+			  } 
+			}
+			
+			// access apply record 
+		    echo "\nPaser Page.".$now_page." : ".count($apply_link)." Applied Data:\n";
+		    foreach($apply_link as $i => $query_post){
+		      echo "Access Apply ".($i+1).':';
+		      $this->load_page($this->page_refer,$this->page_refer,array_merge($this->page_post,$query_post));
+		      $this->fetch_apply();
+		      //sleep(1);
+		    }
 		  
-		  // access apply record 
-		  echo "Paser Page.".$now_page." : ".count($apply_link)." Applied Data:\n";
-		  foreach($apply_link as $i => $query_post){
-		    echo "Access Apply ".($i+1).':';
-		    $this->load_page($this->page_refer,$this->page_refer,array_merge($this->page_post,$query_post));
-		  
-		    exit(1);
-		  }
-		  
-		  // 進入下一頁
-		  $next_page_post = array_shift($page_link);
-		  $now_page += 1;  
-          echo "\nChange Page.\n";
-		  $this->load_page($this->page_refer,$this->page_refer,array_merge($this->page_post,$page_link));			
-		  
-		}while(count($page_link));
+		    // 進入下一頁
+		    if(count($page_link)){
+			  $next_page_post = array_shift($page_link);
+		      $now_page += 1;  
+              echo "\nChange Page.\n";
+		      $this->load_page($this->page_refer,$this->page_refer,array_merge($this->page_post,$next_page_post));	
+			}
+		}
 		
-	    
 		// 換頁 :繼續
 		// 設定換頁
 		//$this->page_next = ($this->page_form['address']) ? true : false;
@@ -269,25 +353,22 @@
 	  } catch (Exception $e) {
         echo 'ERROR:'.$e->getMessage().' '.date('Ymd H:i:s')."\n";
       }
+	
 	}
   
-	
-	
   }
   
-  
-  
-  
-  echo "ntu auto login 2015 v2  .\n";
+  echo "forest syncboot v20171218  .\n";
   echo "start process - ".date('c')."start: \n";
   
   $today = intval(date('Ymd'));
+  $time_start = strtotime('2014-08-20');
+  $time_finish= strtotime('2017-12-30');
   
   try{
-	
-    
+	  
 	// 執行登入
-    $hsiao = new ntulogin_2015('ntu10','1010');
+    $hsiao = new forest_sync('ntu10','1010');
     $hsiao->load_page('http://pa.forest.gov.tw/ForestApply/admin/ADMLogin.aspx','http://pa.forest.gov.tw/ForestApply/admin/ADMLogin.aspx',[]);
     $hsiao->analysis_page();  
     if($hsiao->page_next){
@@ -295,28 +376,26 @@
       $hsiao->load_page($hsiao->page_form['address'],$hsiao->page_refer,$hsiao->page_post);
     }
    
-    // 執行主頁
-    $hsiao->load_page('http://pa.forest.gov.tw/ForestApply/admin/ADMReservedApply.aspx','http://pa.forest.gov.tw/ForestApply/admin/ADMMain.aspx',[]); 
-	$hsiao->analysis_page(); 
-	if($hsiao->page_next){
-	  sleep(5);	
-      $hsiao->load_page($hsiao->page_form['address'],$hsiao->page_refer,$hsiao->page_post); //執行查詢
-      $hsiao->analysis_apply();  
     
+	do{
 	  
+	  $hsiao->search_time = $time_start;
+	  
+	  // 執行主頁
+      $hsiao->load_page('http://pa.forest.gov.tw/ForestApply/admin/ADMProtectedApply.aspx','http://pa.forest.gov.tw/ForestApply/admin/ADMMain.aspx',[]); 
+	
+	  $hsiao->analysis_page(); 
+	  if($hsiao->page_next){
+	    sleep(1);	
+        $hsiao->load_page($hsiao->page_form['address'],$hsiao->page_refer,$hsiao->page_post); //執行查詢
+        $hsiao->analysis_apply();
+	  }
+	  
+	  $time_start = strtotime('+1 day',$time_start);
+	    
+	}while($time_start < $time_finish);
 	
 	
-	}
-	
-	/*
-	while($hsiao->page_next){
-	  sleep(5);	
-      $hsiao->load_page($hsiao->page_form['address'],$hsiao->page_refer,$hsiao->page_post);	
-	  $hsiao->analysis_main(); 
-      	  
-	  exit(1);
-	}
-	*/
 	
 	
 	

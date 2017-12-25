@@ -367,7 +367,7 @@
 	  try{    
 		
 		// 檢查申請序號
-		if( !isset($user_data['code']) ||  !preg_match('/^[\w\d]{8}$/',$user_data['code'])  ){
+		if( !isset($user_data['code']) ||  !preg_match('/^[\w\d]{8,10}$/',$user_data['code'])  ){
 	      throw new Exception('_CLIENT_ERROR_APPLICATION_CODE_FAIL');
 	    }
 		
@@ -410,7 +410,7 @@
 	  try{    
 		
 		// 檢查申請序號
-		if( !strlen($ApplyCode) ||  !preg_match('/^[\w\d]{8}$/',$ApplyCode)  ){
+		if( !strlen($ApplyCode) ||  !preg_match('/^[\w\d]{8,10}$/',$ApplyCode)  ){
 	      throw new Exception('_CLIENT_ERROR_APPLICATION_CODE_FAIL');
 	    }
 		
@@ -619,7 +619,7 @@
 		}
 		
 		// 檢查申請序號
-		if($ApplyCode && preg_match('/^[\w\d]{8}$/',$ApplyCode) ){
+		if($ApplyCode && preg_match('/^[\w\d]{8,10}$/',$ApplyCode) ){
 		  // 取得申請資料
 		  $booking = array();
 		  $DB_OBJ = $this->DBLink->prepare(SQL_Client::GET_APPLICATION_DATA());
@@ -732,7 +732,7 @@
 	  
 	  try{
 		// 檢查參數
-		if(!preg_match('/^[\w\d]{8}$/',$ApplyCode)){
+		if(!preg_match('/^[\w\d]{8,10}$/',$ApplyCode)){
 		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 		}
 		$apply_code = $ApplyCode;
@@ -795,7 +795,7 @@
 		// 4. $apply_data['attach'] 附件              array(  )
 		
 		// 檢查申請序號
-		if(!preg_match('/^[\w\d]{8}$/',$ApplyCode)){
+		if(!preg_match('/^[\w\d]{8,10}$/',$ApplyCode)){
 		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 		}
 		
@@ -994,7 +994,7 @@
 	  try{
 		
 		// 檢查參數
-		if(!preg_match('/^[\w\d]{8}$/',$ApplyCode)){
+		if(!preg_match('/^[\w\d]{8,10}$/',$ApplyCode)){
 		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 		}
 		
@@ -1195,7 +1195,7 @@
 	  try{
 		
 		// 檢查參數
-		if(!preg_match('/^[\w\d]{8}$/',$ApplyCode)){
+		if(!preg_match('/^[\w\d]{8,10}$/',$ApplyCode)){
 		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 		}
 		$apply_code = $ApplyCode;
@@ -1332,7 +1332,7 @@
 	  try{
 		
         // 檢查參數
-		if(!preg_match('/^[\w\d]{8}$/',$ApplyCode)){
+		if(!preg_match('/^[\w\d]{8,10}$/',$ApplyCode)){
 		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 		}
 		$apply_code = $ApplyCode;
@@ -1461,7 +1461,7 @@
 	  try{
 		
 		// 檢查申請序號
-		if(!preg_match('/^[\w\d]{8}$/',$ApplyCodeSubmit)){
+		if(!preg_match('/^[\w\d]{8,10}$/',$ApplyCodeSubmit)){
 		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 		}
 		
@@ -1540,7 +1540,7 @@
 	  try{
 		
 		// 檢查申請序號
-		if(!preg_match('/^[\w\d]{8}$/',$ApplyCodeSubmit)){
+		if(!preg_match('/^[\w\d]{8,10}$/',$ApplyCodeSubmit)){
 		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 		}
 		
@@ -1653,7 +1653,7 @@
 	  try{
 		
 		// 檢查申請序號
-		if(!preg_match('/^[\w\d]{8}$/',$ApplyCodeSubmit)){
+		if(!preg_match('/^[\w\d]{8,10}$/',$ApplyCodeSubmit)){
 		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 		}
 		
@@ -1712,7 +1712,7 @@
 	  try{
 		
 		// 檢查申請序號
-		if(!preg_match('/^[\w\d]{8}$/',$ApplyCodeSubmit)){
+		if(!preg_match('/^[\w\d]{8,10}$/',$ApplyCodeSubmit)){
 		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 		}
 		
@@ -1930,7 +1930,7 @@
 	  try{  
 		
 		// 檢查序號
-	    if(!preg_match('/^[\d\w]{8}$/',$DataCode)){
+	    if(!preg_match('/^[\d\w]{8,10}$/',$DataCode)){
 		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 		}
 		

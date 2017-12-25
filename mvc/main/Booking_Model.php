@@ -116,7 +116,7 @@
 		// 取得篩選後申請資料
 		$records = array(); // 存放列表資料
 		
-		$sqlsearch = count($condition) ? join(' AND ',$condition) : 1;
+		$sqlsearch = count($condition) ? join(' AND ',$condition) : ('_stage < 5');
 		
 		$DB_BOOK = $this->DBLink->prepare(SQL_AdBook::SELECT_AREA_BOOKING(array_keys($area_list),$sqlsearch,$orderby));
 		if(!$DB_BOOK->execute()){
@@ -195,7 +195,7 @@
 	  try{  
 		
 		// 檢查序號
-	    if(!preg_match('/^[\d\w]{8}$/',$DataCode)){
+	    if(!preg_match('/^[\d\w]{8,10}$/',$DataCode)){
 		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 		}
 		
@@ -292,7 +292,7 @@
 		
 		
 		// 檢查序號
-	    if(!preg_match('/^[\d\w]{8}$/',$DataCode)){
+	    if(!preg_match('/^[\d\w]{8,10}$/',$DataCode)){
 		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 		}
 		
@@ -486,7 +486,7 @@
 		$apply_stage = intval($StageNo); 
 		
 		// 檢查序號
-	    if(!preg_match('/^[\d\w]{8}$/',$DataCode)){
+	    if(!preg_match('/^[\d\w]{8,10}$/',$DataCode)){
 		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 		}
 		
@@ -558,7 +558,7 @@
 	  try{  
 		
 		// 檢查序號
-	    if(!preg_match('/^[\d\w]{8}$/',$DataCode)){
+	    if(!preg_match('/^[\d\w]{8,10}$/',$DataCode)){
 		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 		}
 		
@@ -680,7 +680,7 @@
 	  try{  
 		
 		// 檢查序號
-	    if(!preg_match('/^[\d\w]{8}$/',$DataCode)){
+	    if(!preg_match('/^[\d\w]{8,10}$/',$DataCode)){
 		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 		}
 		
@@ -1196,7 +1196,7 @@
 		
 		
 		// 檢查序號
-	    if(!preg_match('/^[\d\w]{8}$/',$DataCode)){
+	    if(!preg_match('/^[\d\w]{8,10}$/',$DataCode)){
 		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 		}
 		

@@ -6,4 +6,6 @@ systemUpload/*
 systemFile/document/*
 systemFile/license/*
 systemFile/member/*
+systemJobs/applied_record/*
+systemJobs/pages_tmp/*
 *.log
