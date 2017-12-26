@@ -180,7 +180,7 @@
 		  $_status  = isset($old_apply['application']['狀態']) ? $old_apply['application']['狀態'] : '';
 		  $_final   = isset($old_apply['application']['狀態']) ? $old_apply['application']['狀態'] : '';;
 		  $_stage   = $import_stage;
-		  $_progres = ['client'=>[ 0=>[], 1=>[["time"=>"2017-12-25 00:00:00","status"=>"系統匯入","note"=>"","logs"=>""]], 2=>[], 3=>[], 4=>[], 5=>[["time"=>"2017-12-25 00:00:00","status"=>$_final,"note"=>"","logs"=>""]] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]],'admin'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
+		  $_progres = ['client'=>[ 0=>[], 1=>[["time"=>date('Y-m-d H:i:s'),"status"=>"系統匯入","note"=>"","logs"=>""]], 2=>[], 3=>[], 4=>[], 5=>[]],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]],'admin'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
 		  
 		  $_time_create = $apply_date.' 00:00:00';
 		  $_time_update = $apply_date.' 00:00:00';
@@ -189,19 +189,38 @@
 		  switch($_status){
 			case '收件待審':
             
-            case '申請核准':
+			$apply_process['client'][1]   = [array('time'=>date('Y-m-d H:i:s'),'status'=>'收件待審','note'=>'申請項目需抽籤','logs'=>'')];
+		    $apply_process['review'][2][] = array('time'=>$bollet_date,'status'=>'系統抽籤','note'=>'','logs'=>'');	
+			
+			
+			$progress['client'][3][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'審核通過','note'=>'','logs'=>date('Y-m-d H:i:s'));	
+			$progress['client'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'正取核准','note'=>'','logs'=>'');				
+			$progress['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'核准進入','note'=>'','logs'=>'');
+			$progress['admin'][4][]  = array('time'=>date('Y-m-d H:i:s'),'status'=>'自動通過','note'=>'區域設定：審查限期進入前 '.$tmp['auto_pass'].' 天前自動通過','logs'=>'');	
+		   
+			
+		
 			
 			case '正取送審'
-              
-			收件待審
-			申請核准
+            case '備取送審'
+			case '抽籤未中'
+			
+			
+			
 			
 			正取送審
 			備取送審
 			抽籤未中
 			
-			正取補件
-			備取補件
+			
+			case '正取補件':
+			case '備取補件':
+			
+			
+			
+			
+			case '資料不全'：
+			
 			正取補件送審
 			備取補件送審
 			補件駁退
@@ -210,9 +229,17 @@
 			備取成功
 			備取失敗
 			
-			申請取消
+			
 			申請駁退
 			申請註銷
+			申請核准
+			
+			
+			
+			case '申請取消'
+			  $apply_process['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'取消申請','note'=>'使用者取消申請','logs'=>'');
+			  
+			
 			
 		  }
 		  
