@@ -62,7 +62,7 @@
 					<tr> <td> 國立臺灣大學森林環境暨資源學系 </td></tr>
 					<tr> <td >(02) - 33665275 賴小姐</td> </tr>
 					<tr> <td> 系統維護 </td></tr>
-					<tr> <td >(02) - 33669847 蕭先生</td> </tr>
+					<tr> <td >0919350793 蕭先生 <br/> hsiaoiling@ntu.edu.tw</td> </tr>
 				  </table>
 			  </div>
 			  
@@ -76,7 +76,7 @@
 					<label>密碼</label> <input type='text'  id='' value='成功後將寄發密碼設定信' placeholder='' readonly=true disabled=true/>
 				  </div>
 				  <div class=' regfield _nessary'>
-				    <label>單位</label> 
+				    <label>帳號所屬群組</label> 
 					<select class='_regist' id='user_group'>
 					  <option value=''> - </option>
 					  <?php foreach($group_list as $glist) : ?>
@@ -99,7 +99,7 @@
 				  </div>
 				  <div class='tr_like'>
 					<div class='colset regfield _nessary' >
-					  <label>組室科別</label> <input type='text' class='_regist' id='user_organ' placeholder=" 請填寫組室科別" /> 
+					  <label>單位</label> <input type='text' class='_regist' id='user_organ' placeholder=" 請填寫單位科別" /> 
 					</div>
 				    <div class='colset regfield _nessary'>
 					  <label>職稱</label> <input type='text'  class='_regist' id='user_staff' placeholder=" 請填寫職稱" /> 
