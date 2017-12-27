@@ -285,7 +285,7 @@
       $.ajax({
         url: 'index.php',
 	    type:'POST',
-	    dataType:'json',
+	    dataType:'text',
 	    data: {act:'Staff/'+execute_func+'/'+staff_no},
 		beforeSend: function(){  system_loading(); },
         error: 		function(xhr, ajaxOptions, thrownError) {  console.log( ajaxOptions+" / "+thrownError);},
