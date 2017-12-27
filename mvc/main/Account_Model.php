@@ -360,13 +360,56 @@
 		$DB_UGP->bindvalue(':creater','system');
 		$DB_UGP->execute();
 		
-		
 		// STEP.5: insert table:digital_ftpuser   加入FTP 帳號列表  //:uid, :username, ':user_group'
 	    $DB_FTP = $this->DBLink->prepare(SQL_Account::INSERT_NEW_FTP_ACCOUNT());
 		$DB_FTP->bindValue(':uno',$uid,PDO::PARAM_INT);
 		$DB_FTP->bindValue(':user_account',$uname);
 		$DB_FTP->bindvalue(':homedir',_SYSTEM_FTPS_PATH.$uname);
 		$DB_FTP->execute();
+		
+		
+		// STEP.6 : reguest admin alert  註冊管理者通知信
+		
+		// 取得區域管理者
+		$admin_mails = array();
+	    $DB_GET	= $this->DBLink->prepare( "SELECT user_name,user_mail FROM (SELECT uid,gid, COLUMN_GET(rset,'R01' as char) AS R01, COLUMN_GET(rset,'R02' as char) AS R02 FROM permission_matrix WHERE master=1) AS PM LEFT JOIN user_info ON PM.uid=user_info.uid WHERE gid IN(:gid,'forest') AND (R01=1 OR R02=1);" );
+	    if( !$DB_GET->execute(array('gid'=>$group_code)) ){
+	      throw new Exception('_DB_ERROR_GET_GROUP_CODE_SQL_FAIL');
+        }
+	    while($tmp = $DB_GET->fetch(PDO::FETCH_ASSOC)){
+		  $admin_mails = array_merge($admin_mails, explode(';',$tmp['user_mail'])); 
+	    }
+		
+		// 設定信件內容
+        $mail_title = _SYSTEM_HTML_TITLE." / 新帳號申請通知 / ".$UserData['user_mail'];        
+		$mail_content  = "<div>管理者 您好，有一使用者申請您所轄區域之使用帳號</div>";
+		$mail_content .= "<div>請您至管理後臺進行帳號審核工作</div>";
+		$mail_content .= "<div>申請時間：".date('Y-m-d H:i:s')."</div>";
+		$mail_content .= "<div>申請者姓名：".$UserData['user_name']."</div>";
+		$mail_content .= "<div>申請者單位：".$UserData['user_organ']."</div>";
+		$mail_content .= "<div>申請者電話：".$UserData['user_tel']."</div>";
+		$mail_content .= "<div>※本郵件由系統自動發送，請勿直接回覆，如有任何問題，請洽各區域管理機關(構)查詢。</div>";
+		$mail_content .= "<div> </div>";
+		$mail_content .= "<div>林務局"._SYSTEM_HTML_TITLE." 敬啟</div>";
+		$mail_content .= "<div><a href='"._SYSTEM_SERVER_ADDRESS."' target=_blank >"._SYSTEM_SERVER_ADDRESS."</a></div>";
+		
+		// 註冊信件工作
+		$mail_logs = [date('Y-m-d H:i:s')=>'Regist Alert Mail From Signup.' ];
+		
+		$DB_MAILJOB	= $this->DBLink->prepare(SQL_AdMailer::REGIST_MAIL_JOB());
+		$DB_MAILJOB->bindValue(':mail_type','狀態通知');
+		$DB_MAILJOB->bindValue(':mail_from',_SYSTEM_MAIL_ACCOUNT_USER.'@'._SYSTEM_MAIL_ACCOUNT_HOST);
+		$DB_MAILJOB->bindValue(':mail_to',join(';',$admin_mails));
+		$DB_MAILJOB->bindValue(':mail_title',$mail_title);
+		$DB_MAILJOB->bindValue(':mail_content',htmlspecialchars($mail_content,ENT_QUOTES,'UTF-8'));
+		$DB_MAILJOB->bindValue(':creator','system');
+		$DB_MAILJOB->bindValue(':editor','');
+		$DB_MAILJOB->bindValue(':mail_date',date('Y-m-d'));
+		$DB_MAILJOB->bindValue(':active_logs',json_encode($mail_logs));
+		if(!$DB_MAILJOB->execute()){
+		  throw new Exception('_APPLY_MAIL_REGIST_FAIL');	
+		}
+		
 		
 		$result['data']['account'] = $uname;
 		$result['data']['group']   = $group_code;
