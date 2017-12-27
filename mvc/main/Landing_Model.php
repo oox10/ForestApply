@@ -1973,6 +1973,8 @@
 			  $message_conf = array_pop($progress['client'][$booking['_stage']]);
 			  $mail_status_type = $message_conf['status'];
 			  $mail_status_info = $message_conf['note'];	
+			}else{
+			  $mail_status_type = $booking['_status'];
 			}
 			break;
 			
