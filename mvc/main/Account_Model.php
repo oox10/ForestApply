@@ -610,6 +610,13 @@
 			  
         $mail = new PHPMailer(true); // the true param means it will throw exceptions on errors, which we need to catch
         $mail->IsSMTP(); // telling the class to use SMTP 
+		$mail->SMTPOptions = array(
+		  'ssl' => array(
+			'verify_peer' => false,
+			'verify_peer_name' => false,
+			'allow_self_signed' => true
+		  )
+	    );
 		
 		try {  
 		
