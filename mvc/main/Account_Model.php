@@ -627,7 +627,7 @@
 		  $mail->Port       = _SYSTEM_MAIL_PORT;     // set the SMTP port for the GMAIL server
 				
 		  $mail->Host       = _SYSTEM_MAIL_HOST; 	   // SMTP server
-		  $mail->SMTPDebug  = 1;                       // enables SMTP debug information (for testing)
+		  $mail->SMTPDebug  = 0;                       // enables SMTP debug information (for testing)
 		  $mail->CharSet 	= "utf-8";
 		  $mail->Username   = _SYSTEM_MAIL_ACCOUNT_USER;  // MAIL username
 		  $mail->Password   = _SYSTEM_MAIL_ACCOUNT_PASS;  // MAIL password
