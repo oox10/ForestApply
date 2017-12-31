@@ -1,17 +1,19 @@
 [ 修正項目 ]
-- 清除隱私資料
+- 清除隱私資料 - done
 - 匯入最後兩個月的申請
 - 申請管理：批次下載
 - 陳核列印跑版
 - 匯入申請進入檔案
-
+- 超過處理日期時操作項目移除
 
 
 
 
 [ 局內伺服器 ] 
 - 刪除 permission_area 資料表 : 好像沒用了
-- 更新 permission_rule 資料表
+- 更新 permission_rule  permission_action 資料表
+- 新增  JOB 07
+
 
 
 

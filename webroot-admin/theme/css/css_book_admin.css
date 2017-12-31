@@ -99,7 +99,7 @@
 	tr.data_record:nth-child(odd){ background-color:#f9f9f9; }
 	tr.data_record td{ }
 	tr.data_record td:nth-child(1){  width:30px; text-align:right; }
-	tr.data_record td:nth-child(2){  width:120px; font-weight:bold; font-family: monospace; }
+	tr.data_record td:nth-child(2){  width:140px; font-weight:bold; font-family: monospace; }
 	tr.data_record td:nth-child(3){  width:120px; }
 	tr.data_record td:nth-child(4){  min-width:200px;}
 	tr.data_record td:nth-child(5){  width:110px; }
