@@ -521,7 +521,7 @@
 	  try{
 	    
 		// 檢查登入參數
-		if( !isset($regist_data['regist_email'])  ||  !isset($regist_data['verification'])  ){
+		if( !isset($regist_data['regist_account']) || !isset($regist_data['regist_email'])  ||  !isset($regist_data['verification'])  ){
 	      throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 	    }
 		
@@ -538,6 +538,7 @@
 		// 檢查信箱是否存在
 		$account_data = NULL;
 		$DB_CHK	= $this->DBLink->prepare(SQL_Account::CHECK_ACCOUNT_REGIST_EMAIL());
+		$DB_CHK->bindParam(':user_id'   , $regist_data['regist_account'] , PDO::PARAM_STR);	
 		$DB_CHK->bindParam(':user_mail'   , $regist_data['regist_email'] , PDO::PARAM_STR);	
 		if( !$DB_CHK->execute() ){
 		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');

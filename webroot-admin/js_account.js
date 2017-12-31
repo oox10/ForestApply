@@ -157,6 +157,13 @@
 	  // initial
 	  $('input._keyin').removeClass('form_error');
 	  
+	  
+	  if( !$('#userid').val() ){
+	    $('#userid').addClass('form_error').val('').focus();
+		system_message_alert('error',"請輸入註冊帳號");
+		return false;
+	  }
+	  
 	  // check input 
 	  if(!$('#email').val()){
 	    $('#email').addClass('form_error').focus();
@@ -164,11 +171,7 @@
 		return false;
 	  }
 	  
-	  if( $('#email').val() != $('#email_chk').val()  ){
-	    $('#email_chk').addClass('form_error').val('').focus();
-		system_message_alert('error',"2次輸入的EMAIL不相符，請重新輸入");
-		return false;
-	  }
+	  
 	  
 	  if(!$('#captcha_input').val()){
 	    $('#captcha_input').addClass('form_error').focus();
@@ -177,7 +180,8 @@
 	  }
 	  
 	  var register_info = {};
-	  register_info['regist_email'] = $('#email').val();
+	  register_info['regist_email']   = $('#email').val();
+	  register_info['regist_account'] = $('#userid').val();
 	  register_info['verification'] = $('#captcha_input').val();
 	  
 	  var pass_data = encodeURIComponent(Base64.encode(JSON.stringify(register_info)));

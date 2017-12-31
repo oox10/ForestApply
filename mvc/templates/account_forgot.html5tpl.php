@@ -39,8 +39,8 @@
 		  <div class='system_login_area'>
             <div class='signin_header'> <h1>帳號回復</h1><h2>發送密碼設定信</h2> </div>
 			<div class='signin_form'>			
-              <input type='email' id='email'     class='lg_text _keyin' placeholder="請輸入註冊信箱">
-			  <input type='email' id='email_chk' class='lg_text _keyin' placeholder="請再次輸入信箱以確認">
+              <input type='email' id='userid'     class='lg_text _keyin' placeholder="請輸入註冊帳號">
+			  <input type='email' id='email' 	  class='lg_text _keyin' placeholder="請輸入註冊信箱">
 			  <div class='signin_func' id='regist_submit'>
 				<input type="text" class='_keyin' id='captcha_input' name="Turing" value="" style='width:120px;'>
 				<img src="tool/captcha/code.php" id="captcha">

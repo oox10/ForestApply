@@ -28,7 +28,7 @@
 
 	//-- 檢查使用者email
 	public static function CHECK_ACCOUNT_REGIST_EMAIL(){
-	  $SQL_String = "SELECT uno,user_id,user_mail,user_idno,user_status FROM user_info LEFT JOIN user_login ON uid=uno WHERE user_mail=:user_mail AND uno IS NOT NULL;";
+	  $SQL_String = "SELECT uno,user_id,user_mail,user_idno,user_status FROM user_info LEFT JOIN user_login ON uid=uno WHERE user_id=:user_id AND user_mail=:user_mail;";
 	  return $SQL_String;
 	}
 	
