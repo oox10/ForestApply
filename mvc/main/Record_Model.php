@@ -31,7 +31,7 @@
 			
 		// 取得區域範圍
 		$area_list = array();
-		$DB_AREA = $this->DBLink->prepare(SQL_AdRecord::SELECT_AREA_LIST()); 
+		$DB_AREA = $this->DBLink->prepare(parent::SQL_Permission_Filter(SQL_AdRecord::SELECT_AREA_LIST())); 
 		if(! $DB_AREA->execute()){
 		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');
 		}
@@ -45,7 +45,7 @@
 		  $area_sel_manual[$dbraw['area_code']] = $dbraw['area_name'];
 		  
 		  // 依據每個地區取得範圍內的申請資料
-		  $DB_BOOK = $this->DBLink->prepare(SQL_AdRecord::GET_AREA_BOOK_RECORD()); 
+		  $DB_BOOK = $this->DBLink->prepare(  SQL_AdRecord::GET_AREA_BOOK_RECORD() ); 
 		  $DB_BOOK->bindValue(':ano' , $dbraw['ano'] );
 		  $DB_BOOK->bindValue(':date_start' , $record_range['date_start'] );
 		  $DB_BOOK->bindValue(':date_end'   , $record_range['date_end']   );
