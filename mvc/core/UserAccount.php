@@ -107,27 +107,33 @@
 		  $permission[$tmp['gid']]['group_roles'] = $group_roles;
 		  krsort($group_roles);
 		  
-		  
-		  // get group role UI config 
+		  // get group & role UI config 
 		  $DB_RUI = $Model->DBLink->prepare(SQL_Account::GET_GROUPS_ROLE_INTERFACE_CONFIG());
+		  
+		  // ui limit by rule
 		  $permission[$tmp['gid']]['interface_mask'] = array();
 		  foreach($group_roles as $role=>$level){
-		    if($DB_RUI->execute(array('role'=>$role))){
-			  while( $rule = $DB_RUI->fetch(PDO::FETCH_ASSOC)){
-				
+		    $DB_RUI->bindValue(':mode','rbac');  
+			$DB_RUI->bindValue(':limit','role');  
+			$DB_RUI->bindValue(':target',$role);  
+			if($DB_RUI->execute()){
+			  while( $rule = $DB_RUI->fetch(PDO::FETCH_ASSOC)){	
 				$rule['table'];     // 頁面名稱
 				$rule['field'];     // DOM ID
-				$rule['contents'];  // 顯示方式  1 顯示 0遮蔽
-				
+				$rule['contents'];  // 顯示方式 查看條件 or 1 顯示 0遮蔽
 				if(!isset($permission[$tmp['gid']]['interface_mask'][$rule['table']])) $permission[$tmp['gid']]['interface_mask'][$rule['table']] = [];				
-				$permission[$tmp['gid']]['interface_mask'][$rule['table']][$rule['field']] = intval($rule['contents']);  
+				if($rule['contents']=='1' || $rule['contents']=='0'){
+				  $permission[$tmp['gid']]['interface_mask'][$rule['table']][$rule['field']] = intval($rule['contents']);
+				}else{
+				  $permission[$tmp['gid']]['interface_mask'][$rule['table']][$rule['field']] = in_array($tmp['gid'],explode(',',$rule['contents'])) ? 1 : 0;
+				}
 			  }
 		    }
 		  }
 		  
+		   
 		  /*==[ 取得角色對應動作 ]==*/
 		 
-		  
 		  // get permission filter // 取得角色action權限表
 		  $permission[$tmp['gid']]['group_action'] = array(); 
 		  $role_action_map = array();

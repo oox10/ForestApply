@@ -84,7 +84,7 @@
 	
 	//-- 取得腳色介面設定
 	public static function GET_GROUPS_ROLE_INTERFACE_CONFIG(){
-	  $SQL_String = "SELECT * FROM permission_rule WHERE mode='rbac' AND limitto='role' AND target=:role AND operator='UI' AND _keep=1 ORDER BY permission_rule.table ASC;";
+	  $SQL_String = "SELECT * FROM permission_rule WHERE mode=:mode AND limitto=:limit AND target=:target AND operator='UI' AND _keep=1 ORDER BY permission_rule.table ASC;";
 	  return $SQL_String;
 	}
 	
