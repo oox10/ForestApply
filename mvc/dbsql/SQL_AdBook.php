@@ -57,7 +57,7 @@
 	
 	//-- Admin Book : 
 	public static function GET_APPLY_HISTORY(){
-	  $SQL_String = "SELECT area_name,apply_date,apply_reason,member_count,_final FROM area_booking LEFT JOIN area_main ON am_id=ano WHERE apply_code != :apply_code AND applicant_name=:applicant_name AND applicant_mail=:applicant_mail AND area_booking._keep=1 ORDER BY apply_date DESC;";
+	  $SQL_String = "SELECT area_name,apply_date,apply_reason,member_count,_final FROM area_booking LEFT JOIN area_main ON am_id=ano WHERE apply_code != :apply_code AND applicant_name=:applicant_name AND applicant_mail=:applicant_mail AND area_booking._keep=1 AND _stage=5 ORDER BY apply_date DESC;";
 	  return $SQL_String;
 	} 
 	
