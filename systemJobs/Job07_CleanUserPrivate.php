@@ -32,7 +32,7 @@
 	
 	$clean_counter = 0;
 	
-	$DB_UPD	= $db->DBLink->prepare( "UPDATE area_booking SET applicant_info=:master,member=:member WHERE abno = :abno;" );
+	$DB_UPD	= $db->DBLink->prepare( "UPDATE area_booking SET applicant_info=:master,member=:member,_stage=:_stage,_progres=:_progres WHERE abno = :abno;" );
 	
 	$DB_OLD	= $db->DBLink->prepare( "SELECT * FROM area_booking WHERE apply_date < :apply_limit;" );
 	$DB_OLD->bindValue(':apply_limit',$oldapply_limit);
@@ -67,10 +67,21 @@
 		$member[$mi] = $mbr;
 	  }
 	  
+	  $progres = json_decode($tmp['_progres'],true);
+	  $progres['admin'][5][] = [
+	    'time'=>date('Y-m-d H:i:s'),
+        'status'=>'移除隱私',
+		'note'=>'',
+		'logs'=>''
+	  ];
+	  
 	  // 更新無隱私資料
 	  $DB_UPD->bindValue(':master',json_encode($master));
 	  $DB_UPD->bindValue(':member',json_encode($member));
+	  $DB_UPD->bindValue(':_stage',7);
+	  $DB_UPD->bindValue(':_progres',json_encode($progres));
 	  $DB_UPD->bindValue(':abno',$tmp['abno']);
+	  
 	  $DB_UPD->execute();
 	  $clean_counter++;		
 	  
