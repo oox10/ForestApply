@@ -9,3 +9,4 @@ systemFile/member/*
 systemJobs/applied_record/*
 systemJobs/pages_tmp/*
 *.log
+*.logs
