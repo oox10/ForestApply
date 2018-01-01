@@ -9,7 +9,7 @@
 		    <li> 申請須知 </li>
 		    <li>  </li>
 		  </ul>
-		  
+		  <?php if(!$this->vars['server']['data']['area']['alone']): ?> 
 		  <h2> 相關連結 </h2>
 		  <ul>
 		    <li> <a href='http://www.forest.gov.tw' target=_blank >林務局全球資訊網</a>  </li>
@@ -17,6 +17,7 @@
 			<li> <a href='http://pa.forest.gov.tw/ForestApply/Default.aspx' target=_blank >舊申請系統</a> </li>
 		    <li> <a href='<?php echo _SYSTEM_MANAGE_ADDRESS; ?>' target=_blank >管理人員首頁</a> </li>
 		  </ul>
+		  <?php endif; ?>
 		
 		</div>
 	    

@@ -7,14 +7,15 @@
 	
 	
 	//-- Get Client Page Post List
-	// [input] : NULL 
-	public function Access_Get_Client_Post_List(){
+	// [input] : NULL / group code 
+	public function Access_Get_Client_Post_List( ){
 	  $result_key = parent::Initial_Result('post');
 	  $result  = &$this->ModelResult[$result_key];
 	  
 	  try{    
+	  
 		// 查詢資料庫
-		$DB_OBJ = $this->DBLink->prepare(SQL_Client::INDEX_GET_POST_LIST());
+		$DB_OBJ = $this->DBLink->prepare(SQL_Client::INDEX_GET_POST_LIST());	
 		if(!$DB_OBJ->execute()){
 		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
 		}
@@ -61,18 +62,24 @@
 	
 	//-- Get Client Page Area List
 	// [input] : NULL 
-	public function Access_Get_Active_Area_List(){
+	public function Access_Get_Active_Area_List($GroupCode=''){
 	  $result_key = parent::Initial_Result('area');
 	  $result  = &$this->ModelResult[$result_key];
 	  
 	  try{    
 		
-        
 		// 取得區域聯繫人
 		$contect = array();
 		
 		// 查詢資料庫
-		$DB_OBJ = $this->DBLink->prepare(SQL_Client::INDEX_CONTECT_ORGAN());
+		
+		if(!$GroupCode){
+		  $DB_OBJ = $this->DBLink->prepare(SQL_Client::INDEX_CONTECT_ORGAN());	
+		}else{
+		  $DB_OBJ = $this->DBLink->prepare(SQL_Client::GROUP_CONTECT_ORGAN());	
+          $DB_OBJ->bindValue(':ug_code',strtolower($GroupCode));		  
+		}
+		
 		if(!$DB_OBJ->execute()){
 		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
 		}
@@ -88,7 +95,14 @@
 		}
 		
 		// 查詢資料庫
-		$DB_OBJ = $this->DBLink->prepare(SQL_Client::INDEX_GET_AREA_LIST());
+		if(!$GroupCode){
+		  $DB_OBJ = $this->DBLink->prepare(SQL_Client::INDEX_GET_AREA_LIST());
+		}else{
+		  $DB_OBJ = $this->DBLink->prepare(SQL_Client::INDEX_GET_GROUP_AREA());	
+		  $DB_OBJ->bindValue(':owner',strtolower($GroupCode));	
+		}
+		
+		
 		if(!$DB_OBJ->execute()){
 		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
 		}
@@ -101,8 +115,9 @@
 		  $contect[$area['owner']]['areas'][] = $area['area_name'];
 		}
 		
-		$result['data']['type'] = array_unique($area_type);
-		$result['data']['list'] = $area_list ;
+		$result['data']['alone']   = $GroupCode ? $GroupCode : false;
+		$result['data']['type']    = array_unique($area_type);
+		$result['data']['list']    = $area_list ;
 		$result['data']['contect'] = $contect;
 		
 		$result['action'] = true;		

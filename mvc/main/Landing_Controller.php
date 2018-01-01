@@ -36,11 +36,12 @@ class Landing_Controller extends Admin_Controller{
 	/***--- LANDING ACTION SET ---***/
 	
 	// PAGE: client landing page
-	public function index(){   
+	public function index($Group=''){   
 	  $this->Model->Access_Get_Client_Post_List();
-	  $this->Model->Access_Get_Active_Area_List();
+	  $this->Model->Access_Get_Active_Area_List($Group);
 	  self::data_output('html','client_landing',$this->Model->ModelResult);
 	}
+	
 	
 	// AJAX : 取得地區日程表
 	public function schedule($AreaCode,$CalendarStart,$CalendarNum){

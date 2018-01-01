@@ -22,22 +22,30 @@
 	
 	/***-- Client Data SQL --***/  
 	
-	//-- Client Post :  get post user list 
+	//-- Client Post :  get post list
 	public static function INDEX_GET_POST_LIST(){
 	  $SQL_String = "SELECT pno,post_type,post_from,post_level,post_time_start,post_title,post_content FROM system_post WHERE post_to='申請系統' AND post_display=1 AND post_keep=1 AND ( (NOW() BETWEEN post_time_start AND post_time_end ) OR post_level=4 ) ORDER BY post_level DESC,post_time_start DESC,pno DESC;";
 	  return $SQL_String;
 	}  
+	
 	
 	//-- Client Page :  get page contents 
 	public static function INDEX_GET_PAGE_CONTENT(){
 	  $SQL_String = "SELECT page_title,page_content FROM system_pages WHERE 1;";
 	  return $SQL_String;
 	}
-	
+
 	
 	//-- Client Landing :  get area contact information
 	public static function INDEX_CONTECT_ORGAN(){
 	  $SQL_String = "SELECT ug_code,ug_name FROM user_group WHERE ug_pri=3 ORDER BY ug_no ASC;";
+	  return $SQL_String;
+	}
+	
+	
+	//-- Client Landing :  get area contact information
+	public static function GROUP_CONTECT_ORGAN(){
+	  $SQL_String = "SELECT ug_code,ug_name FROM user_group WHERE ug_pri>=3 AND ug_code=:ug_code;";
 	  return $SQL_String;
 	}
 	
@@ -59,6 +67,14 @@
 	  $SQL_String = "SELECT area_code,area_type,area_name,owner FROM area_main WHERE _open=1 AND _keep=1 ORDER BY ano ASC;";
 	  return $SQL_String;
 	} 
+	
+	//-- Client Area :  get open area list 
+	public static function INDEX_GET_GROUP_AREA(){
+	  $SQL_String = "SELECT area_code,area_type,area_name,owner FROM area_main WHERE owner=:owner AND _open=1 AND _keep=1 ORDER BY ano ASC;";
+	  return $SQL_String;
+	} 
+	
+	
 	
 	//-- Client Area :  get target area data 
 	public static function GET_TARGET_AREA_DATA(){
