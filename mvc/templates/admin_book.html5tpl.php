@@ -363,7 +363,8 @@
 					</td>
 				    <td class='stage3 _variable' >
 					</td>
-				    <td class='stage4 _variable' colspan=2></td>
+				    <td class='stage4 _variable' ></td>
+					<td class='stage5 _variable' ></td>
 				  </tr>
 				  <?php if(isset($user_info['permission']['interface_mask']['admin_book.html5tpl.php']['review']) && intval($user_info['permission']['interface_mask']['admin_book.html5tpl.php']['review'])): ?> 
 				  <tr class='process_task' id='review' > 

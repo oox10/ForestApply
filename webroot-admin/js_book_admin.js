@@ -599,10 +599,15 @@
 		})
 	  });
 	  
-	  
 	  // mark stage now
 	  $('td[class^="stage"]').removeClass('nowstage');
-	  $('td.stage'+Stage).addClass('nowstage');
+	  if(Stage <= 5){
+		$('tr.process_task#review').show();   
+		$('td.stage'+Stage).addClass('nowstage');  
+	  }else{
+		// 關閉控制
+        $('tr.process_task#review').hide(); 
+	  }
 	 
 	}
 	
