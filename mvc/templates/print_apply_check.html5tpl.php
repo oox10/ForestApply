@@ -13,7 +13,7 @@
 		<style>
 			html,body{font-family:"新細明體","Microsoft JhengHei";}html{overflow-x:hidden}
 			div.page-container{
-			  padding:8%;
+			  padding:3% 8%;
 			  size:portrait;/*ㄧ頁大小，以紙張短邊為寬，沒有用。*/ 
 			}
 			
