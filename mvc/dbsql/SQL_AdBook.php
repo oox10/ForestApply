@@ -34,6 +34,11 @@
 	  return $SQL_String;
 	}
 	
+	//-- Admin Book : get book data for admin 
+	public static function SEARCH_BOOKING_RECORDS($records=[]){
+	  $SQL_String = "SELECT * FROM area_booking WHERE abno IN(".join(",",$records).") AND _keep=1;";
+	  return $SQL_String;
+	}
 	
 	
 	//-- Admin Book : get book data for admin 

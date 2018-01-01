@@ -105,6 +105,19 @@
 	}
 	
 	
+	// AJAX: 批次匯出
+	public function batchexport($Records){
+	  $this->Model->ADBook_Export_Selected($Records);
+	  self::data_output('json','',$this->Model->ModelResult);
+	}
+	
+	// AJAX: 下載打包
+	public function getexport($ExportName){
+	  $this->Model->ADBook_Access_Export_File($ExportName);
+	  self::data_output('file','',$this->Model->ModelResult);
+	}
+	
+	
 	/*[ Book for Check Action Set ] 警政單位申請資料查驗頁面  */ 
 	
 	

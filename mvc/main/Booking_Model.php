@@ -298,6 +298,154 @@
 	}
 	
 	
+	
+	//-- Admin Meta Export User Select
+	// [input] : RecordsString  :  encoed array string;
+	
+	public function ADBook_Export_Selected( $RecordsString=''){
+	  
+	  $result_key = parent::Initial_Result('file');
+	  $result  = &$this->ModelResult[$result_key];
+	  
+	  $excel_template = 'template_book_export.xlsx';
+	  
+	  try{  
+	    
+		$abno_array = json_decode(base64_decode(str_replace('*','/',rawurldecode($RecordsString))),true); 
+		if(!count($abno_array)){
+		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');	
+		}
+		
+		// 取得管制區域列表
+		$DB_OBJ = $this->DBLink->prepare(parent::SQL_Permission_Filter(SQL_AdBook::SELECT_USER_AREA()));
+		if(!$DB_OBJ->execute()){
+		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
+		}
+		while($tmp = $DB_OBJ->fetch(PDO::FETCH_ASSOC)){
+		  $area_list[$tmp['ano']] = $tmp;
+		}
+		
+		// 取得管制區域申請清單
+		$DB_OBJ = $this->DBLink->prepare(parent::SQL_Permission_Filter(SQL_AdBook::SEARCH_BOOKING_RECORDS($abno_array )));
+		 
+		if(!$DB_OBJ->execute()){
+		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
+		}
+		
+		$export_record = [];
+		$total_count = 0;
+		$i=1;
+		while($book = $DB_OBJ->fetch(PDO::FETCH_ASSOC)){
+		  $applyform = json_decode($book['apply_form'],true);  
+		  $apply = [];
+		  $apply['apply_code'] =  $book['apply_code'];
+		  $apply['apply_date'] =  $book['apply_date'];
+		  $apply['apply_area'] =  $area_list[$book['am_id']]['area_name'];
+		  $apply['apply_reason'] =  $book['apply_reason'];
+		  $apply['apply_user'] = $book['applicant_name']; 
+		  $apply['apply_mail'] =  $book['applicant_mail'];
+		  $apply['enter_date'] =  $book['date_enter'] .' ～ '.$book['date_exit'];
+		  $apply['enter_block'] =  isset($applyform['area']['inter'])&&is_array($applyform['area']['inter']) ? join('、',$applyform['area']['inter']) : '';   
+		  $apply['enter_gate'] = isset($applyform['area']['gate']['entr']) ? $applyform['area']['gate']['entr'] : ''; 
+		  $apply['enter_time'] = $apply['enter_gate']&&isset($applyform['area']['gate']['entr_time']) ? $applyform['area']['gate']['entr_time'] : ''; 
+		  $apply['exit_gate']  = isset($applyform['area']['gate']['exit']) ? $applyform['area']['gate']['exit'] : ''; ; 
+		  $apply['exit_time']  = $apply['exit_gate']&&isset($applyform['area']['gate']['exit_time']) ? $applyform['area']['gate']['exit_time'] : ''; ; 
+		  $apply['apply_check']= $book['check_note'];
+		  $apply['apply_status']= $book['_status'];
+		  $apply['member_count']= $book['member_count'];
+		  if(isset($applyform['fields']) && is_array($applyform['fields'])){
+			foreach($applyform['fields'] as $af){
+			  $apply[$af['field']] = $af['value'];	
+			}
+		  }
+		  $total_count+= intval($book['member_count']);
+		  
+		  $export_record[] = $apply; 
+		}
+		
+		
+		//php excel initial
+		$objReader = PHPExcel_IOFactory::createReader('Excel2007');
+		$objPHPExcel = $objReader->load(_SYSTEM_ROOT_PATH.'mvc/templates/'.$excel_template);
+		$active_sheet = $objPHPExcel->setActiveSheetIndex(0);
+		
+		// 填入日期
+		$active_sheet->getCellByColumnAndRow(1,1)->setValueExplicit(date('Y-m-d'), PHPExcel_Cell_DataType::TYPE_STRING);  	
+		
+		// 填入總人次
+		$active_sheet->getCellByColumnAndRow(1,2)->setValueExplicit($total_count, PHPExcel_Cell_DataType::TYPE_NUMERIC);  	
+		
+		// 填入資料
+        $row = 4;
+		foreach($export_record as  $record){
+          $col = 0;
+          foreach($record as $f=>$v){
+			$active_sheet->getCellByColumnAndRow($col++, $row)->setValueExplicit($v, PHPExcel_Cell_DataType::TYPE_STRING);    
+		  }  		  
+		  $row++;
+		}
+		 		
+		// 設定序號
+		$objPHPExcel->setActiveSheetIndex(0);
+		$excel_file_name =  _SYSTEM_NAME_SHORT.'_export_'.date('Ymd');
+		$objPHPExcel->setActiveSheetIndex(0);
+	    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+	    $objWriter->save(_SYSTEM_USER_PATH.$this->USER->UserID.'/'.$excel_file_name.'.xlsx'); 
+		unset($objPHPExcel);
+		
+		// final
+		$result['data']['fname']   = $excel_file_name;
+		$result['data']['count']   = count($export_record);
+		
+		$result['action'] = true;
+    	
+	  } catch (Exception $e) {
+        $result['message'][] = $e->getMessage();
+      }
+	  return $result;  
+	}
+	
+	
+	
+	
+	
+	
+	//-- Admin Book : Batch Export XLSX 
+	// [input] : FileName  : logs_digital.note	
+	public function ADBook_Access_Export_File( $FileName=''){
+	  
+	  $result_key = parent::Initial_Result('file');
+	  $result  = &$this->ModelResult[$result_key];
+	  
+	  try{  
+	    
+		if(!$FileName){
+		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');		
+		} 
+		
+		$file_path = _SYSTEM_USER_PATH.$this->USER->UserID.'/'.$FileName.'.xlsx';
+		if(!file_exists($file_path)){
+		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');		
+		}
+		
+		// final 
+		$result['data']['name']  = $FileName.'.xlsx';
+		$result['data']['size']  = filesize($file_path);
+		$result['data']['location']  = $file_path;
+		
+		$result['action'] = true;
+    	
+	  } catch (Exception $e) {
+        $result['message'][] = $e->getMessage();
+      }
+	  return $result;  
+	}
+	
+	
+	
+	
+	
+	
 	//-- Admin Booking Get Book Data 
 	// [input] : DataCode        :  \d+ / area_booking.apply_code;
 	// [input] : AreaAccessMap       :  array(abno=>1); // from get list save to session 

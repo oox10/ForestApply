@@ -189,7 +189,7 @@
 		    <div class='record_header'>
 			  <span class='record_name'>申請清單</span>
 			  <span class='record_option'>
-                批次匯出勾選
+                <button type='button' class='active' id='act_selected_export'> <i class="fa fa-file-excel-o" aria-hidden="true"></i> 批次匯出</button>
 			  </span>
 			</div> 
 			<div class='record_body'>
@@ -232,7 +232,7 @@
 			  <table class='record_list'>
 		        <tr class='data_field'>
 			      <td title='編號'		>no.</td>
-				  <td title='申請單號'	><input type='checkbox' name=''  value='_all' /> 申請單號</td>
+				  <td title='申請單號'	><input type='checkbox' class='act_select_all'  name=''  value='_all'  /> 申請單號</td>
 				  <td title='日期'		>申請日期</td>
 			      <td title='申請區域'	>申請區域</td>
 				  <td title='筆數'		>申請人</td>
@@ -246,7 +246,7 @@
 			    <?php foreach($data_list as $i=> $data): ?>  
 			      <tr class='data_record ' no='<?php echo $data['r_apply_code'];?>' page='' >
                     <td field='no'  	   	    ><?php echo $i+$data_start; ?> </td>
-			        <td field='r_apply_code' 	><input type='checkbox' name=''  value='<?php echo intval($data['abno']);?>' /><?php echo $data['r_apply_code']; ?></td>
+			        <td field='r_apply_code' 	><input type='checkbox' class='act_selector' name=''  value='<?php echo intval($data['abno']);?>' /><?php echo $data['r_apply_code']; ?></td>
 				    <td field='r_apply_date'	><?php echo $data['r_apply_date']; ?></td>
 				    <td field='r_apply_area'	><?php echo $data['r_apply_area']; ?></td>
 					<td field='r_apply_user'	><?php echo $data['r_apply_user']; ?></td>

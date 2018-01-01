@@ -26,6 +26,67 @@
 	});
     
 	
+	
+	//-- record select all 全選本頁
+	if($('.act_select_all').length){
+	  $('.act_select_all').change(function(){
+		$('.act_selector').prop('checked',$(this).prop('checked')); 
+	  });
+	}
+	
+	//-- record select one 單選本頁
+	$('.act_selector').click(function(){
+	  var select_all_fleg = $('.act_selector').length == $('.act_selector:checked').length ? true : false;
+	  $('.act_select_all').prop('checked',select_all_fleg);  	
+	});
+	
+	
+	//-- select batch function
+	$('#act_selected_export').click(function(){
+	  
+	  if(!$('.act_selector:checked').length){
+		system_message_alert('','尚未選擇資料');  
+	    return false;
+	  }
+	  
+	  var records    = $('.act_selector:checked').map(function(){return $(this).val(); }).get();
+	  
+	  // confirm to admin
+	  if(!confirm("確定要對勾選 [ "+records.length+" ] 筆資料執行匯出作業?")){
+	    return false;  
+	  }
+	  
+	  var paser_data = encodeURIComponent(Base64M.encode(JSON.stringify(records)));
+	  	
+	  //-- 解決 click 後無法馬上open windows 造成 popout 被瀏覽器block的狀況
+	  //  newWindow = window.open("","_blank");
+	  $.ajax({
+		  url: 'index.php',
+		  type:'POST',
+		  dataType:'json',
+		  data: {act:'Booking/batchexport/'+paser_data},
+		  beforeSend: 	function(){ system_loading();  },
+		  error: 		function(xhr, ajaxOptions, thrownError) {  console.log( ajaxOptions+" / "+thrownError);},
+		  success: 		function(response) {
+			
+			if(response.action){  
+			  window.location.href = 'index.php?act=Booking/getexport/'+response.data.file.fname;
+			  //newWindow.location.href = 'index.php?act=Meta/getexport/'+response.data.batch.fname;
+			}else{
+			  //newWindow.close();
+			  system_message_alert('',response.info);
+			}
+		  },
+		  complete:		function(){   }
+	  }).done(function() { system_loading();   });	
+		
+	   
+	});
+	
+	
+	
+	
+	
 	//-- 設定分頁 資料超過上萬，分頁自訂
 	$(document).off('click','.page_to');
 	
