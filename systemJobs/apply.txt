@@ -1,0 +1,253 @@
+get from match 1
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right"> 申請編號: </td> <td> <span id="ctl00_ContentPlaceHolder1_fv_Label6">P10300001</span> </td>
+            [1] =>  申請編號: 
+            [2] =>  <span id="ctl00_ContentPlaceHolder1_fv_Label6">P10300001</span> 
+        )
+
+)
+get from match 3
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right" height="24"> 進入區域: </td> <td> <span id="ctl00_ContentPlaceHolder1_fv_Label3">海岸山脈台東蘇鐵自然保護區</span> </td>
+            [1] =>  進入區域: 
+            [2] =>  <span id="ctl00_ContentPlaceHolder1_fv_Label3">海岸山脈台東蘇鐵自然保護區</span> 
+        )
+
+)
+get from match 1
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right"> 密碼: </td> <td> <span id="ctl00_ContentPlaceHolder1_fv_Label31">38181</span> </td>
+            [1] =>  密碼: 
+            [2] =>  <span id="ctl00_ContentPlaceHolder1_fv_Label31">38181</span> 
+        )
+
+)
+get from match 3
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right" height="24"> &nbsp; </td> <td> &nbsp; </td>
+            [1] =>  &nbsp; 
+            [2] =>  &nbsp; 
+        )
+
+)
+get from match 1
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right"> 申請人: </td> <td> <span id="ctl00_ContentPlaceHolder1_fv_Label5">官佳岫</span> </td>
+            [1] =>  申請人: 
+            [2] =>  <span id="ctl00_ContentPlaceHolder1_fv_Label5">官佳岫</span> 
+        )
+
+)
+get from match 3
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right" height="24"> 申請日期: </td> <td> <span id="ctl00_ContentPlaceHolder1_fv_Label4">2014/8/21</span> </td>
+            [1] =>  申請日期: 
+            [2] =>  <span id="ctl00_ContentPlaceHolder1_fv_Label4">2014/8/21</span> 
+        )
+
+)
+get from match 1
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right"> 身份證字號: </td> <td> <span id="ctl00_ContentPlaceHolder1_fv_Label20">J222153921</span> </td>
+            [1] =>  身份證字號: 
+            [2] =>  <span id="ctl00_ContentPlaceHolder1_fv_Label20">J222153921</span> 
+        )
+
+)
+get from match 3
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right" height="24"> 進入期間: </td> <td> <span id="ctl00_ContentPlaceHolder1_fv_Label7">2014/9/6</span> &nbsp;~&nbsp;<span id="ctl00_ContentPlaceHolder1_fv_Label8">2014/9/6</span> </td>
+            [1] =>  進入期間: 
+            [2] =>  <span id="ctl00_ContentPlaceHolder1_fv_Label7">2014/9/6</span> &nbsp;~&nbsp;<span id="ctl00_ContentPlaceHolder1_fv_Label8">2014/9/6</span> 
+        )
+
+)
+get from match 1
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right"> 性別: </td> <td> <span id="ctl00_ContentPlaceHolder1_fv_lblSex">女</span> </td>
+            [1] =>  性別: 
+            [2] =>  <span id="ctl00_ContentPlaceHolder1_fv_lblSex">女</span> 
+        )
+
+)
+get from match 3
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right" height="24"> 出生年月日: </td> <td> <span id="ctl00_ContentPlaceHolder1_fv_Label21">1981/1/28</span> </td>
+            [1] =>  出生年月日: 
+            [2] =>  <span id="ctl00_ContentPlaceHolder1_fv_Label21">1981/1/28</span> 
+        )
+
+)
+get from match 1
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right"> 市話: </td> <td> <span id="ctl00_ContentPlaceHolder1_fv_Label12">(089)328324</span> </td>
+            [1] =>  市話: 
+            [2] =>  <span id="ctl00_ContentPlaceHolder1_fv_Label12">(089)328324</span> 
+        )
+
+)
+get from match 3
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right" height="24"> 服務單位: </td> <td> <span id="ctl00_ContentPlaceHolder1_fv_Label22">台東大學</span> </td>
+            [1] =>  服務單位: 
+            [2] =>  <span id="ctl00_ContentPlaceHolder1_fv_Label22">台東大學</span> 
+        )
+
+)
+get from match 1
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right"> 手機: </td> <td> <span id="ctl00_ContentPlaceHolder1_fv_Label24">0933-079703</span> </td>
+            [1] =>  手機: 
+            [2] =>  <span id="ctl00_ContentPlaceHolder1_fv_Label24">0933-079703</span> 
+        )
+
+)
+get from match 3
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right" height="24"> EMail: </td> <td> <span id="ctl00_ContentPlaceHolder1_fv_Label28">eaststarster@gmail.com</span> </td>
+            [1] =>  EMail: 
+            [2] =>  <span id="ctl00_ContentPlaceHolder1_fv_Label28">eaststarster@gmail.com</span> 
+        )
+
+)
+get from match 1
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right"> &nbsp; </td> <td> &nbsp; </td>
+            [1] =>  &nbsp; 
+            [2] =>  &nbsp; 
+        )
+
+)
+get from match 3
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right" height="24"> 傳真: </td> <td> <span id="ctl00_ContentPlaceHolder1_fv_Label25"></span> </td>
+            [1] =>  傳真: 
+            [2] =>  <span id="ctl00_ContentPlaceHolder1_fv_Label25"></span> 
+        )
+
+)
+get from match 2
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right" height="24"> 通訊地址: </td> <td colspan="3"> <span id="ctl00_ContentPlaceHolder1_fv_Label26">950台東市康樂路131巷28號5樓</span> </td>
+            [1] =>  通訊地址: 
+            [2] =>  <span id="ctl00_ContentPlaceHolder1_fv_Label26">950台東市康樂路131巷28號5樓</span> 
+        )
+
+)
+get from match 2
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right" height="24"> 戶籍地址: </td> <td colspan="3"> <span id="ctl00_ContentPlaceHolder1_fv_Label27">33345桃園縣龜山鄉幸福村幸福路30號4樓</span> </td>
+            [1] =>  戶籍地址: 
+            [2] =>  <span id="ctl00_ContentPlaceHolder1_fv_Label27">33345桃園縣龜山鄉幸福村幸福路30號4樓</span> 
+        )
+
+)
+get from match 2
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right" height="24"> 申請事項: </td> <td colspan="3"> <span id="ctl00_ContentPlaceHolder1_fv_lblItem">其他 : 申請人為東河鄉公所委託案"東河鄉誌地理篇"撰稿人，需實際調查在地生態及地理環境特色，亦為台東大學登山社指導老師，帶領台東大學晨曦登山社社員於此進行生態地理考察及健行之旅。</span> </td>
+            [1] =>  申請事項: 
+            [2] =>  <span id="ctl00_ContentPlaceHolder1_fv_lblItem">其他 : 申請人為東河鄉公所委託案"東河鄉誌地理篇"撰稿人，需實際調查在地生態及地理環境特色，亦為台東大學登山社指導老師，帶領台東大學晨曦登山社社員於此進行生態地理考察及健行之旅。</span> 
+        )
+
+)
+get from match 2
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right" height="24"> 地點: </td> <td colspan="3"> <span id="ctl00_ContentPlaceHolder1_fv_Label29">美蘭→金都來產業道路(西榮林道)→彈坑寮→紅菜寮→北底溪→美蘭</span> </td>
+            [1] =>  地點: 
+            [2] =>  <span id="ctl00_ContentPlaceHolder1_fv_Label29">美蘭→金都來產業道路(西榮林道)→彈坑寮→紅菜寮→北底溪→美蘭</span> 
+        )
+
+)
+get from match 2
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right" height="24"> 車牌號碼及<br /> 車型說明資料: </td> <td colspan="3"> <span id="ctl00_ContentPlaceHolder1_fv_Label30">走路</span> </td>
+            [1] =>  車牌號碼及<br /> 車型說明資料: 
+            [2] =>  <span id="ctl00_ContentPlaceHolder1_fv_Label30">走路</span> 
+        )
+
+)
+get from match 1
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right"> &nbsp; </td> <td> &nbsp; </td>
+            [1] =>  &nbsp; 
+            [2] =>  &nbsp; 
+        )
+
+)
+get from match 3
+Array
+(
+    [0] => Array
+        (
+            [0] => <td align="right" height="24"> 狀態: </td> <td> <span id="ctl00_ContentPlaceHolder1_fv_lblStatus" style="color:Red;">申請駁退</span> </td>
+            [1] =>  狀態: 
+            [2] =>  <span id="ctl00_ContentPlaceHolder1_fv_lblStatus" style="color:Red;">申請駁退</span> 
+        )
+
+)

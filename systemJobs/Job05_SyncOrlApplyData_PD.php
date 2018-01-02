@@ -47,7 +47,7 @@
 	}
     
 	public function load_page($Address,$Refer,$PostField=array()){
-	  echo date('Y-m-d H:i:s')."-----------------------------\n";
+	  echo "\n\n".date('Y-m-d H:i:s')."-----------------------------load page\n";
 	  echo "PAGE : ".$Address."\n";
 	  //echo "Post : ".join('&',$PostField)."\n";
 	  
@@ -173,30 +173,46 @@
 		  throw new Exception('NO PAGE CONTENT');  	
 		}
         
-		
 		$apply_data = ['application'=>[],'members'=>[]];
 		
 		$page_content = preg_replace('/[\r\n\t\s]+/',' ',$this->page_content);
 		
-		// 申請資料
-		if(preg_match_all("/<td a.*?>(.*?)<\/td> <td>(.*?)<\/td>/",$page_content,$matchs,PREG_SET_ORDER)){
-		  foreach($matchs as $m){
-			$apply_data['application'][trim(str_replace(':','',$m[1]))] = trim(strip_tags($m[2]));  
-		  }
-		}else{
-		  preg_match_all("/<td a.*?>(.*?)<\/td> <td>(.*?)<\/td>/",$page_content,$matchs,PREG_SET_ORDER);
-		  foreach($matchs as $m){
-			$apply_data['application'][trim(str_replace(':','',$m[1]))] = trim(strip_tags($m[2]));  
+			// 申請資料
+		if(preg_match_all('/<tr>(.*?)<\/tr>/',$page_content,$trs,PREG_SET_ORDER)){	
+		
+		  foreach($trs as $tr){
+			if(preg_match_all('/<td align="right">(.*?)<\/td> <td>(.*?)<\/td>/',$tr[1],$matchs,PREG_SET_ORDER)){
+			  foreach($matchs as $m){
+				$apply_data['application'][trim(str_replace(':','',$m[1]))] = trim(strip_tags($m[2]));  
+			  }
+			  //file_put_contents('apply.txt',"get from match 1\n",FILE_APPEND);
+			  //file_put_contents('apply.txt',print_r($matchs,true),FILE_APPEND);
+			}
+			
+			if(preg_match_all('/<td align="right" height="24">(.*?)<\/td> <td colspan="3">(.*?)<\/td>/',$tr[1],$matchs,PREG_SET_ORDER)){
+			  foreach($matchs as $m){
+				$apply_data['application'][trim(str_replace(':','',$m[1]))] = trim(strip_tags($m[2]));  
+			  }
+			  //file_put_contents('apply.txt',"get from match 2\n",FILE_APPEND);
+			  //file_put_contents('apply.txt',print_r($matchs,true),FILE_APPEND);
+			}
+			
+			if(preg_match_all('/<td align="right" height="24">(.*?)<\/td> <td>(.*?)<\/td>/',$tr[1],$matchs,PREG_SET_ORDER)){
+			  foreach($matchs as $m){
+				$apply_data['application'][trim(str_replace(':','',$m[1]))] = trim(strip_tags($m[2]));  
+			  }
+			  //file_put_contents('apply.txt',"get from match 3\n",FILE_APPEND);
+			  //file_put_contents('apply.txt',print_r($matchs,true),FILE_APPEND);
+			}
 		  }
 		}
 		
-		// 申請欄位
-		if(preg_match_all("/<td align=\"right\" height=\"24\" valign=\"top\" nowrap>(.*?)<\/td> <td colspan=\"3\">(.*?)<\/td>/",$page_content,$matchs,PREG_SET_ORDER)){
-		  foreach($matchs as $m){
-			$apply_data['application'][trim(str_replace(':','',$m[1]))] = trim(strip_tags($m[2]));
-			//file_put_contents('logs.txt',$m[1].':'.strip_tags($m[2])."\n",FILE_APPEND);  
-		  }
+		// 取得備註
+		if(preg_match('/<span id="ctl00_ContentPlaceHolder1_fv_lblMemo">(.*?)<\/span>/',$page_content,$matchs)){
+		  $apply_data['application']['審核備註'] = trim(strip_tags($matchs[1]));  
 		}
+		
+		
 		// 申請成員
 		if(preg_match("/<table .*? id=\"ctl00_ContentPlaceHolder1_fv_gvMember\".*?>(.*?)<\/table>/",$page_content,$membertable)){
 		  if(preg_match_all("/<td .*?>(.*?)<\/td>/",$membertable[1],$matchs,PREG_SET_ORDER)){
@@ -214,13 +230,12 @@
 		  }
 		}
 		
-		
-		if(!isset($apply_data['application']['申請日期'])){
-		  
+		if(!isset($apply_data['application']['申請編號'])){
 		  file_put_contents('logs.txt',print_r($page_content,true),FILE_APPEND);
 		  file_put_contents('logs.txt',print_r($apply_data,true),FILE_APPEND);
 		  exit(1);
 		}
+		 
 		
 		$applied_file = date('Ymd',strtotime($apply_data['application']['申請日期'])).'-'.$apply_data['application']['申請編號'].'.json';
 		file_put_contents('applied_record/'.$applied_file,json_encode($apply_data,JSON_UNESCAPED_UNICODE));
@@ -314,7 +329,7 @@
 			
 			
 			// 分析申請資料連結
-		    echo "\nanalysis apply page:\n";
+		    echo "analysis apply page:\n";
 			$apply_link = array();
 			if(preg_match_all('/__doPostBack\(&#39;(.*?)&#39;,&#39;(.*?)&#39;\)/',$this->page_content,$apply_rows,PREG_SET_ORDER)){
 			  foreach($apply_rows as $apply){
@@ -329,7 +344,7 @@
 			}
 			
 			// access apply record 
-		    echo "\nPaser Page.".$now_page." : ".count($apply_link)." Applied Data:\n";
+		    echo "Paser Page.".$now_page." : ".count($apply_link)." Applied Data:\n";
 		    foreach($apply_link as $i => $query_post){
 		      echo "Access Apply ".($i+1).':';
 		      $this->load_page($this->page_refer,$this->page_refer,array_merge($this->page_post,$query_post));
@@ -341,7 +356,7 @@
 		    if(count($page_link)){
 			  $next_page_post = array_shift($page_link);
 		      $now_page += 1;  
-              echo "\nChange Page.\n";
+              echo "Change Page.\n";
 		      $this->load_page($this->page_refer,$this->page_refer,array_merge($this->page_post,$next_page_post));	
 			}
 		}
