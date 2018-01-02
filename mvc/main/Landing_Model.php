@@ -1603,18 +1603,22 @@
 		
 		// 更新與紀錄狀態
 		$apply_process = $booking['_progres'] ? json_decode($booking['_progres'],true) : ['client'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]],'admin'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
-		  
-		if($booking['_stage']<2){  // 若 stage 為 0 : 起始狀態
+		
+		if($booking['_stage']<2){  // 若 stage 為 0 : 起始狀態  新申請OR更新申請
 		  
 		  $apply_status  = '收件待審';
-		  $apply_process['client'][1][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'收件待審','note'=>'','logs'=>'');
-			
-		  // 確認是否抽籤，不用抽籤直接跳至審查狀態
 		  $apply_stage = $booking['_stage'];
+		  
 		  if( !$booking['_ballot']){
-		    $apply_process['client'][2][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'正取送審','note'=>'申請項目不須抽籤','logs'=>'');
+		    
+			//不用抽籤直接跳至審查狀態
+		    if(!count($apply_process['client'][1])){
+			  $apply_process['client'][1][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'收件待審','note'=>'','logs'=>'');	
+			}
+			$apply_process['client'][2][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'正取送審','note'=>'申請項目不須抽籤','logs'=>'');
 		    $apply_stage = $apply_stage < 3 ? 3 : $apply_stage;
 		    $apply_status= '正取送審';
+		  
 		  }else{
 		    $apply_process['client'][2] = [];
 		    $apply_stage = $apply_stage==0 ?  1 : $apply_stage;

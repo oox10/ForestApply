@@ -112,7 +112,7 @@
 	
 	//-- Client Area :  search user apply history last 7
 	public static function SEARCH_APPLY_RECORD(){
-	  $SQL_String = "SELECT area_booking.*,area_name FROM area_booking LEFT JOIN area_main ON ano=am_id WHERE applicant_name=:applicant_name AND applicant_mail=:applicant_mail AND applicant_id=:applicant_id AND _status!='進入申請' ORDER BY apply_date DESC;";
+	  $SQL_String = "SELECT area_booking.*,area_name FROM area_booking LEFT JOIN area_main ON ano=am_id WHERE applicant_name=:applicant_name AND applicant_mail=:applicant_mail AND applicant_id=:applicant_id AND _status!='申請進入' ORDER BY apply_date DESC;";
 	  return $SQL_String;
 	}
 	
