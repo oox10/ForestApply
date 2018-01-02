@@ -34,7 +34,7 @@
 	
 	$DB_UPD	= $db->DBLink->prepare( "UPDATE area_booking SET applicant_info=:master,member=:member,_stage=:_stage,_progres=:_progres WHERE abno = :abno;" );
 	
-	$DB_OLD	= $db->DBLink->prepare( "SELECT * FROM area_booking WHERE apply_date < :apply_limit AND _stage != 6;" );
+	$DB_OLD	= $db->DBLink->prepare( "SELECT * FROM area_booking WHERE apply_date < :apply_limit AND _stage = 6;" );
 	$DB_OLD->bindValue(':apply_limit',$oldapply_limit);
 	
 	if( !$DB_OLD->execute() ){

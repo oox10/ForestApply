@@ -24,7 +24,7 @@
 	":apply_reason,:date_enter,:date_exit,:apply_form,:member,:member_count,:check_note,".
 	"0,'0000-00-00',0,0,:_stage,:_progres,:_status,:_final,:_time_create,:_time_update,:_checker,'',1);");
 	
-	$import_stage = 5;
+	$import_stage = 6;
 	
 	
 	//掃描所有區域
@@ -88,13 +88,22 @@
 		  $old_apply['application'];
 		  $old_apply['members'];
 		  
-		  $am_id = isset($areamap[$old_apply['application']['進入區域']]) ? $areamap[$old_apply['application']['進入區域']]['ano'] : '0';
+		  $area_name = preg_replace('/台/u','臺',$old_apply['application']['進入區域']);
+		  
+		  
+		  $am_id = isset($areamap[$area_name]) ? $areamap[$area_name]['ano'] : '0';
 		  $apply_code = isset($old_apply['application']['申請編號']) ? $old_apply['application']['申請編號'] : false;
 		  $apply_date = isset($old_apply['application']['申請日期']) ? date('Y-m-d',strtotime($old_apply['application']['申請日期'])) : false;
 		  
 		  $applicant_name = isset($old_apply['application']['申請人']) ?   $old_apply['application']['申請人'] : false;
-		  $applicant_id   = false;
+		  $applicant_id   = isset($old_apply['application']['身份證字號']) ?   $old_apply['application']['身份證字號'] : false;
 		  $applicant_mail = isset($old_apply['application']['EMail']) ?   $old_apply['application']['EMail'] : false;
+		  $applicant_birth = isset($old_apply['application']['出生年月日']) ?   $old_apply['application']['出生年月日'] : false;
+		  $applicant_organ = isset($old_apply['application']['服務單位']) ?   $old_apply['application']['服務單位'] : false;
+		  $applicant_mobile = isset($old_apply['application']['手機']) ?   $old_apply['application']['手機'] : false;
+		  $applicant_fax = isset($old_apply['application']['傳真']) ?   $old_apply['application']['傳真'] : false;
+		  $applicant_add01 = isset($old_apply['application']['通訊地址']) ?   $old_apply['application']['通訊地址'] : false;
+		  $applicant_add02 = isset($old_apply['application']['戶籍地址']) ?   $old_apply['application']['戶籍地址'] : false;
 		  
 		  $enter_member = [];
 		  
@@ -125,13 +134,17 @@
 			
 		  }
 		  
+		  if($applicant_name=='系統抽測') continue;
+		  
+		  
+		  
 		  $applicant_info = [
 		    'applicant_name'=> $applicant_name, 
 		    'applicant_userid'=> $applicant_id,
-            'applicant_mail'=> $applicant_mail, 			
+            'applicant_mail'=> $applicant_mail,
 		  ];
 		  
-		  $apply_reason = isset($old_apply['application']['進入目的']) ?   $old_apply['application']['進入目的'] : false;
+		  $apply_reason = isset($old_apply['application']['申請事項']) ?   $old_apply['application']['申請事項'] : false;
 		  $date_enter = false;
 		  $date_exit = false;
 		  
@@ -143,11 +156,11 @@
 		  
 		  $apply_form = [
 		    'area'=>[
-			  "code"=>$areamap[$old_apply['application']['進入區域']]['area_code'],
-			  "inter"=>[isset($old_apply['application']['進入範圍']) ? $old_apply['application']['進入範圍'] : ''],
+			  "code"=>$areamap[$area_name]['area_code'],
+			  "inter"=>[isset($old_apply['application']['地點']) ? $old_apply['application']['地點'] : ''],
 			  "gate"=>[
-				"entr"=> isset($old_apply['application']['進入入口及出口地點']) ? $old_apply['application']['進入入口及出口地點'] : '',
-				"entr_time"=>(isset($old_apply['application']['到達入口時間']) ? $old_apply['application']['到達入口時間'] : ''),
+				"entr"=> '',
+				"entr_time"=>'00:00:00',
 				"exit"=>"",
 				"exit_time"=>"00:00:00"
 			  ]
@@ -159,32 +172,29 @@
 			'dates'=>[[$date_enter,$date_exit]],
 			'fields'=>[
 			  'application_field_1'=>[
-			    "field"=>"一、每日行程路線：(請簡易填寫行進路線，包含預計日期及時間、抵達地點、及從事之行為種類)：",
-			    "value"=>(isset($old_apply['application']['每日行程路線']) ? $old_apply['application']['每日行程路線'] : ''),  
-			  ],
-			  'application_field_2'=>[
-			    "field"=>"二、環境維護措施(垃圾、廢棄物處理方式)及環境教育內容簡介：",
-			    "value"=>(isset($old_apply['application']['環境維護措施']) ? $old_apply['application']['環境維護措施'] : '')
-			  ],
-			  'application_field_3'=>[
-			    "field"=>"三、緊急災難處理(應變相關裝備概述、辦理保險及撤退路線等說明)：",
-			    "value"=>(isset($old_apply['application']['緊急災難處理']) ? $old_apply['application']['緊急災難處理'] : '') 
+			    "field"=>"車牌號碼及車型說明資料",
+			    "value"=>(isset($old_apply['application']['車牌號碼及<br \/> 車型說明資料']) ? $old_apply['application']['車牌號碼及<br \/> 車型說明資料'] : ''),  
 			  ],
 			]
 		  ];
 		  
 		  $enter_member;
 		  $member_count = count($enter_member);
-		  $check_note = ''; // 審查註記
+		  $check_note = $old_apply['application']['審核備註']; // 審查註記
 		  
 		  $_status  = isset($old_apply['application']['狀態']) ? $old_apply['application']['狀態'] : '';
 		  $_final   = isset($old_apply['application']['狀態']) ? $old_apply['application']['狀態'] : '';;
 		  $_stage   = $import_stage;
-		  $_progres = ['client'=>[ 0=>[], 1=>[["time"=>"2017-12-25 00:00:00","status"=>"系統匯入","note"=>"","logs"=>""]], 2=>[], 3=>[], 4=>[], 5=>[["time"=>"2017-12-25 00:00:00","status"=>$_final,"note"=>"","logs"=>""]] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]],'admin'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
+		  
+		  $_progres = ['client'=>[ 0=>[], 1=>[["time"=>date('Y-m-d H:i:s'),"status"=>"資料匯出","note"=>"","logs"=>""]], 2=>[], 3=>[], 4=>[], 5=>[]],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]],'admin'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
+		  $_progres['client'][5][] = ["time"=>date('Y-m-d H:i:s'),"status"=>$_status,"note"=>"","logs"=>""];
+		  $_progres['admin'][5][] = ["time"=>date('Y-m-d H:i:s'),"status"=>"系統匯入","note"=>"","logs"=>""];
 		  
 		  $_time_create = $apply_date.' 00:00:00';
 		  $_time_update = $apply_date.' 00:00:00';
 		  $_checker		= '';
+		  
+		  
 		  
 		  $db_update->bindValue(':am_id',$am_id);
 		  $db_update->bindValue(':apply_code',$apply_code);
@@ -211,7 +221,6 @@
 		  $db_update->bindValue(':_time_update',$_time_update);
 		  $db_update->bindValue(':_checker',$_checker);
 		  
-		  
 		  if(!$db_update->execute()){
 		    
 			file_put_contents('import.txt',$apply_file."\n",FILE_APPEND);
@@ -221,6 +230,9 @@
 		  }else{
 			echo "０";  
 		  }
+		
+		  
+		
 		}
 	  }
 	  
