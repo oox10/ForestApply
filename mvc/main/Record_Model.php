@@ -177,12 +177,13 @@
             $objPHPExcel->getActiveSheet()->getCellByColumnAndRow(2, $row)->setValueExplicit($area_data['total']['apply_case'], PHPExcel_Cell_DataType::TYPE_STRING);  // 總件數
 			$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(3, $row)->setValueExplicit($area_data['total']['accept_case'], PHPExcel_Cell_DataType::TYPE_STRING);  // 核准件數
 			$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(4, $row)->setValueExplicit($area_data['total']['undone_case'], PHPExcel_Cell_DataType::TYPE_STRING);  // 未完成件數
-            $objPHPExcel->getActiveSheet()->getCellByColumnAndRow(5, $row)->setValueExplicit($area_data['total']['accept_member'], PHPExcel_Cell_DataType::TYPE_STRING);  // 核准人數
-            $objPHPExcel->getActiveSheet()->getCellByColumnAndRow(6, $row)->setValueExplicit($accept_rate.'%' , PHPExcel_Cell_DataType::TYPE_STRING);  // 核准比例
-            $objPHPExcel->getActiveSheet()->getCellByColumnAndRow(7, $row)->setValueExplicit($inter_rate.'%', PHPExcel_Cell_DataType::TYPE_STRING);  // 進入人數比例
-            $objPHPExcel->getActiveSheet()->getCellByColumnAndRow(8, $row)->setValueExplicit($area_data['total']['accept_member'], PHPExcel_Cell_DataType::TYPE_STRING);  // 總進入人次
-            $objPHPExcel->getActiveSheet()->getCellByColumnAndRow(9, $row)->setValueExplicit(count($area_data['total']['apply_dates']) , PHPExcel_Cell_DataType::TYPE_STRING);  // 總和可天數
-            $objPHPExcel->getActiveSheet()->getCellByColumnAndRow(10, $row)->setValueExplicit($everage_person_day.' 人次/每日', PHPExcel_Cell_DataType::TYPE_STRING); // 平均進入人次  
+            $objPHPExcel->getActiveSheet()->getCellByColumnAndRow(5, $row)->setValueExplicit($area_data['total']['apply_member'], PHPExcel_Cell_DataType::TYPE_STRING);  // 申請人數
+            $objPHPExcel->getActiveSheet()->getCellByColumnAndRow(6, $row)->setValueExplicit($area_data['total']['accept_member'], PHPExcel_Cell_DataType::TYPE_STRING);  // 核准人數
+            $objPHPExcel->getActiveSheet()->getCellByColumnAndRow(7, $row)->setValueExplicit($accept_rate.'%' , PHPExcel_Cell_DataType::TYPE_STRING);  // 核准比例
+            $objPHPExcel->getActiveSheet()->getCellByColumnAndRow(8, $row)->setValueExplicit($inter_rate.'%', PHPExcel_Cell_DataType::TYPE_STRING);  // 進入人數比例
+            $objPHPExcel->getActiveSheet()->getCellByColumnAndRow(9, $row)->setValueExplicit($area_data['total']['accept_member'], PHPExcel_Cell_DataType::TYPE_STRING);  // 總進入人次
+            $objPHPExcel->getActiveSheet()->getCellByColumnAndRow(10, $row)->setValueExplicit(count($area_data['total']['apply_dates']) , PHPExcel_Cell_DataType::TYPE_STRING);  // 總和可天數
+            $objPHPExcel->getActiveSheet()->getCellByColumnAndRow(11, $row)->setValueExplicit($everage_person_day.' 人次/每日', PHPExcel_Cell_DataType::TYPE_STRING); // 平均進入人次  
 		    $row++;
 		  }
 		  $objPHPExcel->getActiveSheet()->mergeCells("A".$area_type_start.":A".($row-1));
@@ -222,12 +223,13 @@
 				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(2, $row)->setValueExplicit($data['apply_case'], PHPExcel_Cell_DataType::TYPE_STRING);  // 總件數
 				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(3, $row)->setValueExplicit($data['accept_case'], PHPExcel_Cell_DataType::TYPE_STRING);  // 核准件數
 				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(4, $row)->setValueExplicit($data['undone_case'], PHPExcel_Cell_DataType::TYPE_STRING);  // 未完成件數
-				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(5, $row)->setValueExplicit($data['accept_member'], PHPExcel_Cell_DataType::TYPE_STRING);  // 核准人數
-				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(6, $row)->setValueExplicit($accept_rate.'%' , PHPExcel_Cell_DataType::TYPE_STRING);  // 核准比例
-				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(7, $row)->setValueExplicit($inter_rate.'%', PHPExcel_Cell_DataType::TYPE_STRING);  // 進入人數比例
-				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(8, $row)->setValueExplicit($data['accept_member'], PHPExcel_Cell_DataType::TYPE_STRING);  // 總進入人次
-				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(9, $row)->setValueExplicit(count($data['apply_dates']) , PHPExcel_Cell_DataType::TYPE_STRING);  // 總和可天數
-				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(10, $row)->setValueExplicit($everage_person_day.' 人次/每日', PHPExcel_Cell_DataType::TYPE_STRING); // 平均進入人次  
+				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(5, $row)->setValueExplicit($data['apply_member'], PHPExcel_Cell_DataType::TYPE_STRING);  // 申請人數
+				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(6, $row)->setValueExplicit($data['accept_member'], PHPExcel_Cell_DataType::TYPE_STRING);  // 核准人數
+				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(7, $row)->setValueExplicit($accept_rate.'%' , PHPExcel_Cell_DataType::TYPE_STRING);  // 核准比例
+				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(8, $row)->setValueExplicit($inter_rate.'%', PHPExcel_Cell_DataType::TYPE_STRING);  // 進入人數比例
+				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(9, $row)->setValueExplicit($data['accept_member'], PHPExcel_Cell_DataType::TYPE_STRING);  // 總進入人次
+				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(10, $row)->setValueExplicit(count($data['apply_dates']) , PHPExcel_Cell_DataType::TYPE_STRING);  // 總和可天數
+				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(11, $row)->setValueExplicit($everage_person_day.' 人次/每日', PHPExcel_Cell_DataType::TYPE_STRING); // 平均進入人次  
 				$row++;
 			}
 		    $area_index++; 
