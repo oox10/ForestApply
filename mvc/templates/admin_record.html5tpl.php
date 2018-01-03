@@ -135,14 +135,15 @@
 			  <h1 class='area_type'><?php echo $area_type; ?></h1>
 			  <table class='record_list'>
 		        <tr class='data_field'>
-			      <td title='時間'		>區域名稱</td>
-				  <td title='類型'		>申請件數</td>
-				  <td title='資料表'	>核准件數</td>
-			      <td title='目標'		>未完成件數</td>
-				  <td title='目標'		>核准人數</td>
-				  <td title='紀錄'	    >案件核准比例<br/>申請案件/核准案件</td>
-				  <td title='結果'	    >人次進入比例<br/>申請人次/核准人次</td>
-			      <td title='結果'	    >平均每日進入人次</td>
+			      <td title='區域名稱'		>區域名稱</td>
+				  <td title='申請件數'		>申請件數</td>
+				  <td title='核准件數'	>核准件數</td>
+			      <td title='未完成件數'		>未完成件數</td>
+				  <td title='申請人數'		>申請人數</td>
+				  <td title='核准人數'		>核准人數</td>
+				  <td title='案件核准比例'	    >案件核准比例<br/>申請案件/核准案件</td>
+				  <td title='人次進入比例'	    >人次進入比例<br/>申請人次/核准人次</td>
+			      <td title='平均每日進入人次'	    >平均每日進入人次</td>
 				</tr>
 				
 				<?php foreach($area_list as $area_id => $area_data): ?>  
@@ -152,7 +153,8 @@
 				    <td ><?php echo $area_data['total']['apply_case'];?></td>
 					<td ><?php echo $area_data['total']['accept_case'];?></td>
 					<td ><?php echo $area_data['total']['undone_case'];?></td>
-					<td ><?php echo $area_data['total']['accept_member'];?></td>
+					<td ><?php echo $area_data['total']['apply_member'];?></td>
+				    <td ><?php echo $area_data['total']['accept_member'];?></td>
 					<td ><?php echo intval($area_data['total']['apply_case']) ? round(intval($area_data['total']['accept_case'])/intval($area_data['total']['apply_case']),4)*100  : 0 ; ?>%</td>
 					<td ><?php echo intval($area_data['total']['apply_case']) ? round(intval($area_data['total']['accept_member'])/intval($area_data['total']['apply_member']),4)*100  : 0 ; ?>%</td>
 					<td ><?php echo count($area_data['total']['apply_dates']) ?  round(intval($area_data['total']['accept_member'])/count($area_data['total']['apply_dates'])) : 0 ; ?> 人/日</td>
@@ -163,6 +165,7 @@
 			        <td  ><?php echo $data['apply_case']; ?></td>
 				    <td  ><?php echo $data['accept_case']; ?></td>
 				    <td  ><?php echo $data['undone_case']; ?></td>
+					<td  ><?php echo $data['apply_member'];?></td>
 					<td  ><?php echo $data['accept_member']; ?></td>
 					<td  ><?php echo intval($data['apply_case']) ?  round(intval($data['accept_case'])/intval($data['apply_case']),4)*100  : 0 ; ?>%</td>
 				    <td  ><?php echo intval($data['apply_case']) ?  round(intval($data['accept_member'])/intval($data['apply_member']),4)*100  : 0 ; ?>%</td>
