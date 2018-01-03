@@ -450,17 +450,24 @@
 				<?php endif; ?>
 				
 				
-				<?php if($apply_area['area_gates']): ?>
+				<?php if($apply_area['area_gates']||$apply_area['sub_block']): ?>
 				<ul class='input_assist' id='area_gates_assist' >
+				  
+				  <?php if($apply_area['area_gates']):?>
 				  <?php foreach(explode(';',$apply_area['area_gates']) as $gate): ?>  
 				  <li class='get_selecter' name='<?php echo $gate;?>' ><?php echo $apply_area['area_name'];?> - <?php echo $gate;?></li>
 				  <?php endforeach; ?>
+				  <?php endif; ?>
+				  
+				  <?php if($apply_area['sub_block']):?>
 				  <?php foreach($apply_area['sub_block'] as $bid => $block): ?>  
 				  <?php   if(!count($block['gate'])) continue; ?>
 				  <?php   foreach($block['gate'] as $gate): ?>  
 			      <li class='get_selecter' block='<?php echo $block['name']?>' name='<?php echo $block['name'].' - '.$gate;?>'  >&nbsp;&nbsp;<?php echo $block['name'].' - '.$gate; ?></li>
 				  <?php   endforeach; ?>
 				  <?php endforeach; ?>
+				  <?php endif; ?>
+				
 				</ul>
 			    <?php endif; ?>
 				

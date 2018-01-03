@@ -276,10 +276,16 @@ $(window).load(function () {   //  || $(document).ready(function() {
 	
 	// assist input & close 
 	$('.input_assist > li').click(function(){
-	  var assist_dom = $(this).parent();
-	  var assist_val = $(this).attr('name');
+	  var assist_dom  = $(this).parent();
+	  var assist_val  = $(this).attr('name');
+	  var assist_link = $(this).attr('block');
+	  
 	  var assist_form= assist_dom.attr('bind');
 	  if($('#'+assist_form).length && assist_val){
+		if(typeof assist_link !='undefined' && !$("input[type='checkbox'][value='"+assist_link+"']:checked").length){
+          $("input[type='checkbox'][value='"+assist_link+"']").prop('checked',true);
+		  system_message_alert("alert","新增進入範圍 - "+assist_link );
+		}
 		$('#'+assist_form).val(assist_val); 
 	  }
 	  assist_dom.attr('bind','').hide();
