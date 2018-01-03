@@ -84,7 +84,7 @@
 			$atotal['apply_case']++;
             $atotal['apply_member'] += $dbtmp['member_count'];			
 			
-			if($dbtmp['_stage']==5){
+			if($dbtmp['_stage']>=5){
 			  if($dbtmp['_final']=='核准進入' || $dbtmp['_final']=='申請核准'){
 				
 				$area_apply_record[$apply_index]['accept_case']++;
