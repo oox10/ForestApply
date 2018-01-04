@@ -1309,12 +1309,6 @@
 		  
 		}while($filter  && $counter < 100 );
 		
-		// update apply members
-		$DB_UPDMETA	= $this->DBLink->prepare( SQL_Client::UPDATE_APPLY_MEMBER() );
-		$DB_UPDMETA->bindValue(':apply_code',$ApplyCode);
-		$DB_UPDMETA->bindValue(':member',json_encode($members,JSON_UNESCAPED_UNICODE));
-		$DB_UPDMETA->bindValue(':countmbr',count($members));
-		$DB_UPDMETA->execute();
 		
 		unset($objSheet);
 		unset($objPHPExcel);
@@ -1375,7 +1369,7 @@
 		  throw new Exception('_APPLY_RECORD_NOT_FOUND');  
 		}
 		
-		// get area applied member list  
+		// get area applied member list  目前已申請之使用者清單，以確保無重複申請
 		$member_checker = array();
 		$DB_MBR = $this->DBLink->prepare(SQL_Client::GET_AREA_APPLIED_MEMBER());
 		$DB_MBR->bindParam(':am_id',$booking['am_id']);
@@ -1434,7 +1428,6 @@
 		  if( $member['member_id']==$Applicant['applicant_userid'] && $member['member_name']==$Applicant['applicant_name']   ){
 			$chif = 1;  
 		  }
-		
 		}
 		
 		if($fail){
@@ -1445,6 +1438,14 @@
 		if(!$chif){
 		  throw new Exception('_APPLY_MEMBER_NO_APPLICANT'); 	
 		}
+		
+		// 檢查人數是否變更:抽籤後人數不可增加
+		if($booking['_stage'] > 2 && $booking['_ballot']){
+		  if(count($apply_members) > $booking['member_count']){
+			throw new Exception('_APPLY_MEMBER_OVER_THEN_BEFORE');   
+		  }
+		}
+		
 		
 		// update apply members
 		$DB_UPDMETA	= $this->DBLink->prepare( SQL_Client::UPDATE_APPLY_MEMBER() );
