@@ -2236,7 +2236,7 @@
 		foreach($booking as $i => $b){
 		  $leader_length = mb_strlen($b['leader']);
 		  $leader_first  = mb_substr($b['leader'],0,1);
-		  $booking[$i]['code']   = '***'.substr($b,-5,5);
+		  $booking[$i]['code']   = '***'.substr($b['code'],-5,5);
 		  $booking[$i]['leader'] = $leader_first.str_pad('',($leader_length-1) ,'o', STR_PAD_RIGHT);
 		}
 		
