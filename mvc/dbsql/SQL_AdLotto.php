@@ -46,7 +46,7 @@
 	
 	//-- Admin Lotto :  scan area_booking table that to lotto
 	public static function GET_LOTTO_BOOKING(){
-	  $SQL_String = "SELECT * FROM area_booking WHERE _ballot=1 AND _ballot_date=:lotto_date AND _ballot_result=0 AND _keep=1 ORDER BY am_id ASC,apply_date ASC,abno ASC;";
+	  $SQL_String = "SELECT * FROM area_booking WHERE _ballot=1 AND _ballot_date=:lotto_date AND _ballot_result=0 AND _stage=2 AND _keep=1 ORDER BY am_id ASC,apply_date ASC,abno ASC;";
 	  return $SQL_String;
 	}
 	

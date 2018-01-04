@@ -45,6 +45,7 @@
 	
 	// 查詢抽籤列表(尚未抽籤)
 	$DB_OBJ = $db->DBLink->prepare( SQL_AdLotto::GET_LOTTO_QUEUE());
+	$DB_OBJ->bindValue(':date_tolot',$lotto_date);
 	if(!$DB_OBJ->execute()){
 	  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
 	}
