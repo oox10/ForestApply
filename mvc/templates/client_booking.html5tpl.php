@@ -202,7 +202,7 @@
 			  <div class="declaration" >
 			    <?php echo $page_content['自然保護區申請規範']; ?>
 			  </div>
-			  <?php elseif($apply_area['area_type']=='動物保護區' && isset($page_content['動物保護區申請規範'])):?>
+			  <?php elseif($apply_area['area_type']=='野生動物保護區' && isset($page_content['動物保護區申請規範'])):?>
 			  <div class="declaration" >
 			    <?php echo $page_content['動物保護區申請規範']; ?>
 			  </div>
@@ -437,7 +437,7 @@
 				<div  class='form_element other_form'>
 				  <label><?php echo $fconf['label']; ?></label>
 				  <div>
-				    <?php if($fconf['input']=='textarea'): ?>
+				    <?php if(isset($fconf['input']) && $fconf['input']=='textarea'): ?>
 				    <textarea class='apply_data' id='<?php echo $fid; ?>' ><?php echo $fconf['value']; ?></textarea>
 				    <?php else: ?> 
 				    <input type="text" class='apply_data' id='<?php echo $fid; ?>' value='<?php echo $fconf['value']; ?>' />
