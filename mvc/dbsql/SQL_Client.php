@@ -200,7 +200,7 @@
 	
 	//-- Client Applied : search area lotto data
 	public static function GET_LOTTO_TARGET_DATA(){
-	  $SQL_String = "SELECT aid,date_tolot,time_lotto,lotto_pool,lotto_num,logs_process,_loted FROM booking_lotto WHERE aid=:aid AND date_tolot=:date_tolot AND _keep=1;";
+	  $SQL_String = "SELECT aid,date_tolot,time_lotto,lotto_pool,lotto_num,logs_process,_loted FROM booking_lotto WHERE aid=:aid AND date_enter=:date_enter AND _keep=1;";
 	  return $SQL_String;
 	}
 	

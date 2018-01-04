@@ -2187,16 +2187,17 @@
 	/*[ Lotto Function Set ]*/ 
 	
 	//-- Admin Lotto Data Read 
-	// [input] : NULL;
+	// [input] : AreaCode   區域代號;
+	// [input] : EnterDate  進入時間;
 	
-	public function Get_Area_Lotto_Data($AreaCode,$LottoDate){
+	public function Get_Area_Lotto_Data($AreaCode,$EnterDate){
 	  
 	  $result_key = parent::Initial_Result('lotto');
 	  $result  = &$this->ModelResult[$result_key];
 	  
 	  try{
 	    
-		// 檢查登入參數
+		// 檢查區域碼參數
 		if( !preg_match('/^[\w\d]{8}$/',$AreaCode)  ){
 	      throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 	    }
@@ -2208,24 +2209,22 @@
 		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
 		}
 		
-		$lotto_date = '';
-		if( !strtotime($LottoDate) ){
+		$enter_date = '';
+		if( !strtotime($EnterDate) ){
 		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 		}else{
-		  $lotto_date = date('Y-m-d',strtotime($LottoDate));	
+		  $enter_date = date('Y-m-d',strtotime($EnterDate));	
 		}
 		
-		
-		if(strtotime($lotto_date) < strtotime('2017-12-31 23:59:59')){
+		if(strtotime($enter_date) < strtotime('2017-12-31 23:59:59')){
 		  throw new Exception('_APPLY_LOTTO_UNRECORDED'); 	
 		}
-		
 		
 		// 查詢資料庫
 		//aid,date_tolot,time_lotto,lotto_pool,lotto_num,logs_process,_loted,area_type,area_name,area_load,accept_max_day,accept_min_day,wait_list
 		$DB_OBJ = $this->DBLink->prepare( SQL_Client::GET_LOTTO_TARGET_DATA() );
 		$DB_OBJ->bindValue(':aid',$area['ano']);
-		$DB_OBJ->bindValue(':date_tolot',$lotto_date);
+		$DB_OBJ->bindValue(':date_enter',$enter_date);
 		
 		if(!$DB_OBJ->execute()){
 		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
@@ -2237,6 +2236,7 @@
 		foreach($booking as $i => $b){
 		  $leader_length = mb_strlen($b['leader']);
 		  $leader_first  = mb_substr($b['leader'],0,1);
+		  $booking[$i]['code']   = '***'.substr($b,-5,5);
 		  $booking[$i]['leader'] = $leader_first.str_pad('',($leader_length-1) ,'o', STR_PAD_RIGHT);
 		}
 		
