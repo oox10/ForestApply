@@ -33,7 +33,7 @@
 			  <?php endif; ?>
 			  
 			  <?php if( $admin_filter || 
-			           (isset($_SESSION[_SYSTEM_NAME_SHORT]['ADMIN']['PERMISSION'][strtolower('Page')]) && intval($_SESSION[_SYSTEM_NAME_SHORT]['ADMIN']['PERMISSION'][strtolower('Page')])!=0 && (isset($user_info['permission']['interface_mask']['module_page']) && $user_info['permission']['interface_mask']['module_page']))  
+			           (isset($_SESSION[_SYSTEM_NAME_SHORT]['ADMIN']['PERMISSION'][strtolower('Page')]) && intval($_SESSION[_SYSTEM_NAME_SHORT]['ADMIN']['PERMISSION'][strtolower('Page')])!=0 && (isset($user_info['permission']['interface_mask']['admin_manual.html5tpl.php']['module_page']) && $user_info['permission']['interface_mask']['admin_manual.html5tpl.php']['module_page']))  
 					): ?>
 			  <li  title='網站內容編輯'	class='option func_activate'	id='Page'	><i class="fa fa-file-text-o" aria-hidden="true"></i> <span >網站內容編輯</span> </li>
 			  <?php endif; ?>
