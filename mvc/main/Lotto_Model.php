@@ -197,7 +197,7 @@
 			$lotto_boxid  = $this->DBLink->lastInsertId('booking_lotto');
 			$lottoboxs[$lotto_index] = array();
 		  
-		  }else if($lottoinfo[$lotto_index]['_loted']){
+		  }else if(isset($lottoinfo[$lotto_index]) && $lottoinfo[$lotto_index]['_loted']){
             
 			// 已經抽過了 ~~
             // 針對申請單補充資料
