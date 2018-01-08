@@ -216,9 +216,9 @@
 		
 		
 		if(!isset($apply_data['application']['申請日期'])){
-		  
 		  file_put_contents('logs.txt',print_r($page_content,true),FILE_APPEND);
 		  file_put_contents('logs.txt',print_r($apply_data,true),FILE_APPEND);
+		  throw new Exception('fetch content fail');  	
 		  exit(1);
 		}
 		
@@ -363,7 +363,7 @@
   
   $today = intval(date('Ymd'));
   $time_start = strtotime('2017-11-01');
-  $time_finish= strtotime('2017-12-25');
+  $time_finish= strtotime('2018-01-05');
   
   try{
 	  
