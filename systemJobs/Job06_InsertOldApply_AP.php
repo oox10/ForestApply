@@ -22,14 +22,14 @@
 	$db_update =  $db->DBLink->prepare("INSERT INTO area_booking VALUES(NULL,".
 	":am_id,:apply_code,:apply_date,:applicant_name,:applicant_mail,:applicant_id,:applicant_info,".
 	":apply_reason,:date_enter,:date_exit,:apply_form,:member,:member_count,:check_note,".
-	"0,'0000-00-00',0,0,:_stage,:_progres,:_status,:_final,:_time_create,:_time_update,:_checker,'',1);");
+	":_ballot,:_ballot_date,0,0,:_stage,:_progres,:_status,:_final,:_time_create,:_time_update,:_checker,'',1);");
 	
 	$import_stage = 5;
 	
 	
 	//掃描所有區域
 	$areamap = [];
-	$DB_GET	= $db->DBLink->prepare( "SELECT ano,area_code,area_name FROM area_main WHERE _keep=1 ORDER BY ano ASC;" );
+	$DB_GET	= $db->DBLink->prepare( "SELECT * FROM area_main WHERE _keep=1 ORDER BY ano ASC;" );
 	if( !$DB_GET->execute() ){
 	  throw new Exception('_DB_ERROR_GET_AREA_SQL_FAIL');
     }
@@ -46,6 +46,9 @@
 	  if(!count($apply_years)){
 		throw new Exception('No Source Files FROM :'.$file_path."\n");    
 	  }
+	  
+	  
+	  $status_queue = array();
 	  
 	  foreach($apply_years as $ayear){
 		  
@@ -177,75 +180,89 @@
 		  $member_count = count($enter_member);
 		  $check_note = ''; // 審查註記
 		  
+		  $bollet_date  = '0000-00-00';
+		  $apply_bollet = 0;
+		  
+		  
 		  $_status  = isset($old_apply['application']['狀態']) ? $old_apply['application']['狀態'] : '';
-		  $_final   = isset($old_apply['application']['狀態']) ? $old_apply['application']['狀態'] : '';;
-		  $_stage   = $import_stage;
-		  $_progres = ['client'=>[ 0=>[], 1=>[["time"=>date('Y-m-d H:i:s'),"status"=>"系統匯入","note"=>"","logs"=>""]], 2=>[], 3=>[], 4=>[], 5=>[]],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]],'admin'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
+		  $_final   = '';;
+		  $_stage   = 0;
+		  
+		  $_progres = ['client'=>[ 0=>[], 1=>[["time"=>date('Y-m-d H:i:s'),"status"=>"資料匯出","note"=>"","logs"=>""]], 2=>[], 3=>[], 4=>[], 5=>[]],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]],'admin'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
+		  $_progres['admin'][5][] = ["time"=>date('Y-m-d H:i:s'),"status"=>"系統匯入","note"=>"","logs"=>""];
+		  
 		  
 		  $_time_create = $apply_date.' 00:00:00';
 		  $_time_update = $apply_date.' 00:00:00';
 		  $_checker		= '';
 		  
+		  if(!isset( $status_queue[$_status])) $status_queue[$_status] = 0;
+		  $status_queue[$_status]++;
+		  
+		  
 		  switch($_status){
+			
 			case '收件待審':
             
-			$apply_process['client'][1]   = [array('time'=>date('Y-m-d H:i:s'),'status'=>'收件待審','note'=>'申請項目需抽籤','logs'=>'')];
-		    $apply_process['review'][2][] = array('time'=>$bollet_date,'status'=>'系統抽籤','note'=>'','logs'=>'');	
-			
-			
-			$progress['client'][3][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'審核通過','note'=>'','logs'=>date('Y-m-d H:i:s'));	
-			$progress['client'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'正取核准','note'=>'','logs'=>'');				
-			$progress['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'核准進入','note'=>'','logs'=>'');
-			$progress['admin'][4][]  = array('time'=>date('Y-m-d H:i:s'),'status'=>'自動通過','note'=>'區域設定：審查限期進入前 '.$tmp['auto_pass'].' 天前自動通過','logs'=>'');	
-		   
-			
-		
-			
-			case '正取送審'
-            case '備取送審'
-			case '抽籤未中'
-			
-			
-			
-			
-			正取送審
-			備取送審
-			抽籤未中
-			
-			
-			case '正取補件':
-			case '備取補件':
-			
-			
-			
-			
-			case '資料不全'：
-			
-			正取補件送審
-			備取補件送審
-			補件駁退
-			
-			備取等待
-			備取成功
-			備取失敗
-			
-			
-			申請駁退
-			申請註銷
-			申請核准
-			
-			
-			
-			case '申請取消'
-			  $apply_process['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'取消申請','note'=>'使用者取消申請','logs'=>'');
+			    $_stage   = 1;
+			    $areainfo = $areamap[$old_apply['application']['進入區域']];
+			    $apply_bollet  = 0;  //是否需抽籤
+				$applicant_mail='tpcca.rcdh.ntu@gmail.com';
+				
+				// 檢驗申請理由是否需要抽籤
+				
+				if('相關團體為環境教育之需要' == $apply_reason){
+				  $apply_bollet = 1;  
+				}
+				// 確認是否抽籤
+				$bollet_date = $apply_bollet ? date('Y-m-d',strtotime('-'.($areainfo['accept_min_day']-1).' day',strtotime($date_enter))) : '0000-00-00';
+				if( $apply_bollet ){  
+				  $_progres['client'][1]   = [array('time'=>date('Y-m-d H:i:s'),'status'=>'收件待審','note'=>'申請項目需抽籤','logs'=>'')];
+				  $_progres['review'][2][] = array('time'=>$bollet_date,'status'=>'系統抽籤','note'=>'','logs'=>'');	
+				}else{
+				  continue; 	
+				  // 不須抽籤不處理
+				}
+			  break;
 			  
-			
-			
+			case '申請取消': case '申請核准': case '申請註銷': case '申請駁退': case '抽籤未中':
+			  $_progres['client'][5][] = ["time"=>date('Y-m-d H:i:s'),"status"=>$_status,"note"=>"","logs"=>""];
+			  $_stage=5;
+			  $_final=$_status;
+			  break;
+			  
+			default: // 其他狀況
+			  
+			  if(preg_match('/^備取(成功|失敗)(.*?)$/',$_status,$match)){
+				
+				$_progres['review'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>$match[0],'note'=>$match[2],'logs'=>'');	
+				
+				if($match[1]=='成功'){
+				  $progress['client'][5][] = ['time'=>date('Y-m-d H:i:s'),'status'=>'核准進入','note'=>'','logs'=>''];	
+				}else{
+				  $_progres['client'][5][] = ["time"=>date('Y-m-d H:i:s'),"status"=>'申請註銷',"note"=>"","logs"=>""];	
+				}
+				
+				$_stage = 5;
+				$_final=$_status;
+				
+			  }else{
+				/*
+				不處理，等最後有結果再匯入
+				[正取送審] => 36
+				[備取送審（順序：4）] => 2
+				[正取補件送審] => 2
+				[備取等待（順序：10）] => 2
+				*/  
+				echo "skip!!";
+				continue;   
+			  
+			  }
+			  break;
 		  }
 		  
 		  
-		  
-		  
+		  if(!$_stage) continue;
 		  
 		  $db_update->bindValue(':am_id',$am_id);
 		  $db_update->bindValue(':apply_code',$apply_code);
@@ -263,6 +280,9 @@
 		  $db_update->bindValue(':member_count',$member_count);
 		  $db_update->bindValue(':check_note',$check_note);
 		  
+		  $db_update->bindValue(':_ballot',$apply_bollet);
+		  $db_update->bindValue(':_ballot_date',$bollet_date);
+		  
 		  $db_update->bindValue(':_stage',$_stage);
 		  $db_update->bindValue(':_progres',json_encode($_progres));
 		  $db_update->bindValue(':_status',$_status);
@@ -273,20 +293,18 @@
 		  $db_update->bindValue(':_checker',$_checker);
 		  
 		  if(!$db_update->execute()){
-		    
-			file_put_contents('import.txt',$apply_file."\n",FILE_APPEND);
+		    file_put_contents('import.txt',$apply_file."\n",FILE_APPEND);
 			file_put_contents('import.txt',print_r($old_apply,true),FILE_APPEND);
 			file_put_contents('import.txt',"\n\n",FILE_APPEND);
 			echo "Ｘ";
 		  }else{
 			echo "０";  
 		  }
-		
-		  
-		
 		}
+	  
 	  }
 	  
+	 
 	  
 	} catch (Exception $e) {
       echo $e->getMessage();
