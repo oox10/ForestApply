@@ -375,10 +375,16 @@
 	$mail_content  = "<div>申請人 您好：</div>";
     $mail_content .= "<div>台端於 <strong>".$ApplyDate."</strong> 申請進入『".$ApplyArea."』 </div>";
 	$mail_content .= "<div>抽籤結果：<span style='font-weight:bold;color:blue;'>".$LottoResult."</span></div>";
-	$mail_content .= "<div>詳細抽籤結果請至申請系統查詢</div>";
+	$mail_content .= "<div><br/></div>";
+	$mail_content .= "<div>請詳閱下列注意事項：</div>";
+	$mail_content .= "<div>一、請注意抽籤結果如為「正取送審」，僅表示取得優先審查之排序，並不代表申請已獲核准，完成抽籤後審核機關將開始審核您的申請案，如因申請資料不全將通知補件修正，逾3天未補正或資格未符者應予駁退，空出名額由「備取送審」人員遞補。</div>";
+	$mail_content .= "<div>二、完成抽籤後即不可更改進入成員名冊，如欲更改，必須取消申請後再重新提出申請。</div>";
+	$mail_content .= "<div>三、正取或備取經候補成功者，通過審查後將收到核准進入通知，請登入系統下載許可證，方完成申請程序，於入園時必須隨身攜帶許可證及身份證件以備查驗。</div>";
+	$mail_content .= "<div>四、抽籤未中時，如尚有申請進入需求者，請改選擇其他日期重新申請。</div>";
+	$mail_content .= "<div>五、詳細抽籤結果、最新審查進度及許可證下載，請利用申請編號登入申請系統查詢。</div>";
 	$mail_content .= "<div><br/></div>";
 	$mail_content .= "<div></div>";
-	$mail_content .= "<div>※本郵件由系統自動發送，請勿直接回覆，如有任何問題，請洽各區域審查管理單位。</div>";
+	$mail_content .= "<div>※本郵件由系統自動發送，請勿直接回覆，如有任何問題，請洽各區域管理機關(構)查詢。</div>";
     $mail_content .= "<div></div>";
 	$mail_content .= "<div>林務局"._SYSTEM_HTML_TITLE." 敬啟</div>";
 	$mail_content .= "<div><a href='"._SYSTEM_SERVER_ADDRESS."' target=_blank >"._SYSTEM_SERVER_ADDRESS."</a></div>";

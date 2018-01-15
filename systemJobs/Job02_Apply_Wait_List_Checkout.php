@@ -187,9 +187,14 @@
 		}
 		
 		$mail_content .= "<div><br/></div>";
-	    $mail_content .= "<div></div>";
-	    $mail_content .= "<div>※本郵件由系統自動發送，請勿直接回覆，如有任何問題，請洽各區域審查管理單位。</div>";
-        $mail_content .= "<div></div>";
+		$mail_content .= "<div>一、請妥善保管申請編號及隨時注意電子信箱訊息或登入「申請單查詢」頁面，掌握申請進度狀態、補發編號、申請資料補充或修改及取消申請等事宜，並以查詢之內容為準。</div>";
+		$mail_content .= "<div> </div>";
+		$mail_content .= "<div>二、審查管理機關(構)依保護(留)區相關法規、經營管理計畫等，保有核准及後續進入之管制權利(例如：為災害防救或重大疫病蟲害及其他原因必須緊急處理之必要時，得逕行關閉或限制人員進出等措施)，並以系統最新消息公告為準 。</div>";
+		$mail_content .= "<div> </div>";
+		$mail_content .= "<div>三、為維護自然生態，各保護區設有進入人數之承載量管制，若申請截止日(依據各區設定)總人數逾越承載量，系統將進行隨機抽籤，並發給審查通知或結果通知等狀態之電子郵件，請隨時留意通知內容，有資料不全通知補件時，應盡速補件，未於期限內補件者將予以駁退。已通知核准進入者，請登入申請單查詢頁面下載許可證，未出示許可證者禁止進入自然保護區域。。</div>";
+		$mail_content .= "<div><br/></div>";
+		$mail_content .= "<div>※本郵件由系統自動發送，請勿直接回覆，如有任何問題，請洽各區域管理機關(構)查詢。</div>";
+		$mail_content .= "<div><br/></div>";
 	    $mail_content .= "<div>林務局"._SYSTEM_HTML_TITLE." 敬啟</div>";
 		$mail_content .= "<div><a href='"._SYSTEM_SERVER_ADDRESS."' target=_blank >"._SYSTEM_SERVER_ADDRESS."</a></div>";
 	    

@@ -50,7 +50,9 @@
 	  while($booking = $DB_BOOKING->fetch(PDO::FETCH_ASSOC)){
 		
 		$enter_date_time = strtotime($booking['date_enter'].' 00:00:00');    
-	    
+	    $application     = json_decode($booking['apply_form'],true);
+		
+		
 		if( strtotime('now') < strtotime( '-'.$tmp['auto_pass'].' day',$enter_date_time) ){
 		  continue;	
 		}
@@ -115,11 +117,23 @@
 		$mail_content .= "<div>台端於 <strong>".$booking['apply_date']."</strong> 申請進入『".$tmp['area_name']."』 </div>";
 		$mail_content .= "<div>申請狀態：".$apply_new_status."</div>";
 		$mail_content .= "<div>申請連結："._SYSTEM_SERVER_ADDRESS.'index.php?act=Landing/direct/'.$booking['apply_code'].'/'.$license_access_key."</div>";
-		$mail_content .= "<div>詳細結果請至申請系統查詢</div>";
 		$mail_content .= "<div><br/></div>";
-		$mail_content .= "<div></div>";
-	    $mail_content .= "<div>※本郵件由系統自動發送，請勿直接回覆，如有任何問題，請洽各審查管理機關(構)。</div>";
-        $mail_content .= "<div> </div>";
+		
+		$mail_content .= "<div>一、本案申請資料如下：</div>";
+		$mail_content .= "<table><tr><td>(一)進入期間</td><td>：".$booking['date_enter']." ~ ".$booking['date_exit']."</td></tr>";
+		$mail_content .= "<tr><td>(二)進入區域/入口/出口</td><td>：".join(';',$application['area']['inter']).' / '.$application['area']['gate']['entr'].' / '.$application['area']['gate']['exit']."</td></tr>";
+		$mail_content .= "<tr><td>(三)申請代表人或領隊</td><td>：".$booking['applicant_name']."</td></tr>";
+		$mail_content .= "<tr><td>(四)人數</td><td>：共 ".$booking['member_count']." 人</td></tr>";
+		$mail_content .= "<tr><td>(五)申請編號</td><td>：".$booking['apply_code']." </td></tr></table>";
+		$mail_content .= "<div><br/><br/></div>";
+		$mail_content .= "<div>二、請妥善保管申請編號及隨時注意電子信箱訊息或登入「申請單查詢」頁面，掌握申請進度狀態、補發編號、申請資料補充或修改及取消申請等事宜，並以查詢之內容為準。</div>";
+		$mail_content .= "<div> </div>";
+		$mail_content .= "<div>三、審查管理機關(構)依保護(留)區相關法規、經營管理計畫等，保有核准及後續進入之管制權利(例如：為災害防救或重大疫病蟲害及其他原因必須緊急處理之必要時，得逕行關閉或限制人員進出等措施)，並以系統最新消息公告為準 。</div>";
+		$mail_content .= "<div> </div>";
+		$mail_content .= "<div>四、為維護自然生態，各保護區設有進入人數之承載量管制，若申請截止日(依據各區設定)總人數逾越承載量，系統將進行隨機抽籤，並發給審查通知或結果通知等狀態之電子郵件，請隨時留意通知內容，有資料不全通知補件時，應盡速補件，未於期限內補件者將予以駁退。已通知核准進入者，請登入申請單查詢頁面下載許可證，未出示許可證者禁止進入自然保護區域。。</div>";
+		$mail_content .= "<div><br/></div>";
+		$mail_content .= "<div>※本郵件由系統自動發送，請勿直接回覆，如有任何問題，請洽各區域管理機關(構)查詢。</div>";
+		$mail_content .= "<div><br/></div>";
 	    $mail_content .= "<div>林務局"._SYSTEM_HTML_TITLE." 敬啟</div>";
 		$mail_content .= "<div><a href='"._SYSTEM_SERVER_ADDRESS."' target=_blank >"._SYSTEM_SERVER_ADDRESS."</a></div>";
 		
