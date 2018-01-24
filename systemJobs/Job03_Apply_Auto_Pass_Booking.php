@@ -86,7 +86,12 @@
 		    $apply_new_stage = 4;
 		    break;
 			
+		  
+		  
 		  // 其他狀況不處理
+		  
+		  
+		  
 		  default: continue; break;
 			
 		}

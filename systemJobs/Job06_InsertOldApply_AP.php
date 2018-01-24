@@ -135,6 +135,15 @@
 		  ];
 		  
 		  $apply_reason = isset($old_apply['application']['進入目的']) ?   $old_apply['application']['進入目的'] : false;
+		  
+		  switch($apply_reason){
+			case '相關團體為環境教育之需要': $apply_reason = '民眾為環境教育之需要'; break;
+            default:break;;			
+		  }
+		  
+		  
+		  
+		  
 		  $date_enter = false;
 		  $date_exit = false;
 		  
@@ -211,7 +220,7 @@
 				
 				// 檢驗申請理由是否需要抽籤
 				
-				if('相關團體為環境教育之需要' == $apply_reason){
+				if('民眾為環境教育之需要' == $apply_reason){
 				  $apply_bollet = 1;  
 				}
 				// 確認是否抽籤
