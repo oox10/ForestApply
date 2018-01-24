@@ -6,6 +6,14 @@
   頻率：1次/天
   對象：當日所有審查中資料
   
+  狀況：
+  a.未進行審查資料＝>自動通過審查
+  b.已審查資料
+    -> 有補件 自動通過審查
+	-> 未補件 檢查是否超過補件期限
+	----> 超過期限  申請註銷
+	----> 未過期限  跳過不處理
+	
   */
   
   define('ROOT',dirname(dirname(__FILE__)).'/');
@@ -27,7 +35,7 @@
 	
 	
 	//掃描所有區域，取出遞補日
-	$DB_GET	= $db->DBLink->prepare( "SELECT ano,area_code,area_name,area_load,auto_pass FROM area_main WHERE _keep=1 AND auto_pass > 0 ORDER BY ano ASC;" );
+	$DB_GET	= $db->DBLink->prepare( "SELECT ano,area_code,area_name,area_load,auto_pass,revise_day FROM area_main WHERE _keep=1 AND auto_pass > 0 ORDER BY ano ASC;" );
 	if( !$DB_GET->execute() ){
 	  throw new Exception('_DB_ERROR_GET_AREA_SQL_FAIL');
     }
@@ -86,12 +94,50 @@
 		    $apply_new_stage = 4;
 		    break;
 			
-		  
-		  
+		  	
+		  case '資料補充':
+		  case '資料更新':
+		    
+			switch($booking['_ballot_result']){
+			  case 1:  //正取送審	
+			    $progress['client'][3][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'審核通過','note'=>'','logs'=>date('Y-m-d H:i:s'));	
+				$progress['client'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'正取核准','note'=>'','logs'=>'');				
+				$progress['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'核准進入','note'=>'','logs'=>'');
+				$progress['admin'][4][]  = array('time'=>date('Y-m-d H:i:s'),'status'=>'自動通過','note'=>'區域設定：審查限期進入前 '.$tmp['auto_pass'].' 天前自動通過','logs'=>'');	
+				$apply_new_status='核准進入';
+				$apply_new_stage = 5;
+			    break;
+				
+			  case 2:  //備取送審
+                $progress['client'][3][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'審核通過','note'=>'','logs'=>date('Y-m-d H:i:s'));		
+			    $progress['client'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'備取等待','note'=>'','logs'=>'');
+			    $progress['admin'][4][]  = array('time'=>date('Y-m-d H:i:s'),'status'=>'自動通過','note'=>'區域設定：審查限期進入前 '.$tmp['auto_pass'].' 天前自動通過','logs'=>'');	
+		        $apply_new_status='備取等待';
+		        $apply_new_stage = 4;
+			    break;
+				
+			  default:break; 			  	
+			}
+			
+			
+		  case '資料不全':
+		    
+			//補件期限
+			$additional_dateline = strtotime('+'.$tmp['revise_day'].' day',strtotime($booking['_time_update']));
+		    
+			if( strtotime('now') > $additional_dateline  ){  
+			  $progress['client'][3][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'資格不符','note'=>'超過補件日期:'.date('Y-m-d',$additional_dateline),'logs'=>'');	
+			  $progress['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'審查未過','note'=>'','logs'=>'');
+			  $progress['admin'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'自動註銷','note'=>'排程系統註銷未補件申請','logs'=>'');	
+			  
+			  $apply_new_status='審查未過';
+			  $apply_new_stage = 5;	
+			  break; 
+			}
+			// 如果在補件日期內：不管
+			   
+		    
 		  // 其他狀況不處理
-		  
-		  
-		  
 		  default: continue; break;
 			
 		}
@@ -116,7 +162,7 @@
 		// 設定信件內容
 		$mail_title_type = '狀態通知';
         $to_sent = $booking['applicant_mail'];
-        $mail_title = _SYSTEM_HTML_TITLE." / 審核通過通知 / 申請編號:".$booking['apply_code'];        
+        $mail_title = _SYSTEM_HTML_TITLE." / 審核結果通知 / 申請編號:".$booking['apply_code'];        
 		
         $mail_content  = "<div>申請人 您好：</div>";
 		$mail_content .= "<div>台端於 <strong>".$booking['apply_date']."</strong> 申請進入『".$tmp['area_name']."』 </div>";
