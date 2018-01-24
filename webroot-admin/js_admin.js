@@ -484,6 +484,22 @@
 	
 	});
 	
+	//-- 資料跳頁
+	$(document).on('change','#page_selecter',function(){
+	  
+	  var page_to  = $(this).val();
+      var page_now = parseInt($('#page_selecter > option:selected').attr('page'));
+	  var max_page  = $('#page_selecter > option:nth-last-child(1)').attr('page');  
+	  
+	  switch(page_to){
+		case 'prev':  var new_page = (page_now-1) > 0 ? page_now-1 : page_now  ;  break;
+		case 'next':  var new_page = ((page_now+1) >= max_page) ? max_page : page_now+1 ;  break;
+        default:  new_page = page_to;  break; 		
+	  }
+	  record_pager_builter( $('tr.data_record') , new_page);
+	
+	});
+	
 	
 	//-- 資料搜尋 Step 1
     var search_buff  = '';
@@ -599,10 +615,19 @@
 	  
       // 建構分頁籤
 	  var total_page = page_max;
-	  for(var p=1 ; p<=total_page ; p++ ){
-		var page_class = (p==PageNow) ? 'page_tap page_now' : 'page_tap page_to';
-		$('<a>').addClass(page_class).attr('page',p).html(p).appendTo( ".page_select" );
-      }	
+	  if(total_page <= 15){
+		for(var p=1 ; p<=total_page ; p++ ){
+		  var page_class = (p==PageNow) ? 'page_tap page_now' : 'page_tap page_to';
+		  $('<a>').addClass(page_class).attr('page',p).html(p).appendTo( ".page_select" );
+        }  
+	  }else{
+		var pager = $('<select/>').addClass('page_jump').attr('id','page_selecter');		
+		for(var p=1 ; p<=total_page ; p++ ){
+		  var selected = (p==PageNow) ? true : false;
+		  $('<option/>').attr('page',p).val(p).html('P.'+p).prop('selected',selected).appendTo( pager );
+		}   
+		pager.appendTo( ".page_select" );  
+	  }
 	  
 	  // 標示資料
 	  $('#records_display_start').html(display_str);
