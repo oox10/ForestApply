@@ -472,9 +472,15 @@
 	$(document).on('click','.page_to',function(){
 	  
 	  var page_to  = $(this).attr('page');
-      var page_now = parseInt($('.page_now').attr('page'));
-	  var max_page  = $('.page_select > a.page_tap:nth-last-child(1)').attr('page');
-
+      
+	  if(!$('#page_selecter').length){
+	    var page_now = parseInt($('.page_now').attr('page'));
+		var max_page  = $('.page_select > a.page_tap:nth-last-child(1)').attr('page');
+      }else{
+	    var page_now = parseInt($('#page_selecter > option:selected').attr('page'));
+		var max_page  = $('#page_selecter > option:nth-last-child(1)').attr('page');  
+	  }
+	  
 	  switch(page_to){
 		case 'prev':  var new_page = (page_now-1) > 0 ? page_now-1 : page_now  ;  break;
 		case 'next':  var new_page = ((page_now+1) >= max_page) ? max_page : page_now+1 ;  break;
