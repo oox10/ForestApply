@@ -100,7 +100,7 @@
 		if(!$booking_check){
 		  $ticktes[$tkey]['accept'] = 0;
           $ticktes[$tkey]['reason'].= $cnacel_reason;
-		  $process[] = ['time'=>date('Y-m-d H:i:s'),'type'=>'REVIEW : '.$tconf['code'],'info'=>$cnacel_reason];  
+		  $process[] = ['time'=>date('Y-m-d H:i:s'),'type'=>'REVIEW : ','info'=>$tconf['code'].' : '.$cnacel_reason];  
 		  if(intval($tconf['lotto'])==1){
 			$area_accept_now-=intval($ticktes['people']);  
 		  }
@@ -131,7 +131,7 @@
 			$area_accept_now+=intval($tconf['people']);
 		  
 		    // 註記progress
-			$process[] = ['time'=>date('Y-m-d H:i:s'),'type'=>'FILLED : '.$tconf['code'],'info'=>'備取成功'];  
+			$process[] = ['time'=>date('Y-m-d H:i:s'),'type'=>'FILLED : ','info'=>$tconf['code'].' : 備取成功'];  
 		    
 			
 			// 註記 booking
@@ -146,7 +146,7 @@
 			$ticktes['b:'.$tconf['abno']]['review'].=',失敗';
 			
 			// 註記progress
-			$process[] = ['time'=>date('Y-m-d H:i:s'),'type'=>'FILLED : '.$tconf['code'],'info'=>'備取失敗'];  
+			$process[] = ['time'=>date('Y-m-d H:i:s'),'type'=>'FILLED : ','info'=>$tconf['code'].' : 備取失敗'];  
 			
 			// 註記 booking
 			$lotto_result = '備取失敗';
