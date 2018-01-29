@@ -110,8 +110,8 @@
 		}
 		
 		if( 2== intval($tconf['lotto'])  ){
-		  $waitlist[$tconf['queue']] = $tconf;
-		  $waitlist[$tconf['queue']]['booking'] =  $booking;
+		  $waitlist[$tkey] = $tconf;
+		  $waitlist[$tkey]['booking'] =  $booking;
 		  file_put_contents($logs_file,date('Y-m-d H:i:s').' : '.$tconf['code'].' add to filled queue.'.PHP_EOL,FILE_APPEND); 
 		}
 	    
