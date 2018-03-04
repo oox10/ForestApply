@@ -159,7 +159,7 @@
 			    <button type='button' class='active' id='act_license_download'  
 				        code='<?php echo $apply_conf['apply_code']; ?>' 
 						area='<?php echo $apply_conf['application']['area']['code']; ?>' 
-						<?php echo (intval($apply_conf['_stage'])==5 && $apply_conf['_final']=='核准進入') ? '':'disabled'; ?>
+						<?php echo (intval($apply_conf['_stage'])==5 && ($apply_conf['_final']=='核准進入' || $apply_conf['_final']=='申請核准')) ? '':'disabled'; ?>
 				><i class='mark16 iconv_pdf'></i> 下載許可證 </button>
 			  
 			  </span>

@@ -1531,7 +1531,7 @@
 		$booking_final_status = isset($this->ModelResult['applied']['data']['final']) ? $this->ModelResult['applied']['data']['final'] : '';
 		
 		// 檢查申請狀態是否符合
-		if( $booking_final_status!='核准進入'){
+		if( $booking_final_status!='核准進入' && $booking_final_status!='申請核准'){
 		  throw new Exception('_APPLY_DOWNLOAD_DENIA');
 		}
 		

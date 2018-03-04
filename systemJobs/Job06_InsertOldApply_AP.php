@@ -6,7 +6,7 @@
 	*/
 	ini_set("memory_limit", "2048M");
     
-    require_once(dirname(dirname(__FILE__)).'/conf/server_config.php');
+    require_once(dirname(dirname(__FILE__)).'/conf/system_config.php');
     require_once(dirname(dirname(__FILE__)).'/mvc/core/DBModule.php');   
     require_once(dirname(dirname(__FILE__)).'/mvc/lib/PHPExcel-1.8/Classes/PHPExcel.php');
 	
@@ -22,7 +22,7 @@
 	$db_update =  $db->DBLink->prepare("INSERT INTO area_booking VALUES(NULL,".
 	":am_id,:apply_code,:apply_date,:applicant_name,:applicant_mail,:applicant_id,:applicant_info,".
 	":apply_reason,:date_enter,:date_exit,:apply_form,:member,:member_count,:check_note,".
-	":_ballot,:_ballot_date,0,0,:_stage,:_progres,:_status,:_final,:_time_create,:_time_update,:_checker,'',1);");
+	":_ballot,:_ballot_date,:_ballot_result,:_review,:_stage,:_progres,:_status,:_final,:_time_create,:_time_update,:_checker,'',1);");
 	
 	$import_stage = 5;
 	
@@ -90,6 +90,11 @@
 		  
 		  $old_apply['application'];
 		  $old_apply['members'];
+		  $old_apply['reviewed'];     //[_review  check_note]
+		  $old_apply['attachment'];
+		  
+		  
+		  
 		  
 		  $am_id = isset($areamap[$old_apply['application']['進入區域']]) ? $areamap[$old_apply['application']['進入區域']]['ano'] : '0';
 		  $apply_code = isset($old_apply['application']['申請編號']) ? $old_apply['application']['申請編號'] : false;
@@ -168,6 +173,7 @@
 			  'item'=>$apply_reason,
 			  'limit'=>1, 
 			],
+			'attach'=>[],
 			'dates'=>[[$date_enter,$date_exit]],
 			'fields'=>[
 			  'application_field_1'=>[
@@ -185,12 +191,42 @@
 			]
 		  ];
 		  
+		  
+		  if(isset($old_apply['attachment']) && count($old_apply['attachment'])){
+			
+			// 歸檔
+			$upload_folder = _SYSTEM_CLIENT_PATH.$apply_code.'/';
+			mkdir($upload_folder,0777,true);
+			
+			foreach($old_apply['attachment'] as $attach){
+				
+				$upload_path   = $file_path.$attach;
+				// Get filename.
+			    $temp = explode(".", $upload_path);
+
+			    // Get extension.
+			    $extension = strtolower(end($temp));
+			    $upload_file   = strtoupper(hash('crc32',time())).'.'.$extension;
+			    $upload_save   = $upload_folder.$upload_file ;
+			    copy($upload_path,$upload_save);
+				$apply_form['attach'][] = [
+				  "code"=>$upload_file,
+				  "time"=>date('Y-m-d H:i:s'),
+				  "file"=>$attach  
+				];	
+			
+			}
+		  }
+		  
+		  
 		  $enter_member;
 		  $member_count = count($enter_member);
-		  $check_note = ''; // 審查註記
+		  $check_note   = isset($old_apply['reviewed']['check_note']) ? $old_apply['reviewed']['check_note'] : ''; // 審查註記
+		  
 		  
 		  $bollet_date  = '0000-00-00';
 		  $apply_bollet = 0;
+		  $_ballot_result = 0;
 		  
 		  
 		  $_status  = isset($old_apply['application']['狀態']) ? $old_apply['application']['狀態'] : '';
@@ -229,16 +265,31 @@
 				  $_progres['client'][1]   = [array('time'=>date('Y-m-d H:i:s'),'status'=>'收件待審','note'=>'申請項目需抽籤','logs'=>'')];
 				  $_progres['review'][2][] = array('time'=>$bollet_date,'status'=>'系統抽籤','note'=>'','logs'=>'');	
 				}else{
-				  continue; 	
-				  // 不須抽籤不處理
+				   
 				}
 			  break;
 			  
-			case '申請取消': case '申請核准': case '申請註銷': case '申請駁退': case '抽籤未中':
+			case '申請取消':  case '申請註銷': case '申請駁退': case '抽籤未中':
 			  $_progres['client'][5][] = ["time"=>date('Y-m-d H:i:s'),"status"=>$_status,"note"=>"","logs"=>""];
 			  $_stage=5;
 			  $_final=$_status;
 			  break;
+			
+            case '申請核准':
+			  $_progres['client'][5][] = ["time"=>date('Y-m-d H:i:s'),"status"=>'核准進入',"note"=>"","logs"=>""];
+			  $_stage  =5;
+			  $_status = '核准進入';
+			  $_final  ='核准進入';
+			  break;
+			
+			
+			  
+			case '正取送審':
+              $_progres['client'][2][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'正取送審','note'=>date('Y-m-d').'抽籤正取','logs'=>'');
+			  $_stage=3;
+			  $_ballot_result=1;
+			  break;  			
+			  
 			  
 			default: // 其他狀況
 			  
@@ -251,23 +302,31 @@
 				}else{
 				  $_progres['client'][5][] = ["time"=>date('Y-m-d H:i:s'),"status"=>'申請註銷',"note"=>"","logs"=>""];	
 				}
-				
 				$_stage = 5;
 				$_final=$_status;
 				
-			  }else{
-				/*
-				不處理，等最後有結果再匯入
-				[正取送審] => 36
-				[備取送審（順序：4）] => 2
-				[正取補件送審] => 2
-				[備取等待（順序：10）] => 2
-				*/  
-				echo "skip!!";
-				continue;   
+			  }else if(preg_match('/^備取送審（順序：(\d+)）$/',$_status,$match)){
+				$_status = '備取送審';
+				$_progres['client'][2][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'備取送審','note'=>date('Y-m-d').'抽籤備取 '.$match[1],'logs'=>'');
+			    $_stage=3; 
+				$_ballot_result=2;
+				
+			  }else if(preg_match('/^備取等待（順序：(\d+)）$/',$_status,$match) ){
+				$_status = '備取等待';
+				$_progres['client'][2][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'備取送審','note'=>date('Y-m-d').'抽籤備取 '.$match[1],'logs'=>'');
+			    $_progres['client'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'備取等待','note'=>'','logs'=>'');	
+				$_stage=4;   
+			    $_ballot_result=2;
 			  
+			  }else{
+				/*  處理其他相關狀態*/
+				/*
+				[正取補件送審] => 2
+				
+				*/  
 			  }
 			  break;
+		  
 		  }
 		  
 		  
@@ -291,6 +350,9 @@
 		  
 		  $db_update->bindValue(':_ballot',$apply_bollet);
 		  $db_update->bindValue(':_ballot_date',$bollet_date);
+		  $db_update->bindValue(':_ballot_result',$_ballot_result);
+		  
+		  $db_update->bindValue(':_review',isset($old_apply['reviewed']['_review']) ? intval($old_apply['reviewed']['_review']):0 );
 		  
 		  $db_update->bindValue(':_stage',$_stage);
 		  $db_update->bindValue(':_progres',json_encode($_progres));

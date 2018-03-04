@@ -215,7 +215,7 @@
 		// 取得篩選後申請資料
 		$records = array(); // 存放列表資料
 		$sqlsearch = count($condition) ? join(' AND ',$condition) : ('_stage < 5');
-		
+		 
 		
 		// 計算總數
 		$DB_BOOK = $this->DBLink->prepare(SQL_AdBook::COUNT_AREA_BOOKING(array_keys($area_list),$sqlsearch));
@@ -982,8 +982,12 @@
 		    $mail_title_type = '審查通知'; 
 		    if(isset($progress['review'][$booking['_stage']])){
 			  $message_conf = array_pop($progress['client'][$booking['_stage']]);
+			  
 			  $mail_status_type = $message_conf['status'];
-			  $mail_status_info = $message_conf['note'];	
+			  $mail_status_info = $message_conf['note'];
+              $mail_check_note = $booking['check_note'];
+
+			  
 			}
 			break;
 			
@@ -1012,6 +1016,10 @@
 		if($mail_status_info){
 		  $mail_content .= "<div >訊息通知：<span style='color:red;font-weight:bold;'>".$mail_status_info."</span></div>";	
 		}
+		if(isset($mail_check_note)){
+		  $mail_content .= "<div >審核註記：<span style='color:red;font-weight:bold;'>".$mail_check_note."</span></div>";		
+		}
+		
 		$mail_content .= "<div>申請連結："._SYSTEM_SERVER_ADDRESS.'index.php?act=Landing/direct/'.$booking['apply_code'].'/'.$license_access_key."</div>";
 		
 		$mail_content .= "<div> <br/> </div>";

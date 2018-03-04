@@ -32,8 +32,7 @@
 	
 	$db = new DBModule;
     $db->db_connect('PDO'); 
-	
-	
+		
 	//掃描所有區域，取出遞補日
 	$DB_GET	= $db->DBLink->prepare( "SELECT ano,area_code,area_name,area_load,auto_pass,revise_day FROM area_main WHERE _keep=1 AND auto_pass > 0 ORDER BY ano ASC;" );
 	if( !$DB_GET->execute() ){

@@ -151,7 +151,7 @@
 				  <optgroup label='狀態列表'>
 				    <option value='遞交申請' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='遞交申請' ? 'selected':'';?> > 遞交申請 </option>
 					<option value='收件待審' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='收件待審' ? 'selected':'';?> > 收件待審 </option>
-					<option value='申請核准' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='申請核准' ? 'selected':'';?> > 申請核准 </option>
+					<option value='核准進入' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='核准進入' ? 'selected':'';?> > 核准進入 </option>
 					<option value='申請駁退' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='申請駁退' ? 'selected':'';?> > 申請駁退 </option>
 					<option value='申請註銷' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='申請註銷' ? 'selected':'';?> > 申請註銷 </option>
 					<option value='正取送審' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='正取送審' ? 'selected':'';?> > 正取送審 </option>
