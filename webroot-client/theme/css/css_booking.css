@@ -441,7 +441,12 @@
 					li.attachment .file{flex:1;  white-space:nowrap; overflow:hidden;}
 					li.attachment .time{opacity:0.5; font-size:0.8em; }
 					
-				
+				  #attachment_sample{
+					font-size:0.9em;  
+				  }
+					
+				  
+				  
 			  div.option_set{
 				margin:5px 0 10px; 			
 			  }

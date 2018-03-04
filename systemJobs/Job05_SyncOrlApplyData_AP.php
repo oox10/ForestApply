@@ -363,7 +363,7 @@
   
   $today = intval(date('Ymd'));
   $time_start = strtotime('2017-11-01');
-  $time_finish= strtotime('2018-01-05');
+  $time_finish= strtotime('2018-01-31');
   
   try{
 	  

@@ -410,7 +410,17 @@
 					
 					<label style='margin-top:5px;'>已上傳附件清單:</label>
 					<ul id='attachment_list' ></ul>
-					  
+					
+					<?php if( $apply_area['area_code']=='72a985fd'): //南澳闊葉樹林 ?>
+					<label style='margin-top:5px;'>附件參考樣式:</label>
+					<ul id='attachment_sample' >
+					  <li><i class="fa fa-download" aria-hidden="true"></i> <a href='docs/南澳闊葉樹林自然保留區-環境教育切結書.docx' target=_blank>南澳闊葉樹林-環境教育切結書</a></li>
+					  <li><i class="fa fa-download" aria-hidden="true"></i> <a href='docs/南澳闊葉樹林自然保留區-環境教育成果報告參考樣式.docx' target=_blank>南澳闊葉樹林-環境教育成果報告參考樣式</a></li>
+					</ul>
+					<?php endif; ?>
+					
+					
+					
 				  </div>
 				</div>
 				<?php unset($apply_form['application_reason']); ?>
