@@ -207,6 +207,10 @@
 		  }
 		}
 		
+		
+		
+		
+		
 		// 取得備註
 		if(preg_match('/<span id="ctl00_ContentPlaceHolder1_fv_lblMemo">(.*?)<\/span>/',$page_content,$matchs)){
 		  $apply_data['application']['審核備註'] = trim(strip_tags($matchs[1]));  

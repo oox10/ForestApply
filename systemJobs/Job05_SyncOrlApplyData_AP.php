@@ -174,7 +174,7 @@
 		}
         
 		
-		$apply_data = ['application'=>[],'members'=>[]];
+		$apply_data = ['application'=>[],'members'=>[],'reviewed'=>[],'attachment'=>[]];
 		
 		$page_content = preg_replace('/[\r\n\t\s]+/',' ',$this->page_content);
 		
@@ -197,6 +197,15 @@
 			//file_put_contents('logs.txt',$m[1].':'.strip_tags($m[2])."\n",FILE_APPEND);  
 		  }
 		}
+		
+		// 附件檔案
+		//http://pa.forest.gov.tw/ForestApply/data/upload/2018-02-19-22-12-51-1778543110.xls
+		//<a id="ctl00_ContentPlaceHolder1_fv_HyperLink1" href="../data/upload/2018-02-19-22-12-51-1778543110.xls" target="_blank">2018-02-19-22-12-51-1778543110.xls</a>
+		if(preg_match('/<a id="ctl00_ContentPlaceHolder1_fv_HyperLink1" href="(.*?)" target="_blank">(.*?)<\/a>/',$page_content,$attach) && $attach[2] ){
+		  file_put_contents('applied_record/'.$apply_data['application']['申請編號'].'-'.$attach[2],file_get_contents(preg_replace('/\.\.\//','http://pa.forest.gov.tw/ForestApply/',$attach[1])));  
+		  $apply_data['attachment'][] = $apply_data['application']['申請編號'].'-'.$attach[2];
+		}
+		
 		// 申請成員
 		if(preg_match("/<table .*? id=\"ctl00_ContentPlaceHolder1_fv_gvMember\".*?>(.*?)<\/table>/",$page_content,$membertable)){
 		  if(preg_match_all("/<td .*?>(.*?)<\/td>/",$membertable[1],$matchs,PREG_SET_ORDER)){
@@ -212,6 +221,17 @@
 			  $member[] = trim($m[1]);
 			}
 		  }
+		}
+		
+		
+		// 陳核長官
+		if(preg_match('/<input id="ctl00_ContentPlaceHolder1_fv_ReviewStatus".*?checked="checked" \/>/',$page_content)){
+		   $apply_data['reviewed']['_review'] = 1;
+		}
+		
+		// 審核註記
+		if(preg_match('/<span id="ctl00_ContentPlaceHolder1_fv_lblMemo">(.*?)<\/span>/',$page_content,$reviewed)){
+		   $apply_data['reviewed']['check_note'] = $reviewed[1];
 		}
 		
 		
@@ -363,7 +383,7 @@
   
   $today = intval(date('Ymd'));
   $time_start = strtotime('2017-11-01');
-  $time_finish= strtotime('2018-01-31');
+  $time_finish= strtotime('2018-03-05');
   
   try{
 	  
