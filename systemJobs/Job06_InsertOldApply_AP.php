@@ -191,12 +191,11 @@
 			]
 		  ];
 		  
+		  // 歸檔
+		  $upload_folder = _SYSTEM_CLIENT_PATH.$apply_code.'/';
+		  mkdir($upload_folder,0777,true);
 		  
 		  if(isset($old_apply['attachment']) && count($old_apply['attachment'])){
-			
-			// 歸檔
-			$upload_folder = _SYSTEM_CLIENT_PATH.$apply_code.'/';
-			mkdir($upload_folder,0777,true);
 			
 			foreach($old_apply['attachment'] as $attach){
 				

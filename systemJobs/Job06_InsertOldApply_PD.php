@@ -6,7 +6,7 @@
 	*/
 	ini_set("memory_limit", "2048M");
     
-    require_once(dirname(dirname(__FILE__)).'/conf/server_config.php');
+    require_once(dirname(dirname(__FILE__)).'/conf/system_config.php');
     require_once(dirname(dirname(__FILE__)).'/mvc/core/DBModule.php');   
     require_once(dirname(dirname(__FILE__)).'/mvc/lib/PHPExcel-1.8/Classes/PHPExcel.php');
 	
@@ -175,6 +175,11 @@
 			]
 		  ];
 		  
+		  // 歸檔
+		  $upload_folder = _SYSTEM_CLIENT_PATH.$apply_code.'/';
+		  mkdir($upload_folder,0777,true);
+		  
+		  
 		  foreach($apply_reason as $ar){
 			if($ar){
 			  $apply_form['reason'][] = [
@@ -303,7 +308,7 @@
 		  $db_update->bindValue(':applicant_id',$applicant_id);
 		  $db_update->bindValue(':applicant_info',json_encode($applicant_info));
 		  
-		  $db_update->bindValue(':apply_reason',$apply_reason);
+		  $db_update->bindValue(':apply_reason',$apply_reason[0]);
 		  $db_update->bindValue(':date_enter',$date_enter);
 		  $db_update->bindValue(':date_exit',$date_exit);
 		  $db_update->bindValue(':apply_form',json_encode($apply_form));
