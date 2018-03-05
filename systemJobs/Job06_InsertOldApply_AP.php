@@ -318,6 +318,14 @@
 				$_stage=4;   
 			    $_ballot_result=2;
 			  
+			  }else if(preg_match('/^(.*?)補件/',$_status,$match)){
+                
+				$_progres['client'][2][] = array('time'=>date('Y-m-d H:i:s'),'status'=>$match[1].'送審','note'=>'抽籤'.$match[1],'logs'=>'');
+			    $_progres['client'][3][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'資料不全','note'=>$_status,'logs'=>'');	
+				$_status = '資料不全';
+				$_stage=3;
+			    $_ballot_result=$match[1]=='正取'?1:2;				
+				
 			  }else{
 				/*  處理其他相關狀態*/
 				/*
