@@ -144,7 +144,7 @@
             'applicant_mail'=> $applicant_mail,
 		  ];
 		  
-		  $apply_reason = isset($old_apply['application']['申請事項']) ?   $old_apply['application']['申請事項'] : false;
+		  $apply_reason = isset($old_apply['application']['申請事項']) ? explode(' / ',$old_apply['application']['申請事項']) : [];
 		  $date_enter = false;
 		  $date_exit = false;
 		  
@@ -165,10 +165,7 @@
 				"exit_time"=>"00:00:00"
 			  ]
 			],
-			'reason'=>[[
-			  'item'=>$apply_reason,
-			  'limit'=>1, 
-			]],
+			'reason'=>[],
 			'dates'=>[[$date_enter,$date_exit]],
 			'fields'=>[
 			  'application_field_1'=>[
@@ -177,6 +174,15 @@
 			  ],
 			]
 		  ];
+		  
+		  foreach($apply_reason as $ar){
+			if($ar){
+			  $apply_form['reason'][] = [
+			    'item'=>$ar,
+			    'limit'=>1,  
+			  ];
+			} 
+		  }
 		  
 		  $enter_member;
 		  $member_count = count($enter_member);
