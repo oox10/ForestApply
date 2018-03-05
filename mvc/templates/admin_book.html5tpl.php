@@ -157,7 +157,7 @@
 					<option value='正取送審' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='正取送審' ? 'selected':'';?> > 正取送審 </option>
 					<option value='備取送審' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='備取送審' ? 'selected':'';?> > 備取送審 </option>
 					<option value='急件送審' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='急件送審' ? 'selected':'';?> > 急件送審 </option>
-					<option value='資料不全' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='申請補件' ? 'selected':'';?> > 申請補件 </option>
+					<option value='申請補件' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='申請補件' ? 'selected':'';?> > 申請補件 </option>
 					<option value='抽籤未中' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='抽籤未中' ? 'selected':'';?> > 抽籤未中 </option>
 					<option value='申請取消' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='申請取消' ? 'selected':'';?> > 申請取消 </option>
 					<option value='備取等待' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='備取等待' ? 'selected':'';?> > 備取等待 </option>

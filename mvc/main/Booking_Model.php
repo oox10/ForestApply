@@ -194,6 +194,8 @@
 			  case 'apply_status':   $condition[] = " _status = '".$filter_set."' "; break;
 			  case 'apply_review':   $condition[] = " _review = 1 " ; break;
 			  case 'apply_checked':  $condition[] = " _status IN('正取送審','備取送審','急件送審','補件送審')" ; break;
+			  case 'apply_unfinish':  $condition[] = " _stage < 5" ; break;
+			  
 			  case 'apply_date': 
               case 'date_enter':
  			  case 'date_exit':
