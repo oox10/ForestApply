@@ -173,7 +173,7 @@
 		  throw new Exception('NO PAGE CONTENT');  	
 		}
         
-		$apply_data = ['application'=>[],'members'=>[]];
+		$apply_data = ['application'=>[],'members'=>[],'reviewed'=>[],'attachment'=>[]];
 		
 		$page_content = preg_replace('/[\r\n\t\s]+/',' ',$this->page_content);
 		
@@ -207,9 +207,15 @@
 		  }
 		}
 		
+		// 陳核長官
+		if(preg_match('/<input id="ctl00_ContentPlaceHolder1_fv_ReviewStatus".*?checked="checked" \/>/',$page_content)){
+		   $apply_data['reviewed']['_review'] = 1;
+		}
 		
-		
-		
+		// 審核註記
+		if(preg_match('/<span id="ctl00_ContentPlaceHolder1_fv_lblMemo">(.*?)<\/span>/',$page_content,$reviewed)){
+		   $apply_data['reviewed']['check_note'] = $reviewed[1];
+		}
 		
 		// 取得備註
 		if(preg_match('/<span id="ctl00_ContentPlaceHolder1_fv_lblMemo">(.*?)<\/span>/',$page_content,$matchs)){
@@ -381,8 +387,8 @@
   echo "start process - ".date('c')."start: \n";
   
   $today = intval(date('Ymd'));
-  $time_start = strtotime('2014-08-20');
-  $time_finish= strtotime('2017-12-30');
+  $time_start = strtotime('2017-10-29');
+  $time_finish= strtotime('2018-03-06');
   
   try{
 	  

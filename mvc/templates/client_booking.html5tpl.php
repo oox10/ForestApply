@@ -519,7 +519,7 @@
 					<tr class='fields'><td>NO.</td><td>角色</td><td>成員資料 (所有欄位都需填寫)</td><td>編輯</td></tr>
 				    <tbody class='apply_data' id='apply_member_list' pnum='' ></tbody>
 					<tr class='fields'><td>NO.</td><td>角色</td><td>成員資料</td><td><a class='option' id='act_add_member' ><i class="fa fa-user-plus" aria-hidden="true"></i> 新增</a></td></tr>
-					<tr class='member template' edit=0 save=0 >
+					<tr class='member template' edit=1 save=0 >
 					    <td ><a class='option mdele'><i class="fa fa-trash-o" aria-hidden="true"></i></a> <span class='mbr_no'></span>.</td>
 						<td class='mbr_role' >role</td>
 						<td class='mbr_info' >

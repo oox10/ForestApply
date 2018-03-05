@@ -335,7 +335,7 @@ $(window).load(function () {   //  || $(document).ready(function() {
 	$('.apply_step_03').click(function(){
 	  
 	  var apply_id = location.hash.replace(/^#/,'');
-	  if(!apply_id.length || apply_id.length != 8 ){
+	  if(!apply_id.length || apply_id.length < 8 ){
 		system_message_alert('','尚未填寫申請人資料，請回到上一步'); 
 		return false;  
 	  }
@@ -874,6 +874,69 @@ $(window).load(function () {   //  || $(document).ready(function() {
 	});
 	
 	
+	//-- apply change member 替換成員
+	$('#act_quick_apply').click(function(){
+	  
+      if($(this).prop('disabled')){
+		system_message_alert('','功能尚未開放，您可能處於錯誤狀態');    
+	    return false;
+	  }
+	  
+	  if( !$(this).attr('code') || !$(this).attr('area') ){
+		system_message_alert('','參數錯誤，請重新整理頁面');    
+	    return false;   
+	  }
+	  
+	  var area_code = $(this).attr('area');
+	  
+	  if(!confirm("確定將使用本資料再次提出申請其他進入日期? \n注意，相同成員同一區域之進入日期不可重複!!")){
+		return false;  
+	  }
+	  
+	  // active ajax
+      $.ajax({
+        url: 'index.php',
+	    type:'POST',
+	    dataType:'json',
+	    data: {'act':'Landing/duplicate/'+$(this).attr('code')},
+		beforeSend: function(){  system_loading() },
+        error: 		function(xhr, ajaxOptions, thrownError) {  console.log( ajaxOptions+" / "+thrownError);},
+	    success: 	function(response){
+		  if(response.action){  
+		    location.href = 'index.php?act=Landing/reserve/'+area_code+'#'+response.data.newcode; 
+		  }else{
+			system_message_alert('',response.info);
+		  }
+	    },
+		complete:	function(){  }
+      }).done(function(r) { system_loading(); });
+	  
+	});
+	
+	
+	
+	
+	//-- apply change member 替換成員
+	$('#act_apply_mbrchang').click(function(){
+	  
+      if($(this).prop('disabled')){
+		system_message_alert('','功能尚未開放，您可能處於錯誤狀態');    
+	    return false;
+	  }
+	  
+	  if( !$(this).attr('code') || !$(this).attr('area') ){
+		system_message_alert('','參數錯誤，請重新整理頁面');    
+	    return false;   
+	  }
+	  location.href = 'index.php?act=Landing/reserve/'+$(this).attr('area')+'#'+$(this).attr('code');
+	  
+	  
+	});
+	
+	
+	
+	
+	
 	 // initial account data  //帶有參數的網址連結資料
 	if(document.location.hash.match(/^#.+/) && location.search.match(/^\?act=Landing\/reserve\/[\w\d]+/) ){
 		
@@ -1269,7 +1332,7 @@ $(window).load(function () {   //  || $(document).ready(function() {
 	  
 	  $.each(MemberList,function(i,mbr){
 		var mbr_dom = $('tr.member.template').clone().removeClass('template');	
-	    mbr_dom.attr('edit','0');
+	    mbr_dom.attr('edit','1');
         mbr_dom.find('.mbr_no').text(i+1);
 	    mbr_dom.find('.mbr_role').text(mbr.member_role);
 	    mbr_dom.find('input').each(function(){
@@ -1280,7 +1343,7 @@ $(window).load(function () {   //  || $(document).ready(function() {
 		  }else{
 		    $(this).val(mbr[$(this).attr('class')]);	 
 		  }
-		  $(this).prop('readonly',true);
+		  $(this).prop('readonly',false);
 	    });
 		mbr_dom.appendTo($('#apply_member_list')); 
 	    

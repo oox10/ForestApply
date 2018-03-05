@@ -165,10 +165,10 @@
 				"exit_time"=>"00:00:00"
 			  ]
 			],
-			'reason'=>[
+			'reason'=>[[
 			  'item'=>$apply_reason,
 			  'limit'=>1, 
-			],
+			]],
 			'dates'=>[[$date_enter,$date_exit]],
 			'fields'=>[
 			  'application_field_1'=>[

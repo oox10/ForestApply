@@ -1718,6 +1718,101 @@
 	  return $result;  
 	}
 	
+	//-- Client Apply Record Cancel
+	// [input] : ApplyCodeSubmit  : from submit;
+	// [input] : ApplyToken   : array(CODE KEY )from session ;
+	public function Apply_Record_Duplicate($ApplyCodeSubmit='',$ApplyToken=array()){
+	  $result_key = parent::Initial_Result('');
+	  $result  = &$this->ModelResult[$result_key];
+	  try{
+		
+		// 檢查申請序號
+		if(!preg_match('/^[\w\d]{8,10}$/',$ApplyCodeSubmit)){
+		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
+		}
+		
+		// 檢查讀取序號是否有權限
+		if(!isset($ApplyToken['CODE']) || $ApplyToken['CODE']!=$ApplyCodeSubmit){
+		  throw new Exception('_APPLY_RECOVER_DENIAL');
+		}
+		
+		// 取得申請資料
+		$booking = array();
+		$DB_OBJ = $this->DBLink->prepare(SQL_Client::GET_APPLICATION_META());
+		if(!$DB_OBJ->execute(array('apply_code'=>$ApplyCodeSubmit))  ||  !$booking=$DB_OBJ->fetch(PDO::FETCH_ASSOC) ){
+		  throw new Exception('_APPLY_RECORD_NOT_FOUND');  
+		}
+		
+		$apply_code  = strtoupper(hash('crc32',$booking['applicant_name'].$booking['applicant_mail'].time()._SYSTEM_NAME_SHORT));
+		
+		$DB_NEW = $this->DBLink->prepare(SQL_Client::INITIAL_APPLY_ACCOUNT()); 
+	    $DB_NEW->bindValue(':am_id','');
+		$DB_NEW->bindValue(':apply_code'	, $apply_code);
+		$DB_NEW->bindValue(':apply_date'	, date('Y-m-d'));
+		$DB_NEW->bindValue(':applicant_name', $booking['applicant_name'] );
+		$DB_NEW->bindValue(':applicant_mail', $booking['applicant_mail'] );
+		$DB_NEW->bindValue(':applicant_id'	, $booking['applicant_id'] );
+		$DB_NEW->bindValue(':applicant_info', $booking['applicant_info'] );
+		$DB_NEW->bindValue(':member_list'	, $booking['member'] );
+		
+		if( !$DB_NEW->execute() ){
+		  throw new Exception('_APPLY_INITIAL_FAIL');  
+		}
+		
+		// 帳號資料夾
+        if(!is_dir(_SYSTEM_CLIENT_PATH.$apply_code)){
+		  mkdir(_SYSTEM_CLIENT_PATH.$apply_code, 0777, true);	  
+	    }
+		
+		$apply_form = json_decode($booking['apply_form'],true);
+		$apply_form['dates'] = [];
+		$apply_form['reason'] = [];
+		
+		
+		$DB_UPD = $this->DBLink->prepare(SQL_Client::UPDATE_APPLY_FORM()); 
+	    $DB_UPD->bindValue(':apply_code', $apply_code);
+		$DB_UPD->bindValue(':areaid'    , $booking['am_id']);
+		$DB_UPD->bindValue(':reason'    , '' );
+		$DB_UPD->bindValue(':date_enter', '0000-00-00' );
+		$DB_UPD->bindValue(':date_exit' , '0000-00-00' );
+		$DB_UPD->bindValue(':application', json_encode($apply_form,JSON_UNESCAPED_UNICODE));
+		$DB_UPD->bindValue(':ballot'	, 0 );
+		$DB_UPD->bindValue(':ballot_date','0000-00-00');
+		if( !$DB_UPD->execute() ){
+		  throw new Exception('_APPLY_SUBMIT_FAIL');  
+		}
+		
+		// 更新與紀錄狀態
+		$apply_process = ['client'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]],'admin'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
+		$apply_process['client'][0][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'資料複製','note'=>$ApplyCodeSubmit,'logs'=>'');
+		$apply_process['review'][2]   = [];
+		
+		$DB_UPD = $this->DBLink->prepare(SQL_Client::UPDATE_APPLY_STATUS()); 
+	    $DB_UPD->bindValue(':apply_code',$booking['apply_code']);
+		$DB_UPD->bindValue(':status'    ,$booking['_status']);
+		$DB_UPD->bindValue(':progres'   , json_encode($apply_process));
+		if( !$DB_UPD->execute() ){
+		  throw new Exception('_APPLY_SUBMIT_FAIL');  
+		}
+		 
+		$result['session']['APPLYTOKEN'] = ['CODE'=>$apply_code,'KEY'=>_SYSTEM_NAME_SHORT.':'.strtotime('now')];
+		$result['session']['APPLICANT']  = json_decode($booking['applicant_info'],true);
+		$result['data']['newcode'] = $apply_code;
+		
+		$result['action'] = true;
+		
+	  }catch(Exception $e){
+		$result['message'][] = $e->getMessage();    
+	  }
+	  return $result;  
+	}
+	
+	
+	// prepare new application value
+        
+	
+	
+	
 	
 	
 	

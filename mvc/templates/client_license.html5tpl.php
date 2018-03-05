@@ -35,7 +35,7 @@
 	$apply_conf = isset($this->vars['server']['data']['preview']) ? $this->vars['server']['data']['preview'] : array(); 
 	$apply_view = isset($this->vars['server']['data']['license']) ? $this->vars['server']['data']['license'] : array('PAGE_CONTENT'=>''); 
 	
-	$apply_progress_info = array('遞交申請','初始階段','抽籤階段','審查階段','等待階段','最終階段');
+	$apply_progress_info = array('遞交申請','初始階段','抽籤階段','審查階段','等待階段','最終階段','結案階段');
 	
 	$area_contect = isset($this->vars['server']['data']['area']['contect']) ? $this->vars['server']['data']['area']['contect'] : array(); 
 	
@@ -225,13 +225,26 @@
 					</td>
 					<td class='stage5' >
 					  <?php if(!$apply_conf['_isdone']): //進入取消日前才可以取消  ?>
+					  <button id='act_apply_mbrchang' code='<?php echo $apply_conf['apply_code']; ?>' area='<?php echo $apply_conf['application']['area']['code']; ?>'>更換成員</button>
 					  <button id='act_apply_tocancel' code='<?php echo $apply_conf['apply_code']; ?>' area='<?php echo $apply_conf['application']['area']['code']; ?>'>取消申請</button>
 					  <?php endif; ?>
 					</td>
 				  </tr>
 				</table>
 				
-			    <h2> 申請資料預覽 </h2>
+			    <h2 style='position:relative;'> 申請資料預覽 
+				
+				  <button type='button' class='active' id='act_quick_apply'  
+				          code='<?php echo $apply_conf['apply_code']; ?>' 
+						  area='<?php echo $apply_conf['application']['area']['code']; ?>'
+                          title="使用本申請資料再次申請其他日期"  						  
+				  > 申請其他日期 </button>
+				  
+				</h2>
+				
+				
+				
+				
 				<div class='license' id='license_preview'>
 				<?php echo isset($apply_view['PAGE_CONTENT']) ? $apply_view['PAGE_CONTENT'] : '查無資料'; ?>
 				</div>

@@ -83,7 +83,7 @@ class Landing_Controller extends Admin_Controller{
 	/***--- BOOKING ACTION SET ---***/
 	
 	// PAGE: client booking page
-	public function reserve($AreaCode){
+	public function reserve($AreaCode=''){
 	  $MonthStart = '_now'; //default month
       $MonthLength=1;  
 	  
@@ -184,7 +184,6 @@ class Landing_Controller extends Admin_Controller{
 	} 
 	
 	
-	
 	// AJAX : 讀取申請資料
 	public function recover($ApplyNo){   
 	  //提取資料必須先登入或先前有註冊
@@ -200,6 +199,7 @@ class Landing_Controller extends Admin_Controller{
 	  self::data_output('json','',$this->Model->ModelResult);
 	}
 	
+	
 	// AJAX: Download Apply License // 下載許可證 
 	public function download($ApplyNo){
 	  $apply_token = isset($_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN']) ? $_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN'] : false;
@@ -211,9 +211,17 @@ class Landing_Controller extends Admin_Controller{
 	    exit(1);
 	  }
 	  $this->Model->Apply_Feform_Application_Page($ApplyNo,'license');
-	  self::data_output('pdf','print_user_license',$this->Model->ModelResult);  
-	   
+	  self::data_output('pdf','print_user_license',$this->Model->ModelResult);   
 	}
+	
+	// AJAX : 複製申請單
+	public function duplicate($ApplyCode=''){   
+	  $apply_token = isset($_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN']) ? $_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN'] : false;
+	  $this->Model->Apply_Record_Duplicate($ApplyCode,$apply_token);
+	  self::data_output('json','',$this->Model->ModelResult);
+	}
+	
+	
 	
 	
 	/***--- POST ACTION SET ---***/
@@ -222,6 +230,9 @@ class Landing_Controller extends Admin_Controller{
 	  $this->Model->Get_Client_Post_Target($DataNo);
 	  self::data_output('json','',$this->Model->ModelResult);
 	}
+	
+	
+	
 	
 	
 	/***--- Applied ---***/
