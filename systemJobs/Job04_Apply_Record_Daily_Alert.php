@@ -78,20 +78,24 @@
 	  }
 	  
 	  // 建立資料清單
-	  $applied_table  = "<table style='width:100%;'>";
+	  $tickets_counter = 0  //待審計數
+	  
+	  $applied_table   = "<table style='width:100%;'>";
 	  foreach($areatickets as $area_name => $tickets){
 		$applied_table .= "<tr><td colspan=6 style='font-weight:bold;border-bottom:2px #000000 solid;'>".$area_name."</th></tr>";
 	    $applied_table .= "<tr><td>申請代號</td><td>申請日期</td><td>進入日期</td><td>申請人</td><td>目前狀態</td><td>最後更新</td></tr>";
 		foreach( $tickets as $apply){
 		  $applied_table  .= "<tr><td>".$apply['apply_code']."</td><td>".$apply['apply_date']."</td><td>".$apply['date_enter']."</td><td>".$apply['applicant']."</td><td>".$apply['status']."</td><td>".$apply['update']."</td></tr>";  
 	    }
+		$tickets_counter+=count($tickets);
+		
 	  }
 	  $applied_table .= "</table>";  
 	  
       $mail_type    = '系統排程';
 	  $mail_logs 	= [date('Y-m-d H:i:s')=>'Regist Alert Mail From [Job_Apply_Record_Daily_Alert].' ];
 	  
-	  $mail_title   = _SYSTEM_HTML_TITLE.' / 每日審查通知 / '.date('ymd').' : '.count($tickets).'筆';
+	  $mail_title   = _SYSTEM_HTML_TITLE.' / 每日審查通知 / '.date('ymd').' : '.$tickets_counter.'筆';
 	  
 	  if(!count($admin_mails)){ // 沒有管理者則寄給系統管理員
 		$admin_mails[] = _SYSTEM_CONTACT_MAIL;
