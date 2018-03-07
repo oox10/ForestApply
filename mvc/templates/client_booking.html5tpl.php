@@ -496,7 +496,7 @@
 		  <div class='booking_step' id='member_form' >
 		    
 			<h1>
-			  <span class='step_title'>申請步驟 4 - 填寫進入成員名單 </span>
+			  <span class='step_title'>申請步驟 4 - 填寫進入成員名單 (每團上限15人) </span>
 			  <span class='step_option'>
 			    <button type='button' class='active' id='apply_step_04' ischeck=0 > 確認成員 </button>
 			    <button type='button' class='active' id='apply_submit'  disabled=true  > 遞交申請 </button>

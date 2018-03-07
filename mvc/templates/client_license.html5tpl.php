@@ -225,7 +225,6 @@
 					</td>
 					<td class='stage5' >
 					  <?php if(!$apply_conf['_isdone']): //進入取消日前才可以取消  ?>
-					  <button id='act_apply_mbrchang' code='<?php echo $apply_conf['apply_code']; ?>' area='<?php echo $apply_conf['application']['area']['code']; ?>'>更換成員</button>
 					  <button id='act_apply_tocancel' code='<?php echo $apply_conf['apply_code']; ?>' area='<?php echo $apply_conf['application']['area']['code']; ?>'>取消申請</button>
 					  <?php endif; ?>
 					</td>

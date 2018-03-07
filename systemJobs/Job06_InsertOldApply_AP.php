@@ -251,7 +251,7 @@
 			    $_stage   = 1;
 			    $areainfo = $areamap[$old_apply['application']['進入區域']];
 			    $apply_bollet  = 0;  //是否需抽籤
-				$applicant_mail='tpcca.rcdh.ntu@gmail.com';
+				 
 				
 				// 檢驗申請理由是否需要抽籤
 				

@@ -610,6 +610,12 @@ $(window).load(function () {   //  || $(document).ready(function() {
 	//-- create new member 
 	$('#act_add_member').click(function(){
 	  var mcount = $('tr.member:not(.template)').length;
+	  
+	  if(mcount>15){
+		system_message_alert('','成員清單超過15人上限!!');  
+	    return false;
+	  }
+	  
 	  var mbr_dom = $('tr.member.template').clone().removeClass('template');	
 	  mbr_dom.attr('edit','1');
       mbr_dom.find('.mbr_no').text(mcount+1);

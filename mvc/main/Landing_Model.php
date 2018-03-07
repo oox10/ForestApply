@@ -626,7 +626,7 @@
 		}else if( preg_match('/^\w\d{9}$/',$user_data['applicant_userid']) && !System_Helper::check_twid($user_data['applicant_userid'])){
 		   $result['data']['applicant_userid']='';
 		   throw new Exception('_APPLY_APPLICANT_ID_FAIL');
-		}else if(strlen($user_data['applicant_userid']) < 6){
+		}else if( strlen($user_data['applicant_userid']) < 9 || strlen($user_data['applicant_userid']) > 10  ){
 		   $result['data']['applicant_userid']='';
 		   throw new Exception('_APPLY_APPLICANT_ID_FAIL');	
 		}
@@ -1314,6 +1314,8 @@
 		unset($objPHPExcel);
 		unset($excelReader);
 		
+		$members = array_slice($members,0,15);
+		
 		// final
 		$result['data'] = $members;
 		$result['action'] = true;
@@ -1360,6 +1362,9 @@
 		  throw new Exception('_APPLY_MEMBER_PASSER_FAIL'); 	
 		}
 		
+		if(count($apply_members) > 15 ){
+		  throw new Exception('_APPLY_MEMBER_OVER_UPBOUND');
+		}
 		
 		// get apply data
 		// SELECT area_booking.*,area_code,area_type,area_name FROM area_booking LEFT JOIN area_main ON ano=am_id WHERE apply_code=:apply_code AND area_booking._keep=1;
@@ -1417,6 +1422,12 @@
 			if( $mf=='member_tel' && !isset($check[$no][$mf]) &&  !preg_match('/^0/',$mv) ){
 			  $check[$no][$mf] = 'lose';  	
 			} 
+			
+			if( $mf=='member_birth' && !strtotime($mv) ){
+			  $check[$no][$mf] = 'fail';  	
+			} 
+			
+			
 		  
 		  }
 		  

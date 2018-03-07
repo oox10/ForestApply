@@ -149,7 +149,7 @@
 				<select class='apply_status' id='filter_apply_status' >
 				  <option value='' disabled selected> 篩選申請狀態 </option>
 				  <optgroup label='狀態列表'>
-				    <option value='遞交申請' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='遞交申請' ? 'selected':'';?> > 遞交申請 </option>
+				    <option value='申請進入' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='申請進入' ? 'selected':'';?> > 申請進入 </option>
 					<option value='收件待審' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='收件待審' ? 'selected':'';?> > 收件待審 </option>
 					<option value='核准進入' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='核准進入' ? 'selected':'';?> > 核准進入 </option>
 					<option value='申請駁退' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='申請駁退' ? 'selected':'';?> > 申請駁退 </option>
@@ -372,6 +372,7 @@
 				    <td class='stage1' >
 					  <button id='act_apply_startmail' >補寄收件信</button>
 					  <button id='act_apply_toreview' >急件送審</button>
+					  <button class='act_submit_review' mode='apply_status' value='申請註銷' >申請註銷</button>
 					</td>
 				    <td class='stage2 _variable' > </td>
 				    <td class='stage3' >

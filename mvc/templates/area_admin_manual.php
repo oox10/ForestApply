@@ -83,7 +83,9 @@
 			  <li  title='錯誤回報' class='option' id='user_feedback'><i class="fa fa-bug" aria-hidden="true"></i> <span >錯誤回報</span> </li>
 			</ul>
 		  </li>
-		  
+		  <li style='display:none;'>
+		    
+		  </li>
 	    </ul>
 	  </div>
   

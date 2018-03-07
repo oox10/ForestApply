@@ -127,8 +127,7 @@
 			</div>
             <div class='form_func'>
 			  <button class='cancel'>取消</button>
-			  <?php //<button class='submit blue' id='area_reserve' >我要申請</button> //?>
-			  <button class='cancel' id='' >系統尚未開放</button>
+			  <button class='submit blue' id='area_reserve' >我要申請</button>
 			</div>			
 		  </div>
 		  

@@ -166,7 +166,7 @@ $(window).load(function () {   //  || $(document).ready(function() {
 			  $('#area_booking_today').empty();
 			  
 			  if( !Object.keys(response.data.lotto.booking).length  ){
-				system_message_alert('','本日沒有抽籤紀錄');  
+				system_message_alert('','系統查不到本日抽籤紀錄<br/>系統僅提供 2018/03/20 以後的抽籤資料');  
 			    return false;
 			  }
 			  

@@ -672,7 +672,7 @@
 		  span.mbr_data[fail='empty']::after{ content:'不可空白';opacity:0.5; }
 		  span.mbr_data[fail='double']::after{ content:'ID重複';opacity:0.5; }
 		  span.mbr_data[fail='lose']::after{ content:'請填寫區碼';opacity:0.5; }
-		  span.mbr_data[fail='fail']::after{ content:'ID錯誤';opacity:0.5; }
+		  span.mbr_data[fail='fail']::after{ content:'資料錯誤';opacity:0.5; }
 		  span.mbr_data[fail='applied']::after{ content:'當日重複申請';opacity:0.5; }
 		  
 		
