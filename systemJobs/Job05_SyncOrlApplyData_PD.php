@@ -388,7 +388,7 @@
   
   $today = intval(date('Ymd'));
   $time_start = strtotime('2018-01-01');
-  $time_finish= strtotime('2018-03-06');
+  $time_finish= strtotime('2018-03-10');
   
   try{
 	  
