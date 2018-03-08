@@ -964,7 +964,7 @@
 		
 		if( $apply_bollet ){
 		  
-		  $apply_process['client'][1]   = [array('time'=>date('Y-m-d H:i:s'),'status'=>'收件待審','note'=>'申請項目需抽籤','logs'=>'')];
+		  //$apply_process['client'][1]   = [array('time'=>date('Y-m-d H:i:s'),'status'=>'收件待審','note'=>'申請項目需抽籤','logs'=>'')];
 		  $apply_process['review'][2][] = array('time'=>$bollet_date,'status'=>'系統抽籤','note'=>'','logs'=>'');	
 		
 		  $DB_UPD = $this->DBLink->prepare(SQL_Client::UPDATE_APPLY_STAGE()); 
@@ -1621,13 +1621,12 @@
 		  $apply_status  = '收件待審';
 		  $apply_stage = $booking['_stage'];
 		  
+		  if(!count($apply_process['client'][1])){
+			$apply_process['client'][1][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'收件待審','note'=>'','logs'=>'');	
+		  }
+		  
 		  if( !$booking['_ballot']){
-		    
-			//不用抽籤直接跳至審查狀態
-		    if(!count($apply_process['client'][1])){
-			  $apply_process['client'][1][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'收件待審','note'=>'','logs'=>'');	
-			}
-			$apply_process['client'][2][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'正取送審','note'=>'申請項目不須抽籤','logs'=>'');
+		    $apply_process['client'][2][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'正取送審','note'=>'申請項目不須抽籤','logs'=>'');
 		    $apply_stage = $apply_stage < 3 ? 3 : $apply_stage;
 		    $apply_status= '正取送審';
 		  
@@ -1648,8 +1647,8 @@
 		  $apply_process['client'][0][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'更新資料','note'=>'','logs'=>'');
 		  $apply_status = '更新資料';
 		  if($booking['_stage']==3){
-			$apply_process['client'][$booking['_stage']][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'資料補充','note'=>'','logs'=>'');  
-		    $apply_status = '資料補充';
+			$apply_process['client'][$booking['_stage']][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'申請補件','note'=>'','logs'=>'');  
+		    $apply_status = '申請補件';
 		  }
 		
 		}

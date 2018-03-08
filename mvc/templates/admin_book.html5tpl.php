@@ -396,7 +396,10 @@
 					  <input type='text' class='_variable review_admin' id='apply_review_notes' placeholder='通知訊息..' size=9/>
 					  <button class='act_submit_review' mode='apply_review' >發送審查狀態</button>
 					</td>
-				    <td class='stage4 _variable' > </td>
+				    <td class='stage4' > 
+					  <button class='act_submit_review' mode='apply_status' value='備取成功' >備取成功</button>
+					  <button class='act_submit_review' mode='apply_status' value='備取失敗' >備取失敗</button>
+					</td>
 					<td class='stage5' >
 					  <button class='act_submit_review' mode='apply_status' value='申請未到' >申請未到</button>
 					  <button class='act_submit_review' mode='apply_status' value='申請註銷' >申請註銷</button>

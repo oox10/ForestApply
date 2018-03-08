@@ -661,14 +661,41 @@
 			$is_final = true;  
 			  
 			break;
+			
+		  case '備取成功':
+		    $apply_process['admin'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'備取成功','note'=>'','logs'=>'');	
+			$apply_process['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'核准進入','note'=>'','logs'=>'');
+		    
+			$apply_new_status='備取成功';
+			$apply_new_stage = 5;
+			$to_sent_mail = true;
+			$is_final = true;  
+			break;
+			
+		  
+          case '備取失敗':		 
+            $apply_process['admin'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'備取失敗','note'=>'','logs'=>'');	
+		    $apply_process['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'申請註銷','note'=>'','logs'=>'');
+			
+			$apply_new_status='備取失敗';
+			$apply_new_stage = 5;
+			$to_sent_mail = true;
+			$is_final = true;  
+			break; 
+			
 		  
           case '陳核長官':	
 		    $DB_UPD = $this->DBLink->prepare(SQL_AdBook::UPDATE_BOOK_DATA(array('_review'))); 
 	        $DB_UPD->bindValue(':apply_code', $booking['apply_code']);
 		    $DB_UPD->bindValue(':_review'   , 1);
 		    $DB_UPD->execute();
-		  
+		    
 		  case '重新審查':
+		    $DB_UPD = $this->DBLink->prepare(SQL_AdBook::UPDATE_BOOK_DATA(array('_final'))); 
+	        $DB_UPD->bindValue(':apply_code', $booking['apply_code']);
+		    $DB_UPD->bindValue(':_final'    , '');
+		    $DB_UPD->execute();
+		    
           case '資料不全':  
 			$apply_process['client'][3][] = array('time'=>date('Y-m-d H:i:s'),'status'=>$apply_review['status'],'note'=>$apply_review['notes'],'logs'=>'');
 		    $apply_new_stage = 3;
@@ -889,7 +916,7 @@
 	  try{  
 		
 		// 檢查申請序號
-	    if(!preg_match('/^[\w\d]{8}$/',$ApplyCode)  || !is_array($data_modify)  ){
+	    if(!preg_match('/^[\w\d]{8,10}$/',$ApplyCode)  || !is_array($data_modify)  ){
 		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 		}
 		
@@ -1574,7 +1601,7 @@
 		
 		foreach($apply_list as $apply_code){
 			// 檢查序號
-			if(!preg_match('/^[\d\w]{8}$/',$apply_code)){
+			if(!preg_match('/^[\d\w]{8,10}$/',$apply_code)){
 			  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 			}
 			

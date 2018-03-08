@@ -22,14 +22,19 @@
 					<tr> <td >(02) - 33665275 賴小姐</td> </tr>
 					<tr> <td> 系統維護 </td></tr>
 					<tr> <td >0919350793 蕭先生 <br/> hsiaoiling@ntu.edu.tw</td> </tr>
+					<tr> <td style='color:red;'>3/11-25 工程師外出，
+					         聯絡請使用email 或 line : 0919350793<br>
+							 收到訊息後將盡快處理，敬請見諒
+						 </td> 
+				    </tr>
+					
 				  </table>
 				  
 				  <div class='desc_border'>手冊下載</div>
 				  <p class='format_desc'>
 					<ol class='test_list'>
 					  <li><span class='test_title'>申請系統</span>:<a href='docs/務局保護留區申請進入系統操作手冊-使用者.pdf' target='_blank'> 申請系統操作手冊 </a></li>
-					  <li><span class='test_title'>管理系統</span>:<a href='docs/務局保護留區申請進入系統操作手冊-管理者.pdf' target='_blank'> 管理系統操作手冊 </a></li>
-					  <li><span class='test_title'>2017工作坊</span>:<a href='docs/林務局工作坊20170704.pdf' target='_blank'> 工作坊投影片 </a></li>
+					  <?php // <li><span class='test_title'>管理系統</span>:<a href='docs/務局保護留區申請進入系統操作手冊-管理者.pdf' target='_blank'> 管理系統操作手冊 </a></li> ?>
 					</ol>
 				  </p>
 				  <!--

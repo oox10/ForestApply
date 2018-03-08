@@ -1,6 +1,6 @@
 <?php
   /* 
-  每日抽籤作業
+  重建抽籤清單
   
   時間：每日早上 2:00
   頻率：1次/天
@@ -18,7 +18,7 @@
  
   $result  = array('action'=>false,'data'=>array(),'message'=>array());
   $logs_file = ROOT.'systemJobs/TASK.logs';
-  $logs_message = date("Y-m-d H:i:s").' [TASK] APPLIED BOLLET TASK START!.'.PHP_EOL;
+  $logs_message = date("Y-m-d H:i:s").' [TASK] ReBuilt BOLLET Data!.'.PHP_EOL;
   file_put_contents($logs_file,$logs_message,FILE_APPEND);
   echo $logs_message;
   
@@ -41,42 +41,40 @@
 	
 	//[ STEP 02 ]: 建立抽籤盒子
 	
-	$lotto_date = date('Y-m-d');  // 抽籤當日
+	$enter_date = '2018-03-17';   // 進入日期
+	$lotto_date = date('Y-m-d',strtotime('-15 days',strtotime($enter_date)));  // 抽籤日期
 	
-	// 查詢抽籤列表(尚未抽籤)
-	$DB_OBJ = $db->DBLink->prepare( SQL_AdLotto::GET_LOTTO_QUEUE());
-	$DB_OBJ->bindValue(':date_tolot',$lotto_date);
-	if(!$DB_OBJ->execute()){
-	  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
-	}
 	
-	$lottoboxs = array();  //要抽籤的盒子們
-	while( $dbraw = $DB_OBJ->fetch(PDO::FETCH_ASSOC)){
-	  $lottoboxs[$dbraw['aid'].'@'.$dbraw['date_tolot']] = json_decode($dbraw['lotto_pool'],true);
-	}
-	
-	// 查詢新增抽籤資料
-	$DB_OBJ = $db->DBLink->prepare( SQL_AdLotto::GET_LOTTO_BOOKING());
-	if(!$DB_OBJ->execute(array('lotto_date'=>$lotto_date))){
+	// 查詢目標資料
+	$DB_OBJ = $db->DBLink->prepare( "SELECT * FROM area_booking WHERE _ballot=1 AND date_enter=:date_enter AND _stage>2 AND _keep=1 AND ORDER BY am_id ASC,apply_date ASC,abno ASC;");
+	if(!$DB_OBJ->execute(array('date_enter'=>$enter_date))){
 	  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
 	}
 	
 	while( $dbraw = $DB_OBJ->fetch(PDO::FETCH_ASSOC)){
 	  
-	  $lotto_index = $dbraw['am_id'].'@'.$dbraw['_ballot_date'];
+	  $lotto_index = $dbraw['am_id'].'@'.$lotto_date;
 	  $lotto_boxid = 0;
 	  $lotto_queue = array(); 
+	  
+	  $progress = json_decode($dbraw['_progres'],true);  //處理歷程
+	  $application = json_decode($dbraw['apply_form'],true);
 	  
 	  if(!isset($lottoboxs[$lotto_index])){
 		//create lotto box 
 		$DB_Box = $db->DBLink->prepare( SQL_AdLotto::BUILT_LOTTO_BOX());
 		$DB_Box->bindValue(':amid',$dbraw['am_id']);
-		$DB_Box->bindValue(':lotto_date',$dbraw['_ballot_date']);
-		$DB_Box->bindValue(':enter_date',$dbraw['date_enter']);
+		$DB_Box->bindValue(':lotto_date',$lotto_date);
+		$DB_Box->bindValue(':enter_date',$enter_date);
 		$DB_Box->execute();
 		$lotto_boxid  = $db->DBLink->lastInsertId('booking_lotto');
 		$lottoboxs[$lotto_index] = array();
 	  }
+	  
+	  $lotto_status = $progress['client'][2][0];
+	  if(preg_match('/送審/',$lotto_status['status']);
+	  $lotto_status['note'];
+	  
 	  
 	  // 確認抽籤資料是否已放入箱中
 	  $ticket_id = 'b:'.$dbraw['abno'];
@@ -91,13 +89,16 @@
 		  'insert' => date('c'),
 		  'accept' => 1,
 		  'lotto'  => 0,
-		  'review' => ''
+		  'review' => '',
+		  'queue'  => ''
 		];
 	  }else{
 		$lottoboxs[$lotto_index][$ticket_id]['leader'] = $dbraw['applicant_name'];
 		$lottoboxs[$lotto_index][$ticket_id]['reason'] = $dbraw['apply_reason'];
 		$lottoboxs[$lotto_index][$ticket_id]['people'] = $dbraw['member_count'];  
 	  }
+	  
+	  
 	}
 	
 	// 更新樂透盒
@@ -272,7 +273,6 @@
 		  $reason .= ', 備取 '.(count($ticket_que));
 		  $ticket_has['b:'.$apply['abno']]['lotto'] = 2;
 		  $ticket_has['b:'.$apply['abno']]['review'] = '備取';
-		  $ticket_has['b:'.$apply['abno']]['queue'] = count($ticket_que); 
 		}
 		
 		// 設定
