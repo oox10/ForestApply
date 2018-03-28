@@ -967,13 +967,13 @@
 		  //$apply_process['client'][1]   = [array('time'=>date('Y-m-d H:i:s'),'status'=>'收件待審','note'=>'申請項目需抽籤','logs'=>'')];
 		  $apply_process['review'][2][] = array('time'=>$bollet_date,'status'=>'系統抽籤','note'=>'','logs'=>'');	
 		
-		  $DB_UPD = $this->DBLink->prepare(SQL_Client::UPDATE_APPLY_STAGE()); 
-	      $DB_UPD->bindValue(':apply_code',$booking['apply_code']);
-		  $DB_UPD->bindValue(':stage'     , 1 );
+		  //$DB_UPD = $this->DBLink->prepare(SQL_Client::UPDATE_APPLY_STAGE()); 
+	      //$DB_UPD->bindValue(':apply_code',$booking['apply_code']);
+		  //$DB_UPD->bindValue(':stage'     , 1 );
 		  
-		  if( !$DB_UPD->execute() ){
-		    throw new Exception('_APPLY_SUBMIT_FAIL');  
-		  }
+		  //if( !$DB_UPD->execute() ){
+		  //  throw new Exception('_APPLY_SUBMIT_FAIL');  
+		  //}
 		}
 		
 		$DB_UPD = $this->DBLink->prepare(SQL_Client::UPDATE_APPLY_STATUS()); 
@@ -1542,7 +1542,7 @@
 		$booking_final_status = isset($this->ModelResult['applied']['data']['final']) ? $this->ModelResult['applied']['data']['final'] : '';
 		
 		// 檢查申請狀態是否符合
-		if( $booking_final_status!='核准進入' && $booking_final_status!='申請核准'){
+		if( $booking_final_status!='核准進入' && $booking_final_status!='申請核准' && $booking_final_status!='備取成功'){
 		  throw new Exception('_APPLY_DOWNLOAD_DENIA');
 		}
 		
@@ -1798,8 +1798,8 @@
 		$apply_process['review'][2]   = [];
 		
 		$DB_UPD = $this->DBLink->prepare(SQL_Client::UPDATE_APPLY_STATUS()); 
-	    $DB_UPD->bindValue(':apply_code',$booking['apply_code']);
-		$DB_UPD->bindValue(':status'    ,$booking['_status']);
+	    $DB_UPD->bindValue(':apply_code',$apply_code);
+		$DB_UPD->bindValue(':status'    ,'申請進入');
 		$DB_UPD->bindValue(':progres'   , json_encode($apply_process));
 		if( !$DB_UPD->execute() ){
 		  throw new Exception('_APPLY_SUBMIT_FAIL');  

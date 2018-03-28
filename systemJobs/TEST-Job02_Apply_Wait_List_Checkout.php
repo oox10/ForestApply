@@ -36,7 +36,7 @@
 	while( $tmp = $DB_GET->fetch(PDO::FETCH_ASSOC)){
 	  
 	  //各區域應處理之進入日期
-	  $date_enter = date('Y-m-d',strtotime('+'.$tmp['filled_day'].' day'));
+	  $date_enter = date('Y-m-d',strtotime('2018-03-25'));
 	  
 	  $DB_LOTTO = $db->DBLink->prepare( "SELECT * FROM booking_lotto WHERE aid=:aid AND date_enter=:date_enter;" );
 	  $DB_LOTTO->bindValue(':aid',$tmp['ano']);
@@ -142,7 +142,7 @@
 			$lotto_final  = '核准進入';	
 			
 		    $progress['review'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>$lotto_result,'note'=>'','logs'=>'');	
-			$progress['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'核准進入','note'=>'備取成功','logs'=>'');
+			$progress['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'核准進入','note'=>'','logs'=>'');
 		
 		}else{
 			
@@ -156,7 +156,7 @@
 			$lotto_final  = '申請註銷';	
 			
 		    $progress['review'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>$lotto_result,'note'=>'','logs'=>'');	
-		    $progress['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'申請註銷','note'=>'備取失敗','logs'=>'');
+		    $progress['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'申請註銷','note'=>'','logs'=>'');
 			
 		}
         

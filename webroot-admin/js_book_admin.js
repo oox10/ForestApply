@@ -40,6 +40,11 @@
 	  $('.act_select_all').prop('checked',select_all_fleg);  	
 	});
 	
+	$('#act_apply_license').click(function(){
+	   window.open('index.php?act=Landing/download/'+$('#apply_code').text())
+	})
+	
+	
 	
 	//-- select batch function
 	$('#act_selected_export').click(function(){

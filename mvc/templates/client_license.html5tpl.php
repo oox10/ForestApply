@@ -67,7 +67,7 @@
 		  <li ><a href='index.php#announcement'>最新消息</a></li>
 		  <li class='current' ><a href='index.php'>申請進入</a></li>
 		  <li ><a href='index.php?act=Landing/applied'>抽籤結果</a></li>
-		  <li >聯絡我們</li>
+		  <li ><a href='index.php#contect_master'>聯絡我們</a></li>
 		</ul>
 	  </div>
 	</header>

@@ -122,8 +122,9 @@
 		  $DB_GET	= $this->DBLink->prepare( SQL_AdStaff::GET_ALL_ADMIN_AREAS() );
 		}else{
 		  $DB_GET	= $this->DBLink->prepare( SQL_AdStaff::GET_STAFF_ADMIN_AREAS() );
-		  $DB_GET->bindParam(':owner' , $user['gid'] , PDO::PARAM_INT);
+		  $DB_GET->bindParam(':owner' , $this->USER->PermissionNow['group_code'] , PDO::PARAM_INT);
 		}
+		
 		if( !$DB_GET->execute()){
 		  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
 		}

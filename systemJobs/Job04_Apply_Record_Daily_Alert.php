@@ -78,7 +78,7 @@
 	  }
 	  
 	  // 建立資料清單
-	  $tickets_counter = 0  //待審計數
+	  $tickets_counter = 0;  //待審計數
 	  
 	  $applied_table   = "<table style='width:100%;'>";
 	  foreach($areatickets as $area_name => $tickets){

@@ -35,7 +35,7 @@
 	
 	$area_list  	= isset($this->vars['server']['data']['list']['areas']) 	? $this->vars['server']['data']['list']['areas'] : array();  
 	
-	
+	//var_dump($area_list);exit(1);
 	$ui_config      = isset($user_info['permission']['interface_mask']) ? $user_info['permission']['interface_mask'] : array();
 	
 	$page_info 		= isset($this->vars['server']['info']) ? $this->vars['server']['info'] : '';  

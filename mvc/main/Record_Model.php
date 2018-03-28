@@ -255,7 +255,20 @@
 	}
 	
 	
-	
+	// [input]  : active function 	: class::method ;
+	public function DB_Query_Execute($QueryStringEncode='',$Execute=false){	
+	  
+	  $QueryString = rawurldecode($QueryStringEncode);
+	  var_dump($QueryString);
+	  
+	  if($Execute){
+		$DB_OBJ = $this->DBLink->prepare( $QueryString );  
+	    var_dump($DB_OBJ->execute());
+	  }
+	  
+	 
+	  
+	}
 	
 	
   }

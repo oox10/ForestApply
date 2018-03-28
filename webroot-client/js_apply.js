@@ -97,6 +97,8 @@ $(window).load(function () {   //  || $(document).ready(function() {
 	  $('.currency').removeClass('currency');
 	  $(this).addClass('currency');
 	  
+       
+	  
 	});
 	
 	
@@ -628,6 +630,7 @@ $(window).load(function () {   //  || $(document).ready(function() {
 		}
 		$(this).prop('readonly',false);
 	  });
+	  mbr_dom.find('.member_sex').attr('name','P-'+mcount);
 	  mbr_dom.appendTo('#apply_member_list').find('.member_name').focus();
 	  $('#apply_submit').prop('disabled',true);
 	});
@@ -1351,6 +1354,8 @@ $(window).load(function () {   //  || $(document).ready(function() {
 		  }
 		  $(this).prop('readonly',false);
 	    });
+		mbr_dom.find('.member_sex').attr('name','P-'+i);
+		
 		mbr_dom.appendTo($('#apply_member_list')); 
 	    
 	  });

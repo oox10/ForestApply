@@ -620,13 +620,32 @@
 		    $DB_UPD->execute();
 			break;
 		  
+		  
+		  case '個案通過':
+            
+		    
+			$apply_process['client'][3][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'審查通過','note'=>$apply_review['notes'],'logs'=>'');
+		    $apply_process['client'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'正取核准','note'=>'','logs'=>'');		
+			$apply_process['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'核准進入','note'=>'','logs'=>'');
+			
+            $apply_process['admin'][3][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'個案通過','note'=>'因特殊原因讓個案核准進入','logs'=>'');
+		                         
+			
+			$apply_new_status='核准進入';
+			$apply_new_stage = 5;
+			$to_sent_mail = true;
+			  
+			$is_final = true;
+			break;  
+			  
+			  
 		  case '審查通過':
           case '不須審查':		  
 		    
 			$apply_process['client'][3][] = array('time'=>date('Y-m-d H:i:s'),'status'=>$apply_review['status'],'note'=>$apply_review['notes'],'logs'=>'');
 		      
 			//確認抽籤狀態
-			if(!$ballot_flag || ($ballot_flag && $ballot_result==1) ){ //不用抽籤 || 抽籤而且正取	
+			if(!$ballot_flag || ($ballot_flag && ($ballot_result==1||$ballot_result==4)) ){ //不用抽籤 || 抽籤而且正取	|| 擊劍送沈
 			  $apply_process['client'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'正取核准','note'=>'','logs'=>'');		
 			  $apply_process['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'核准進入','note'=>'','logs'=>'');
 			  
@@ -642,10 +661,10 @@
 			  $apply_new_status='備取等待';
 			  $apply_new_stage = 4;
 			  $to_sent_mail = true;
-			  
 			}else{
               // 要抽籤但是處於未知狀態
 			  $apply_process['review'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'抽籤錯誤','note'=>'','logs'=>'');
+			  
 			  
 			}
 			break;
@@ -664,9 +683,9 @@
 			
 		  case '備取成功':
 		    $apply_process['admin'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'備取成功','note'=>'','logs'=>'');	
-			$apply_process['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'核准進入','note'=>'','logs'=>'');
+			$apply_process['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'核准進入','note'=>'備取成功','logs'=>'');
 		    
-			$apply_new_status='備取成功';
+			$apply_new_status='核准進入';
 			$apply_new_stage = 5;
 			$to_sent_mail = true;
 			$is_final = true;  
@@ -675,9 +694,9 @@
 		  
           case '備取失敗':		 
             $apply_process['admin'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'備取失敗','note'=>'','logs'=>'');	
-		    $apply_process['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'申請註銷','note'=>'','logs'=>'');
+		    $apply_process['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'申請註銷','note'=>'備取失敗','logs'=>'');
 			
-			$apply_new_status='備取失敗';
+			$apply_new_status='申請註銷';
 			$apply_new_stage = 5;
 			$to_sent_mail = true;
 			$is_final = true;  
@@ -691,7 +710,10 @@
 		    $DB_UPD->execute();
 		    
 		  case '重新審查':
-		    $DB_UPD = $this->DBLink->prepare(SQL_AdBook::UPDATE_BOOK_DATA(array('_final'))); 
+		    
+			array_pop($apply_process['client'][5]);
+		    
+			$DB_UPD = $this->DBLink->prepare(SQL_AdBook::UPDATE_BOOK_DATA(array('_final'))); 
 	        $DB_UPD->bindValue(':apply_code', $booking['apply_code']);
 		    $DB_UPD->bindValue(':_final'    , '');
 		    $DB_UPD->execute();
@@ -804,25 +826,32 @@
 		// 設定審查狀態
 		switch($StageNo){
 		  case 3:  // 急件送審
-		    $apply_process['client'][1][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'急件送審','note'=> $this->USER->UserID.' 經由後台設定送審','logs'=>'');
-		    $apply_new_stage = 3;
+		    $apply_process['client'][2][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'急件送審','note'=> $this->USER->UserID.' 經由後台設定送審','logs'=>'');
+		    $apply_process['admin'][2][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'取消抽籤','note'=> '','logs'=>'');
+		    
+			$apply_new_stage = 3;
+			
+			
 			break;
 		  
 		  default:
             break;
 		}
 		
-		$DB_UPD = $this->DBLink->prepare(SQL_Client::UPDATE_APPLY_STATUS()); 
-	    $DB_UPD->bindValue(':apply_code',$booking['apply_code']);
-		$DB_UPD->bindValue(':status'    ,'急件送審');
-		$DB_UPD->bindValue(':progres'   , json_encode($apply_process));
-		if( !$DB_UPD->execute() ){
-		  throw new Exception('_APPLY_SUBMIT_FAIL');  
-		}
+		$booking_update = [];
+		$booking_update['_stage'] = $apply_new_stage;
+		$booking_update['_status'] = '急件送審';
+		$booking_update['_progres'] = json_encode($apply_process);
+		$booking_update['_ballot_result'] = 4;
 		
-		$DB_UPD = $this->DBLink->prepare(SQL_Client::UPDATE_APPLY_STAGE()); 
+		
+		$DB_UPD = $this->DBLink->prepare(SQL_AdBook::UPDATE_BOOK_DATA(array_keys($booking_update))); 
 	    $DB_UPD->bindValue(':apply_code',$booking['apply_code']);
-		$DB_UPD->bindValue(':stage'     , $apply_new_stage );
+		$DB_UPD->bindValue(':_status'    ,'急件送審');
+		$DB_UPD->bindValue(':_stage'     , $apply_new_stage );
+		$DB_UPD->bindValue(':_progres'   , json_encode($apply_process));
+		$DB_UPD->bindValue(':_ballot_result'   , 4);
+
 		if( !$DB_UPD->execute() ){
 		  throw new Exception('_APPLY_SUBMIT_FAIL');  
 		}

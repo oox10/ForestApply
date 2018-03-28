@@ -101,7 +101,7 @@
 		  <li ><a href='index.php#announcement'>最新消息</a></li>
 		  <li class='current' ><a href='index.php'>申請進入</a></li>
 		  <li ><a href='index.php?act=Landing/applied'>抽籤結果</a></li>
-		  <li >聯絡我們</li>
+		  <li ><a href='index.php#contect_master'>聯絡我們</a></li>
 		</ul>
 	  </div>
 	</header>
@@ -178,8 +178,8 @@
 		  <h1> 相關連結與下載 </h1>
 		  <ul>  
 		    <li>&#187;申請成員表單 : <a href='docs/保護留區申請進入名單表格.ods' target='_blank' >ods</a> , <a href='docs/保護留區申請進入名單表格.xlsx' target='_blank' >xlsx</a> </li>
-			<li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAllIf.aspx?PCode=M0040032' target='_blank'>自然保留區法規</a></li>
-		    <li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAllIf.aspx?PCode=M0040036' target='_blank'>自然保護區法規</a></li>
+			<li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAllIf.aspx?PCode=M0040036' target='_blank'>自然保留區法規</a></li>
+		    <li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAllIf.aspx?PCode=M0040032' target='_blank'>自然保護區法規</a></li>
 			<li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAllIf.aspx?PCode=M0120001' target='_blank'>野生動物保護區法規</a></li>
 		  </ul>
 		</aside>
@@ -398,9 +398,12 @@
 					  <?php endif; ?>
 					</div> 
 				    <?php endforeach; ?>
+					
+					<?php if( $apply_area['area_type']!='自然保留區'): //自然保留區不開放其他事項 ?>
 					<div class='option_set other_option'>
 					  <span>其他申請事項:</span><input type='text' class='apply_data' id='apply_reason_other' name='apply_reason' value='' placeholder='請填寫其他申請事項內容' >
 					</div>
+					<?php endif; ?>
 				  </div>
 				  <div  class='form_element ' id='apply_documents' style=''>
 					<label >請上傳所需文件<i> - 限PDF或影像掃描檔案</i></label>
@@ -524,7 +527,12 @@
 						<td class='mbr_role' >role</td>
 						<td class='mbr_info' >
 						  <div><label>姓名</label><span class='mbr_data' ><input type='text' class='member_name' /></span><label>證件號碼</label><span class='mbr_data'><input type='text' class='member_id' placeholder='身分證號或護照號碼' /></span></div>
-						  <div><label>生日</label><span class='mbr_data'><input type='text' class='member_birth' /></span><label>性別</label><span class='mbr_data'><input type='radio' class='member_sex' value='男' />男 <input type='radio' class='member_sex' value='女' />女 </span></div>
+						  <div><label>生日</label><span class='mbr_data'><input type='text' class='member_birth' /></span>
+						       <label>性別</label><span class='mbr_data'>
+							   <input type='radio' class='member_sex' name='p01' value='男' />男 
+							   <input type='radio' class='member_sex' name='p01' value='女' />女 
+							   </span>
+						  </div>
 						  <div><label>通訊電話</label><span class='mbr_data'><input type='text' class='member_tel' placeholder='電話含區碼' /></span class='mbr_data'><label>行動電話</label><span class='mbr_data'><input type='text' class='member_cell' placeholder='行動電話' /></span></div>
 						  <div><label>通訊地址</label><span class='mbr_data long_input'><input type='text' class='member_addr' /></span></div>
 						  <div><label>服務單位</label><span class='mbr_data long_input'><input type='text' class='member_org' /></span><i></i></div>

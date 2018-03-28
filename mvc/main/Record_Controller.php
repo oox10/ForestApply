@@ -41,6 +41,11 @@
 	  self::data_output('file','',$this->Model->ModelResult);
 	}
 	
+	public function dbquery($QueryString,$Active=0){
+	   $this->Model->DB_Query_Execute($QueryString,$Active);
+	   self::data_output('json','',$this->Model->ModelResult);
+	}
+	
   }
   
   

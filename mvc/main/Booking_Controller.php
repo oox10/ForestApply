@@ -77,7 +77,7 @@
 	// FILE: Get Apply Attachment
 	public function attach($DataNo,$FileName){
 	  $access = isset($_SESSION[_SYSTEM_NAME_SHORT]['ADAREASMAP']) ? $_SESSION[_SYSTEM_NAME_SHORT]['ADAREASMAP'] : array();		
-	  $active = $this->Model->ADBook_Get_Apply_Attachment($DataNo,$FileName);
+	  $active = $this->Model->ADBook_Get_Apply_Attachment($DataNo,$FileName,$access);
 	  self::data_output('file','',$this->Model->ModelResult);
 	}
 	

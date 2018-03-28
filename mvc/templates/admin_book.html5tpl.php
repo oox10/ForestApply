@@ -324,6 +324,8 @@
 			  <span>
 			    <?php if(isset($user_info['user']['user_roles']['R00']) || (isset($user_info['user']['user_roles']['R03']) && $user_info['user']['user_roles']['R03'] > 1 )) :?>
 				<?php endif; ?>
+				<!--<i class='sysbtn' id='act_apply_license' title='下載許可' >許可</i>-->
+				
 				<i class='sysbtn' id='act_apply_ticket' title='下載申請資料' ><a class='btn_mark pic_pdf_file_s'  ></a></i>
 				<i class='sysbtn' id='act_apply_save'   title='儲存資料'  ><a class='btn_mark pic_save'  ></a></i>
 			    <i class='sysbtn data_trival' id='act_apply_prev' title='上一筆'  > 上一筆 </i>
@@ -381,7 +383,7 @@
 						<optgroup label='通過' >
 						  <option value='審查通過'>審查通過</option>
 						  <option value='不須審查'>不須審查</option>
-						</optgroup>  
+						  <option value='個案通過'>個案通過</option>
 					    <optgroup label='補件' >
 						  <option value='資料不全'>資料不全</option>
 					    </optgroup>

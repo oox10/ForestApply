@@ -228,7 +228,7 @@
 	
 	while( $book = $DB_BOOK->fetch(PDO::FETCH_ASSOC)){
 	  
-	  if(strtotime('-2 day') < strtotime($book['apply_date'])){
+	  if(strtotime('-1 day') < strtotime($book['apply_date'])){
 		continue;  
 	  }
 	  
@@ -238,6 +238,8 @@
 	  $application = json_decode($book['apply_form'],true);
 	  
 	  $progress['client'][1][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'申請未完成','note'=>'系統自動註銷，並通知申請人','logs'=>date('Y-m-d H:i:s'));	
+	  $progress['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'申請註銷','note'=>'','logs'=>date('Y-m-d H:i:s'));	
+	  
 	  $apply_new_status='申請註銷';
 	  $apply_new_final ='申請註銷'; 
 	  $apply_new_stage = 5;

@@ -140,7 +140,7 @@
 	
 	//-- Client Area :  update apply data
 	public static function CHECK_APPLY_DATE_IS_ALONE(){
-	  $SQL_String = "SELECT count(*) FROM area_booking WHERE am_id=:am_id AND applicant_name=:applicant_name AND applicant_mail=:applicant_mail AND applicant_id=:applicant_id AND date_enter=:date_enter AND date_exit=:date_exit AND _stage<5 AND apply_code!=:apply_code AND _keep=1;";
+	  $SQL_String = "SELECT count(*) FROM area_booking WHERE am_id=:am_id AND applicant_name=:applicant_name AND applicant_mail=:applicant_mail AND applicant_id=:applicant_id AND date_enter=:date_enter AND date_exit=:date_exit AND _stage<5 AND _stage>0 AND apply_code!=:apply_code AND _keep=1;";
 	  return $SQL_String;
 	}
 	
@@ -153,7 +153,7 @@
 	
 	//-- Client Area :  update apply members
 	public static function GET_AREA_APPLIED_MEMBER(){
-	  $SQL_String = "SELECT apply_code,apply_date,applicant_name,member FROM area_booking WHERE am_id=:am_id AND apply_code!=:apply_code AND date_enter <=:check_date AND date_exit >=:check_date AND _stage<5 AND _keep=1;";
+	  $SQL_String = "SELECT apply_code,apply_date,applicant_name,member FROM area_booking WHERE am_id=:am_id AND apply_code!=:apply_code AND date_enter <=:check_date AND date_exit >=:check_date AND _stage<5 AND _stage>0  AND _keep=1;";
 	  return $SQL_String;
 	}
 	
