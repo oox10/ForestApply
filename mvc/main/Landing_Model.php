@@ -2321,7 +2321,7 @@
 		  $enter_date = date('Y-m-d',strtotime($EnterDate));	
 		}
 		
-		if(strtotime($enter_date) < strtotime('2017-12-31 23:59:59')){
+		if(strtotime($enter_date) < strtotime('2018-03-21 23:59:59')){
 		  throw new Exception('_APPLY_LOTTO_UNRECORDED'); 	
 		}
 		
