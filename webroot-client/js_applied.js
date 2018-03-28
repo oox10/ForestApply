@@ -178,7 +178,7 @@ $(window).load(function () {   //  || $(document).ready(function() {
 				DOM.append("<td>"+book.date+"</td>");
 				DOM.append("<td>"+book.leader+"</td>");
 				DOM.append("<td>"+book.people+"</td>");
-				DOM.append("<td>"+book.review+"</td>");
+				DOM.append("<td>"+book.review+(!parseInt(book.accept) ? ',放棄':'')+"</td>");
 				DOM.append("<td class='lotto'><i class='mark24 iconv_lotto_O'></i><i class='mark24 iconv_lotto_X'></i></td>");
 				DOM.appendTo("#area_booking_today");
 		      });

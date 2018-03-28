@@ -1164,6 +1164,7 @@
 		tr.booking > td.lotto > i{display:none;}
 		tr.booking[lotto='1']  > td.lotto > i.iconv_lotto_O{display:inline-block;} 
 		tr.booking[accept='0'] > td.lotto > i.iconv_lotto_X{display:inline-block;} 
+		tr.booking[accept='0'] > td.lotto > i.iconv_lotto_O{display:none;} 
 		  i.iconv_lotto_O{background-image:url('../image/mark_O_V.png')}
 		  i.iconv_lotto_X{background-image:url('../image/mark_O_X.png')}
 		
