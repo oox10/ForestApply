@@ -44,8 +44,8 @@ class Landing_Controller extends Admin_Controller{
 	
 	
 	// AJAX : 取得地區日程表
-	public function schedule($AreaCode,$CalendarStart,$CalendarNum){
-	  $this->Model->Access_Get_Select_Area_Info($AreaCode);	
+	public function schedule($AreaCode,$CalendarStart,$CalendarNum,$History=0){
+	  $this->Model->Access_Get_Select_Area_Info($AreaCode,(intval($History) ? true:false));	
 	  $this->Model->Access_Get_Select_Area_Date($AreaCode,$CalendarStart,intval($CalendarNum));
 	  self::data_output('json','',$this->Model->ModelResult);
 	}

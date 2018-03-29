@@ -215,8 +215,8 @@
 	  file_put_contents($logs_file,date('Y-m-d H:i:s').' : AREA: '.$tmp['ano'].' '.date('Y-m-d').' auto pass [ '.$pass_count.' ] books finished.'.PHP_EOL,FILE_APPEND);
 	}
 	
-	//掃描未申請完成之清單
 	
+	//掃描未申請完成之清單
 	$logs_message = date("Y-m-d H:i:s").' [TASK] BOOKING AUTO CANCEL START!.'.PHP_EOL;
     file_put_contents($logs_file,$logs_message,FILE_APPEND);
     echo $logs_message;

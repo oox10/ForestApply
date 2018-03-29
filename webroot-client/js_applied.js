@@ -32,7 +32,7 @@ $(window).load(function () {   //  || $(document).ready(function() {
         url: 'index.php',
 		type:'POST',
 	    dataType:'json',
-	    data: {act:'Landing/schedule/'+areaid+'/'+calfrom+'/'+calnums},
+	    data: {act:'Landing/schedule/'+areaid+'/'+calfrom+'/'+calnums+'/1'},
 	    beforeSend: function(){ system_loading() },
         error: function(xhr, ajaxOptions, thrownError){ console.log( ajaxOptions+" / "+thrownError); },
 	    success: function(response) {

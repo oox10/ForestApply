@@ -640,6 +640,9 @@
 		var log_dom = $('tr.process_task#review').find('td.stage'+pstage);
 		if(log_dom.hasClass('_variable')) log_dom.empty();
 		$.each(plist,function(i,log){
+			
+		  console.log(log)	
+			
           var record = $('<span/>').addClass('rvlog').attr('title',log.time).html(log.time.substr(0,10).replace(/\-/g,'')+' '+log.status);
 		  if(log.note.length){
 			record.html(record.html()+'<center>'+log.note+'</center>');  

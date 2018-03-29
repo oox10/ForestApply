@@ -131,7 +131,8 @@
 	
 	//-- Get Client Page Area List
 	// [input] : AreaCode 
-	public function Access_Get_Select_Area_Info($AreaCode){
+	// [input] : GetPassApply  // 是否要查詢過去申請資料
+	public function Access_Get_Select_Area_Info($AreaCode,$GetPassApplied=false){
 	  $result_key = parent::Initial_Result('info');
 	  $result  = &$this->ModelResult[$result_key];
 	  
@@ -205,6 +206,31 @@
             $ads = date('Ymd',strtotime('+1 day',strtotime($ads)));
 		  }while(strtotime($ads.' 00:00:00') <= strtotime($ade.' 23:59:59'));
 		}
+		
+		
+		// 查詢過去申請人數
+		
+		if($GetPassApplied){
+			$DB_OBJ = $this->DBLink->prepare(SQL_Client::GET_TARGET_AREA_APPLIED());
+			$DB_OBJ->bindValue(':apply_d_start',date('Y-m-d',strtotime('-1 year')));
+			$DB_OBJ->bindValue(':apply_d_end',date('Y-m-d',strtotime('+'.($area['accept_min_day']+1).' day')));
+			$DB_OBJ->bindValue(':amid',$area['ano']);
+			if(!$DB_OBJ->execute()){
+			  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
+			}
+			while($tmp = $DB_OBJ->fetch(PDO::FETCH_ASSOC)){
+			  $ads = $tmp['date_enter'];
+			  $ade = $tmp['date_exit'];
+			  do{
+				$applied_index = preg_replace('/\//','-',$ads);	
+				if(!isset($applied[$applied_index])) $applied[$applied_index] = 0;   	
+				$applied[$applied_index] += $tmp['member_count'];
+				$ads = date('Ymd',strtotime('+1 day',strtotime($ads)));
+			  }while(strtotime($ads.' 00:00:00') <= strtotime($ade.' 23:59:59'));
+			}
+		}
+		
+		
 		
 		// search area concat
 		$area['master_group']   = '';
@@ -286,6 +312,7 @@
 		$min_apply_time = strtotime('+'.$areainfo['area']['accept_min_day'].' day',$todaytime);
 		$max_apply_time = strtotime('+'.$areainfo['area']['accept_max_day'].' day',$todaytime);
 		$apply_calendar = array();  //月曆陣列
+		
 		foreach($month_array as $ynm_string){
       
 		  $apply_calendar[$ynm_string] = array();
@@ -337,6 +364,7 @@
 		    if( $this_date_time > $max_apply_time ){  
 			  $dat_sloct['type']='over';
 			  $dat_sloct['info']='-';	
+			  $dat_sloct['booked']= $areainfo['applied'][$this_date_string];
               $apply_calendar[$ynm_string][] = $dat_sloct;
 			  continue;	
 			}
