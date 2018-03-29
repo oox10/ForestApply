@@ -213,7 +213,7 @@
 		if($GetPassApplied){
 			$DB_OBJ = $this->DBLink->prepare(SQL_Client::GET_TARGET_AREA_APPLIED());
 			$DB_OBJ->bindValue(':apply_d_start',date('Y-m-d',strtotime('-1 year')));
-			$DB_OBJ->bindValue(':apply_d_end',date('Y-m-d',strtotime('+'.($area['accept_min_day']+1).' day')));
+			$DB_OBJ->bindValue(':apply_d_end',date('Y-m-d',strtotime('+'.($area['accept_min_day']-1).' day')));
 			$DB_OBJ->bindValue(':amid',$area['ano']);
 			if(!$DB_OBJ->execute()){
 			  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
@@ -364,7 +364,7 @@
 		    if( $this_date_time > $max_apply_time ){  
 			  $dat_sloct['type']='over';
 			  $dat_sloct['info']='-';	
-			  $dat_sloct['booked']= $areainfo['applied'][$this_date_string];
+			  $dat_sloct['booked']= isset($areainfo['applied'][$this_date_string])?$areainfo['applied'][$this_date_string]:0;
               $apply_calendar[$ynm_string][] = $dat_sloct;
 			  continue;	
 			}
