@@ -177,8 +177,8 @@
 		  </ul>
 		  <h1> 申請成員表單下載 </h1>
 		  <ul>  
+		    <li title='微軟OFFICE EXCEL相容格式' >&#187; XLSX : <a href='docs/保護留區申請進入名單表格-空白.xlsx' target='_blank' >空白</a>、<a  href='docs/保護留區申請進入名單表格-範例.xlsx' target='_blank' >含填寫範例</a></li>
 		    <li title='開放文件OpenDocument相容格式'>&#187; ODS : <a href='docs/保護留區申請進入名單表格-空白.ods' target='_blank' >空白</a> 、<a href='docs/保護留區申請進入名單表格-範例.ods' target='_blank' >含填寫範例</a></li>
-			<li title='微軟OFFICE EXCEL相容格式' >&#187; XLSX : <a href='docs/保護留區申請進入名單表格-空白.xlsx' target='_blank' >空白</a>、<a  href='docs/保護留區申請進入名單表格-範例.xlsx' target='_blank' >含填寫範例</a></li>
 		  </ul>
 		  <h1> 相關連結與下載 </h1>
 		  <ul>  
