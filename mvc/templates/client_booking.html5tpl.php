@@ -175,10 +175,14 @@
 		    <li> 申請資料異動</li>
 			<li> 申請許可預覽與下載</li>
 		  </ul>
+		  <h1> 申請成員表單下載 </h1>
+		  <ul>  
+		    <li title='開放文件OpenDocument相容格式'>&#187; ODS : <a href='docs/保護留區申請進入名單表格-空白.ods' target='_blank' >空白</a> 、<a href='docs/保護留區申請進入名單表格-範例.ods' target='_blank' >含填寫範例</a></li>
+			<li title='微軟OFFICE EXCEL相容格式' >&#187; XLSX : <a href='docs/保護留區申請進入名單表格-空白.xlsx' target='_blank' >空白</a>、<a  href='docs/保護留區申請進入名單表格-範例.xlsx' target='_blank' >含填寫範例</a></li>
+		  </ul>
 		  <h1> 相關連結與下載 </h1>
 		  <ul>  
-		    <li>&#187;申請成員表單 : <a href='docs/保護留區申請進入名單表格.ods' target='_blank' >ods</a> , <a href='docs/保護留區申請進入名單表格.xlsx' target='_blank' >xlsx</a> </li>
-			<li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAllIf.aspx?PCode=M0040036' target='_blank'>自然保留區法規</a></li>
+		    <li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAllIf.aspx?PCode=M0040036' target='_blank'>自然保留區法規</a></li>
 		    <li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAllIf.aspx?PCode=M0040032' target='_blank'>自然保護區法規</a></li>
 			<li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAllIf.aspx?PCode=M0120001' target='_blank'>野生動物保護區法規</a></li>
 		  </ul>
