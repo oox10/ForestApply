@@ -531,15 +531,15 @@
 						<td class='mbr_role' >role</td>
 						<td class='mbr_info' >
 						  <div><label>姓名</label><span class='mbr_data' ><input type='text' class='member_name' /></span><label>證件號碼</label><span class='mbr_data'><input type='text' class='member_id' placeholder='身分證號或護照號碼' /></span></div>
-						  <div><label>生日</label><span class='mbr_data'><input type='text' class='member_birth' /></span>
+						  <div><label>生日</label><span class='mbr_data'><input type='text' class='member_birth' placeholder='1950-01-01 或 061-01-01' title='請輸入西元日期 1950-01-01 共10碼 或 民國日期 061-01-01 共9碼' /></span>
 						       <label>性別</label><span class='mbr_data'>
 							   <input type='radio' class='member_sex' name='p01' value='男' />男 
 							   <input type='radio' class='member_sex' name='p01' value='女' />女 
 							   </span>
 						  </div>
-						  <div><label>通訊電話</label><span class='mbr_data'><input type='text' class='member_tel' placeholder='電話含區碼' /></span class='mbr_data'><label>行動電話</label><span class='mbr_data'><input type='text' class='member_cell' placeholder='行動電話' /></span></div>
-						  <div><label>通訊地址</label><span class='mbr_data long_input'><input type='text' class='member_addr' /></span></div>
-						  <div><label>服務單位</label><span class='mbr_data long_input'><input type='text' class='member_org' /></span><i></i></div>
+						  <div><label>通訊電話</label><span class='mbr_data'><input type='text' class='member_tel' placeholder='電話含區碼：03-333333' /></span class='mbr_data'><label>行動電話</label><span class='mbr_data'><input type='text' class='member_cell' placeholder='行動電話' /></span></div>
+						  <div><label>通訊地址</label><span class='mbr_data long_input'><input type='text' class='member_addr' placeholder='地址含郵遞區號：30446 新竹市中山路..' /></span></div>
+						  <div><label>服務單位</label><span class='mbr_data long_input'><input type='text' class='member_org' placeholder=''  /></span><i></i></div>
 						  <div><label>緊急聯絡人</label><span class='mbr_data'><input type='text' placeholder='緊急聯絡人' class='member_contacter' /></span> <label>聯絡人電話</label><span class='mbr_data'><input type='text' placeholder='聯絡人電話' class='member_contactto' /></span></div>
 						</td>
 						<td >

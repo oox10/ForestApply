@@ -906,68 +906,106 @@
 		  throw new Exception('_APPLY_SUBMIT_ATTACHMENT_EMPTY');     	
 		}
 		
-		// 檢查申請日期合法
-		// -1 built accept date slot
-		$todaytime = strtotime(date('Y-m-d 00:00:01'));
-		$min_apply_time = strtotime('+'.$areainfo['area']['accept_min_day'].' day',$todaytime);
-		$max_apply_time = strtotime('+'.($areainfo['area']['accept_max_day']+1).' day',$todaytime);
+		// 處理紀錄
+		$apply_process = $booking['_progres'] ? json_decode($booking['_progres'],true) : ['client'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]],'admin'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
+		$apply_process['client'][0][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'更新資料','note'=>'','logs'=>'');
 		
-		foreach($apply_data['dates'] as $s=> $apply_dates){
-          if( !isset($apply_dates[0]) || !strtotime($apply_dates[0]) ){
-			throw new Exception('_APPLY_SUBMIT_DATES_FAILS');    
-		  }
-		  
-		  // 檢查申請日期是否超過申請範圍
-		  $inter_date_time = strtotime($apply_dates[0].' 12:00:00');
-		  if( $min_apply_time >= $inter_date_time || $inter_date_time >= $max_apply_time ){
-			throw new Exception('_APPLY_SUBMIT_DATES_OVERFLOW');  
-		  }
-		  
-		  // 檢查申請日期是否在停止日期內
-		  foreach($areainfo['stops'] as $stop){
-			$stop_s = strtotime($stop['date_start'].' 00:00:00');
-			$stop_e = strtotime($stop['date_end'].' 23:59:59');
-			if($inter_date_time >= $stop_s && $inter_date_time <= $stop_e){
-			  throw new Exception('_APPLY_SUBMIT_DATES_IS_STOP');
-			  break;
-			}
-		  }
-		  
-		  $apply_date['enter'] = $apply_dates[0];
-		  $apply_date['exit']  = (isset($apply_dates[1])&&strtotime($apply_dates[1])) ? $apply_dates[1] : $apply_date['enter'];
-		  
-		  if(!$apply_crossd && $apply_date['enter'] != $apply_date['exit'] ){
-			$apply_date['exit'] = $apply_date['enter'];  
-			$apply_data['dates'][$s][1] = $apply_date['enter'];
-		  }
-		}
-		
-		// 檢查進入日期是否重複申請
-		$DB_CKD = $this->DBLink->prepare(SQL_Client::CHECK_APPLY_DATE_IS_ALONE()); 
-		$DB_CKD->bindValue(':am_id'			  , $areainfo['area']['ano']);
-		$DB_CKD->bindValue(':apply_code'	  , $booking['apply_code']);
-		$DB_CKD->bindValue(':applicant_name'  , $booking['applicant_name']  );
-		$DB_CKD->bindValue(':applicant_mail'  , $booking['applicant_mail']  );
-		$DB_CKD->bindValue(':applicant_id'	  , $booking['applicant_id']  );
-		$DB_CKD->bindValue(':date_enter'      , $apply_date['enter'] );
-		$DB_CKD->bindValue(':date_exit'       , $apply_date['exit'] );
-		if( !$DB_CKD->execute() ){
-		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');	
-		}
-		$applied_num = $DB_CKD->fetchColumn();
-		if($applied_num){
-		  throw new Exception('_APPLY_TARGET_DATE_DOUBLED');		
-		}
-		
-		// 確認是否抽籤
-		$bollet_date = $apply_bollet ? date('Y-m-d',strtotime('-'.($areainfo['area']['accept_min_day']-1).' day',strtotime($apply_date['enter']))) : '0000-00-00';
 		
 		// 檢查目前狀態，補件狀態不可調整部分欄位
 		if($booking['_stage'] > 1){
-          if($booking['apply_reason'] !=$apply_reason || $booking['date_enter']!=$apply_date['enter'] ){
-			throw new Exception('_APPLY_SUBMIT_STABLE_FIELD_CHANGE');  
-		  }
+			
+			foreach($apply_data['dates'] as $s=> $apply_dates){
+			  if( !isset($apply_dates[0]) || !strtotime($apply_dates[0]) ){
+				throw new Exception('_APPLY_SUBMIT_DATES_FAILS');    
+			  }
+			  
+			  $apply_date['enter'] = $apply_dates[0];
+			  $apply_date['exit']  = (isset($apply_dates[1])&&strtotime($apply_dates[1])) ? $apply_dates[1] : $apply_date['enter'];
+			  
+			  if(!$apply_crossd && $apply_date['enter'] != $apply_date['exit'] ){
+				$apply_date['exit'] = $apply_date['enter'];  
+				$apply_data['dates'][$s][1] = $apply_date['enter'];
+			  }
+			}
+			
+			// 資料申請狀態為補件
+			if(!preg_match('/'.$apply_reason.'/',$booking['apply_reason']) || $booking['date_enter']!=$apply_date['enter'] ){
+			  throw new Exception('_APPLY_SUBMIT_STABLE_FIELD_CHANGE');  
+		    }
+			
+			$apply_reason = $booking['apply_reason'];
+			$apply_bollet = $booking['_ballot'];
+			$bollet_date  = $booking['_ballot_date'];
+			
+			// 補件資訊於檢查時設定放入
+			
+			
+		}else{
+		    // 資料申請狀態為修改
+			// 檢查申請日期合法
+			// -1 built accept date slot
+			$todaytime = strtotime(date('Y-m-d 00:00:01'));
+			$min_apply_time = strtotime('+'.$areainfo['area']['accept_min_day'].' day',$todaytime);
+			$max_apply_time = strtotime('+'.($areainfo['area']['accept_max_day']+1).' day',$todaytime);
+			
+			foreach($apply_data['dates'] as $s=> $apply_dates){
+			  if( !isset($apply_dates[0]) || !strtotime($apply_dates[0]) ){
+				throw new Exception('_APPLY_SUBMIT_DATES_FAILS');    
+			  }
+			  
+			  // 檢查申請日期是否超過申請範圍
+			  $inter_date_time = strtotime($apply_dates[0].' 12:00:00');
+			  if( $min_apply_time >= $inter_date_time || $inter_date_time >= $max_apply_time ){
+				throw new Exception('_APPLY_SUBMIT_DATES_OVERFLOW');  
+			  }
+			  
+			  // 檢查申請日期是否在停止日期內
+			  foreach($areainfo['stops'] as $stop){
+				$stop_s = strtotime($stop['date_start'].' 00:00:00');
+				$stop_e = strtotime($stop['date_end'].' 23:59:59');
+				if($inter_date_time >= $stop_s && $inter_date_time <= $stop_e){
+				  throw new Exception('_APPLY_SUBMIT_DATES_IS_STOP');
+				  break;
+				}
+			  }
+			  
+			  $apply_date['enter'] = $apply_dates[0];
+			  $apply_date['exit']  = (isset($apply_dates[1])&&strtotime($apply_dates[1])) ? $apply_dates[1] : $apply_date['enter'];
+			  
+			  if(!$apply_crossd && $apply_date['enter'] != $apply_date['exit'] ){
+				$apply_date['exit'] = $apply_date['enter'];  
+				$apply_data['dates'][$s][1] = $apply_date['enter'];
+			  }
+			}
+			
+			// 檢查進入日期是否重複申請
+			$DB_CKD = $this->DBLink->prepare(SQL_Client::CHECK_APPLY_DATE_IS_ALONE()); 
+			$DB_CKD->bindValue(':am_id'			  , $areainfo['area']['ano']);
+			$DB_CKD->bindValue(':apply_code'	  , $booking['apply_code']);
+			$DB_CKD->bindValue(':applicant_name'  , $booking['applicant_name']  );
+			$DB_CKD->bindValue(':applicant_mail'  , $booking['applicant_mail']  );
+			$DB_CKD->bindValue(':applicant_id'	  , $booking['applicant_id']  );
+			$DB_CKD->bindValue(':date_enter'      , $apply_date['enter'] );
+			$DB_CKD->bindValue(':date_exit'       , $apply_date['exit'] );
+			if( !$DB_CKD->execute() ){
+			  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');	
+			}
+			$applied_num = $DB_CKD->fetchColumn();
+			if($applied_num){
+			  throw new Exception('_APPLY_TARGET_DATE_DOUBLED');		
+			}
+			
+			// 確認是否抽籤
+			$bollet_date = $apply_bollet ? date('Y-m-d',strtotime('-'.($areainfo['area']['accept_min_day']-1).' day',strtotime($apply_date['enter']))) : '0000-00-00';
+			
+			// 重新設定抽籤資訊
+			$apply_process['review'][2]   = [];
+			if( $apply_bollet ){
+			  $apply_process['review'][2][] = array('time'=>$bollet_date,'status'=>'系統抽籤','note'=>'','logs'=>'');
+			}
+			
 		}
+		
 		
 		// restore to db  / 存入資料庫
 		$application = json_encode($apply_data,JSON_UNESCAPED_UNICODE);
@@ -983,25 +1021,6 @@
 		$DB_UPD->bindValue(':ballot_date',$bollet_date);
 		if( !$DB_UPD->execute() ){
 		  throw new Exception('_APPLY_SUBMIT_FAIL');  
-		}
-		
-		// 更新與紀錄狀態
-		$apply_process = $booking['_progres'] ? json_decode($booking['_progres'],true) : ['client'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]],'admin'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
-		$apply_process['client'][0][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'更新資料','note'=>'','logs'=>'');
-		$apply_process['review'][2]   = [];
-		
-		if( $apply_bollet ){
-		  
-		  //$apply_process['client'][1]   = [array('time'=>date('Y-m-d H:i:s'),'status'=>'收件待審','note'=>'申請項目需抽籤','logs'=>'')];
-		  $apply_process['review'][2][] = array('time'=>$bollet_date,'status'=>'系統抽籤','note'=>'','logs'=>'');	
-		
-		  //$DB_UPD = $this->DBLink->prepare(SQL_Client::UPDATE_APPLY_STAGE()); 
-	      //$DB_UPD->bindValue(':apply_code',$booking['apply_code']);
-		  //$DB_UPD->bindValue(':stage'     , 1 );
-		  
-		  //if( !$DB_UPD->execute() ){
-		  //  throw new Exception('_APPLY_SUBMIT_FAIL');  
-		  //}
 		}
 		
 		$DB_UPD = $this->DBLink->prepare(SQL_Client::UPDATE_APPLY_STATUS()); 
@@ -1451,11 +1470,29 @@
 			  $check[$no][$mf] = 'lose';  	
 			} 
 			
-			if( $mf=='member_birth' && !strtotime($mv) ){
-			  $check[$no][$mf] = 'fail';  	
+			if( $mf=='member_birth'  ){
+			  if(preg_match('/^\d{6,8}$/',$mv)){
+                $bd = intval(substr($mv,-2,2));
+                $bm = intval(substr($mv,-4,2));
+                $by = intval(preg_replace('/\d{4}$/','',$mv)); 
+			  }else{
+				$birth = preg_split('/[\-\/]/',$mv);
+		        $by = isset($birth[0]) ? intval($birth[0]) : 0;
+				$bm = isset($birth[1]) ? $birth[1] : '';
+				$bd = isset($birth[2]) ? $birth[2] : '';
+			  }
+			  if(  $by < date('Y')-1911  &&  $by > 10 ){  //民國年
+                if(!strtotime(($by+1911).'-'.$bm.'-'.$bd)){
+				  $check[$no][$mf] = 'fail';
+				} 				
+			  }else if($by > 1911 && $by < date('Y')){  //西元年
+				if(!strtotime($by.'-'.$bm.'-'.$bd)){
+				  $check[$no][$mf] = 'fail';
+				}  
+			  }else{
+				$check[$no][$mf] = 'fail';   
+			  }	
 			} 
-			
-			
 		  
 		  }
 		  
@@ -2366,11 +2403,18 @@
 		$dbraw=$DB_OBJ->fetch(PDO::FETCH_ASSOC);
 		
 		$booking = isset($dbraw['lotto_pool']) ? json_decode($dbraw['lotto_pool'],true) : array();
+		$counter = 100;
 		foreach($booking as $i => $b){
 		  $leader_length = mb_strlen($b['leader']);
 		  $leader_first  = mb_substr($b['leader'],0,1);
 		  $booking[$i]['code']   = '***'.substr($b['code'],-5,5);
 		  $booking[$i]['leader'] = $leader_first.str_pad('',($leader_length-1) ,'o', STR_PAD_RIGHT);
+		  if($booking[$i]['accept']==1){
+			$counter-= $booking[$i]['people']; 
+		  }
+		  if(($enter_date=='2018-04-07'||$enter_date=='2018-04-08')&& $counter<-10){
+			unset($booking[$i]); 
+		  }
 		}
 		
 		// 取得區域抽籤資料

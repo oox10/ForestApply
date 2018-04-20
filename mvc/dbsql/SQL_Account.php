@@ -65,7 +65,7 @@
 	
 	//-- 查詢使用者資料
 	public static function GET_ACCOUNT_INFO_DATA(){
-	  $SQL_String = "SELECT user_name,user_staff,user_organ,user_tel,user_mail,user_pri FROM user_info WHERE uid=:uid;";
+	  $SQL_String = "SELECT user_name,user_staff,user_organ,user_tel,user_mail,user_info,user_pri FROM user_info WHERE uid=:uid;";
 	  return $SQL_String;
 	}
 	

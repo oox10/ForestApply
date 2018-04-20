@@ -40,10 +40,6 @@
 	  $('.act_select_all').prop('checked',select_all_fleg);  	
 	});
 	
-	$('#act_apply_license').click(function(){
-	   window.open('index.php?act=Landing/download/'+$('#apply_code').text())
-	})
-	
 	
 	
 	//-- select batch function
@@ -515,6 +511,26 @@
       window.open('index.php?act=Booking/ticket/'+data_no);
 		
 	});
+	
+	
+	//-- 下載許可證
+	$('#act_apply_license').click(function(){
+      
+	  // initial	  
+	  var data_no    =  $('._target').length? $('._target').attr('no') : '';  	
+	   // check process data
+	  if( !data_no.length ){
+	    system_message_alert('',"尚未選擇資料");
+	    return false;
+	  } 
+	  
+	  if( !$('._target').find('td:nth-child(9)').text().match(/核准進入|備取成功/)){
+		system_message_alert('',"申請單尚未核可");
+	    return false;  
+	  }
+	  
+	  window.open('index.php?act=Booking/license/'+data_no)
+	})
 	
 	
 	

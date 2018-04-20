@@ -104,6 +104,24 @@
 	  }
 	}
 	
+	// AJAX: Download Apply License // 下載許可證 
+	public function license($DataId){
+	  $apply_token = ['CODE'=>$DataId,'KEY'=>_SYSTEM_NAME_SHORT.':'.strtotime('now')];
+	  $this->Model =  new Landing_Model;		 
+	  
+	  $result = $this->Model->Apply_Record_Read( $DataId, $apply_token );
+	  $active = $this->Model->Apply_Download_Check();
+	  $this->Model->Access_Get_Active_Area_List();
+	  if(!$result['action'] || !$active['action']){
+		self::data_output('html','wrong',$this->Model->ModelResult);    
+	    exit(1);
+	  }
+	  $this->Model->Apply_Feform_Application_Page($DataId,'license');
+	  self::data_output('pdf','print_user_license',$this->Model->ModelResult);   
+	}
+	
+	
+	
 	
 	// AJAX: 批次匯出
 	public function batchexport($Records){
@@ -133,10 +151,7 @@
 	// PAGE: book search page for outreview R04
 	public function R5review( $SearchString='' ){
 	  $this->Model->GetUserInfo();	
-	  $this->Model->Admin_Book_Get_Active_Area_List();
 	  $this->Model->Admin_Book_Get_List_For_Preview($SearchString);
-	  
-	  
 	  self::data_output('html','admin_book4review',$this->Model->ModelResult);
 	}
 	

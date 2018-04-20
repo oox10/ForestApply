@@ -188,6 +188,12 @@
 		$result['data']['ADMIN_LOGIN_TOKEN'] = date('Y-m-d H:i:s');  // 管理系統查核
 		$result['data']['PERMISSION'] = $AccoountObj->PermissionCheck;
 		$result['data']['USER']  = serialize($AccoountObj); 
+		
+	    // 外審人員跳轉審核頁面	
+		if(isset($AccoountObj->PermissionNow['group_roles']['R05']) && intval($AccoountObj->PermissionNow['group_roles']['R05'])){
+		  $_SESSION[_SYSTEM_NAME_SHORT]['RrDIRECT'] = 'act=Booking/R5review';	
+		}
+		
 		//$result['session']['iis'] = array('_USER_NO'=>$login_data['uno'],'_USER_ID'=>$login_data['user_id']);
 		//$result['session']['cache'] = array();
 		

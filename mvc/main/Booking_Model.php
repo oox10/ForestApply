@@ -1423,10 +1423,11 @@
 		}
 		
 		while($tmp = $DB_OBJ->fetch(PDO::FETCH_ASSOC)){
-		  $area_list[$tmp['ano']] = $tmp;
-		  $area_sets[$tmp['ano']] = $tmp['area_code']; 
+		  if($this->USER->UserInfo['user_info']==$tmp['area_code']){
+			$area_list[$tmp['ano']] = $tmp;
+		    $area_sets[$tmp['ano']] = $tmp['area_code'];     
+		  }
 		}
-		
 		
 		// 搜尋條件
 		$condition = array();
@@ -1461,7 +1462,7 @@
 		$records = array(); // 存放列表資料
 		
 		$sqlsearch = count($condition) ? join(' AND ',$condition) : 1;
-		$sqlsearch = "((".$sqlsearch.") OR apply_date <= '".date('Y-m-d')."') AND _status IN('收件待審','正取送審')";
+		$sqlsearch = "((".$sqlsearch.") OR apply_date <= '".date('Y-m-d')."') AND _status IN('收件待審','正取送審','備取送審')";
 		
 		
 		$DB_BOOK = $this->DBLink->prepare(SQL_AdBook::SELECT_AREA_BOOKING(array_keys($area_list),$sqlsearch,$orderby));

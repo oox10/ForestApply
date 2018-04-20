@@ -34,11 +34,10 @@
     $db->db_connect('PDO'); 
 		
 	//掃描所有區域，取出遞補日
-	$DB_GET	= $db->DBLink->prepare( "SELECT ano,area_code,area_name,area_load,auto_pass,revise_day FROM area_main WHERE _keep=1 AND auto_pass > 0 ORDER BY ano ASC;" );
+	$DB_GET	= $db->DBLink->prepare( "SELECT ano,area_code,area_name,area_load,auto_pass,revise_day FROM area_main WHERE _keep=1 AND auto_pass >= 0 ORDER BY ano ASC;" );
 	if( !$DB_GET->execute() ){
 	  throw new Exception('_DB_ERROR_GET_AREA_SQL_FAIL');
     }
-	
 	
 	while( $tmp = $DB_GET->fetch(PDO::FETCH_ASSOC)){
 	  

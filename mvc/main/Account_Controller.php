@@ -58,15 +58,13 @@ class Account_Controller extends Admin_Controller{
 	  }
 	  
 	  self::data_output('session','ADMIN',$this->Model->ModelResult);
-	  
 	  if(isset($_SESSION[_SYSTEM_NAME_SHORT]['RrDIRECT']) && $_SESSION[_SYSTEM_NAME_SHORT]['RrDIRECT'] !=''){
 		// 舊有連結導回搜尋頁面
 		self::redirectTo('index.php?'.$_SESSION[_SYSTEM_NAME_SHORT]['RrDIRECT']);   
 		unset($_SESSION[_SYSTEM_NAME_SHORT]['RrDIRECT']);
 	  }else{
 		self::redirectTo('index.php?act=Staff'); 
-	  }
-	  
+	  } 
 	  
 	}
 	
