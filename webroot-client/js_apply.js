@@ -613,8 +613,8 @@ $(window).load(function () {   //  || $(document).ready(function() {
 	$('#act_add_member').click(function(){
 	  var mcount = $('tr.member:not(.template)').length;
 	  
-	  if(mcount>15){
-		system_message_alert('','成員清單超過15人上限!!');  
+	  if(mcount>100){
+		system_message_alert('','成員清單超過100人上限!!');  
 	    return false;
 	  }
 	  

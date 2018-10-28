@@ -1,0 +1,373 @@
+/*== [ Admin Evaluation Css  ] ==*/	  
+	
+    /* [ header option ]  */
+	div.topic_banner {
+	  justify-content:space-between;  	
+	  align-items:center;
+	}
+    .topic_banner > h2{
+	  padding:8px;  
+	  flex:0 0 350px;
+    }
+  
+    .section_switch{
+	  flex:1;
+      display:inline-flex;
+	  justify-content:center;  	
+    }  
+	
+	.section_switch >li{ 
+	  display:inline-flex;
+	  align-items:center;
+	  justify-content:space-around;
+	  height:35px;
+	  text-align:center;
+	  min-width:180px;
+	  cursor:pointer;
+	  background-color:#dbebc4;
+	}
+  
+    .section_switch >li:hover{background-color:#bee0c2;}
+    .section_switch >li.active{ background-color:#d1de4c;border-bottom:2px #9fc24d solid;}
+	
+	div.lunch_option{
+	  flex:0 0 350px;	
+	}
+	div.lunch_option > button{height:35px;}
+	
+	 
+    /* [ record list ]  */
+    table.record_list{width:100%;}
+	
+    .data_col{  /*單欄*/
+	  width:100%;
+	  margin-bottom:7px;
+	  position:relative;
+	  border-bottom:1px #FEEFEF solid;
+	  padding-bottom:20px;
+	  margin-bottom:20px;
+	}
+
+	.field_set > .data_col{ flex:0 1 49%; }
+
+	.data_col > label{
+	  display:flex; 
+	  min-height:37px;
+	  padding:0 10px; 
+	  position:relative;
+	  align-items:center;
+	  justify-content:flex-start;
+	} 
+	.data_col > label > i{font-size:0.8em;opacity:0.7;font-style:italic;} 
+
+	.data_value{  
+	  display:flex; 
+	  min-height:37px;
+	  position:relative;
+	  align-items:center;
+	  padding-left:30px;
+	} 
+
+	.data_value  input[type="text"] , 
+	.data_value  input[type="time"] , 
+	.data_value  input[type="date"] , 
+	.data_value  input[type="datetime"] , 
+	.data_value  input[type="file"] , 
+	.data_value  input[type="tel"] , 
+	.data_value  input[type="url"] , 
+	.data_value  input[type="email"], 
+	.data_value  input[type="file"],
+	.data_value  input[type="number"],
+	.data_value  select,
+	.data_value  textarea
+	{
+	  color:#2792c3; 
+	  border-width:0; 
+	  border:1px #eae8e1 solid; 
+	  padding:8px 0 8px 8px;
+	  border-radius:3px;
+	  font-size:1em;
+	  box-shadow:0 0 2px -1px rgba(0,0,0,0.1);
+	}
+
+	.data_value > select{
+	  height:35px;	
+	  font-size:0.8em;
+	}
+	.data_value > textarea{
+	  min-height:4em;	
+	  resize: none;
+	}
+    
+	.data_value input:read-only,
+	.data_value textarea:read-only,
+	.data_value input:disabled, 
+	.data_value select:disabled,
+	.data_value textarea:disabled{
+	  background-color:#e4e4e4;	
+	}	
+
+	::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+	  color: #c0c0c0;
+	}
+	::-moz-placeholder { /* Firefox 19+ */
+	  color: #c0c0c0;
+	}
+	:-ms-input-placeholder { /* IE 10+ */
+	  color: #c0c0c0;
+	}
+	:-moz-placeholder { /* Firefox 18- */
+	  color: #c0c0c0;
+	}
+
+    ._modify{background-color:#fdeff2;}
+	div.data_value *._error{border-color:#ff0000;}
+	
+	 
+	/*-- 類型調整 --*/
+	.data_col._flat{ display:flex; }
+	.data_col._flat > label{ flex:0 0 150px;}
+	.data_col._flat > .data_value{ flex:1;}
+
+	.data_value._bundle{ justify-content:space-between;}
+	.data_value._bundle > *{flex:0 1 49%;}	
+	 
+	/*-- 欄位附加類別 --*/
+	.data_col._refer{}
+	.data_col._refer > .data_value ._update{color:#68be8d;	}
+	.data_col._refer > label::after{
+	  display:inline;
+	  font-size:12px;
+	  color:#008b8b;
+	  font-style: italic; 
+	  content:"參考預填";				  
+	}
+
+	.data_col._flat._refer > label::after{
+	  position:absolute;
+	  bottom:-8px;
+	  left:10px;  
+	}
+    
+	.data_col._must > label::before,
+	label.data_field._must::before{
+	  display:inline;
+	  position:absolute; left:0; top:50%; margin-top:-10px;  
+	  content:"•" ; 
+	  color:red;   
+	  font-size:1.5em;
+	}
+
+	._modify{background-color:#fdeff2;}
+
+	._update._hold{border-color:#5f9ea0;color:#5f9ea0;}
+	
+	.act_holder_givup{
+	  position:absolute;
+	  right:0px;
+	  top:-8px;
+	  color:#5f9ea0;
+	}	 
+	
+	._variable._wide{
+	  min-width:300px;
+	  flex:0 1 100%;	
+	}
+	
+	
+	.record_body{
+	  display:flex;
+	  justify-content:flex-start;
+	  position:relative;
+	  font-size:1.2em;
+	}
+	
+	.record_body > .form_area{ flex:1 0 600px; overflow:hidden;}
+    .record_body > .guide_area{ 
+	  font-size:0.9em;
+	  padding:10px 20px;
+	  position: sticky; 
+	  top: 10px;
+	  flex:0 1 300px;
+	  height:min-content;
+	  list-style-type: decimal-leading-zero; 
+	  list-style-position: inside;
+	}
+	
+	
+	
+	
+	.guide_area > li{
+	  padding:10px;
+	  line-height:1.3em;
+	  background-color:#eaeea2;
+	  color:#000000;
+	  min-height:50px;
+	  border-bottom:1px #fefefe dotted;
+	  position:relative;
+	  cursor:pointer;
+	}
+	.guide_area > li:hover{text-decoration:underline;}
+	.guide_area > li.active{background-color:#d1de4c;}
+	.guide_area > li.finish{background-color:#dbebc4}
+	.guide_area > li.finish::after{
+	  position:absolute;
+      top:0px; right:0px;
+      content:"";
+      width:16px;
+      height:16px;
+      background:url('../image/mark_upload_success.png') 0 0;
+	}
+	
+	
+	.data_record_block{display:none;}
+	.data_record_block:nth-child(1){display:block;}
+		 
+	/* [ 問卷第一區 ] */	 
+	#questionnaire_information{}
+	
+	.record_body > .guide_area#mettrecords{ 
+	  flex:0 0 50%;
+	}
+	
+	#mettrecords > h1{
+	  font-weight:bold;
+      font-size:1.1em;
+      padding:10px 0;
+	  border-bottom:1px #666666 solid;
+	}
+	
+	.user_record_list{
+	  list-style-type: decimal; 
+	  list-style-position: inside;
+	}
+	.user_record_list > li{
+	  display:flex;
+      align-items:center;
+	  padding:8px 0;
+	  
+	}
+	.user_record_list > li > span{
+	  display:inline-block;
+      margin-right:5px;  
+	}
+	span.rarea{flex:1 1 200px; text-align:left;}
+	span.ractive{flex:0 0 50px; text-align:center;	}
+	
+	
+	
+	/* [ 問卷第二區 ] */	 
+	#questionnaire_mettdata{}
+	
+	.mutiselecter{
+	  display:flex;
+      flex-wrap:wrap;	  
+	}
+	.mutiselecter > li{
+	  flex: 0 0 200px;
+	  padding:5px 0;
+	  line-height:40px;
+	}
+	.mutiselecter > li.other{
+	  flex:1 1 200px;	
+	}
+	.mutiselecter > li.other > input{width:80%;}
+	
+	
+	ul.increase_form{
+	  list-style-type: square; 
+	  list-style-position: inside;	
+	}
+	ul.increase_form > li{margin-bottom:5px;}
+	li.pattern{display:none;}
+	
+	#block-emd14 table td{padding:3px 0;}
+	#block-emd12 ul > li{padding:3px 0;}
+	
+	/* [ 問卷第三區 ] */	 
+	#questionnaire_tendency{}
+	
+	#questionnaire_tendency h1{
+	  background-color:#a1d8e6; 
+	  border-radius:3px;
+	  padding:10px 8px;
+	  margin-top:10px;
+	  line-height:1.5em;
+	}
+	#questionnaire_tendency h1 > .topic{font-weight:bold;}
+	
+	#questionnaire_tendency .data_col > label{
+	  padding-left:28px; 
+	}
+	#questionnaire_tendency .data_col > label:nth-child(1){
+	  font-weight:bold;
+	}
+	#questionnaire_tendency .data_col > label:nth-child(2){
+	  line-height:1.5em;
+	}
+	
+	table.tendency_block{width:100%;}
+	table.tendency_block > thead > *{font-weight:bold;}
+	table.tendency_block td{vertical-align:middle; padding:8px 5px; border:1px #dedede solid;}
+	table.tendency_block td:nth-child(1){width:250px;}
+	table.tendency_block td:nth-child(2){width:110px; }
+	table.tendency_block td:nth-child(3){min-width:100px;}
+	 
+	.optionset{
+	  display:flex;
+      flex-wrap:wrap;		
+	}
+	.optionset li{ flex:0 0 20% ;}
+	
+	tbody.furtherform{display:none;}
+	span.furtherdescrip{display:none;}
+	
+	/* [ 問卷第四區 ] */	 
+	#questionnaire_evaluate{}
+	
+	table.evaluate_table{width:100%;}
+	table.evaluate_table > thead > *{font-weight:bold;}
+	table.evaluate_table td{vertical-align:top; border:1px #dedede solid;padding:8px 5px; line-height:1.3em;}
+	
+	table.evaluate_table td.element{width:50px;}
+	table.evaluate_table td.topic{min-width:200px;}
+	table.evaluate_table td:selecter{width:300px;}
+	table.evaluate_table td.score{width:50px;text-align:center;}
+	table.evaluate_table td.checked{width:50px; text-align:center; cursor:pointer;}
+	table.evaluate_table td.descrip{width:150px;}
+	table.evaluate_table td.descrip {font-size:0.8em;}
+	table.evaluate_table td.descrip > textarea{width:100%; min-height:7em;}
+	table.evaluate_table td.descrip > input{width:100%;}
+	
+	table.evaluate_table tbody:nth-child(even){background-color:#fafdff;}
+	table.evaluate_table tbody:nth-child(odd){background-color:#f7f6f5;}
+	
+	td.descrip h2{
+	  border-bottom:1px #cdcdcd solid;
+	  display:flex;
+	  justify-content:space-between;
+	}
+	
+	
+	div.exclude_record{color:red;}
+	
+	
+	
+	
+	
+	
+	@media (max-width:1600px){
+	
+	  
+	}
+	@media (max-width:1400px){
+	  
+	}
+	@media (max-width:1200px){
+	  .record_body > .guide_area{display:none;}
+	}
+	@media (max-width:1100px){
+	  table#import_items td:nth-child(4){  display:none; } 
+	}
+	
+	

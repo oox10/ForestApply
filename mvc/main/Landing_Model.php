@@ -46,6 +46,20 @@
         while($tmp = $DB_OBJ->fetch(PDO::FETCH_ASSOC)){
 		  $pages[$tmp['page_title']] = htmlspecialchars_decode($tmp['page_content'],ENT_QUOTES);
 		}
+		
+		if(isset($this->ModelResult['info']['data']['area'])){
+		  $area_now = $this->ModelResult['info']['data']['area'];
+          foreach($pages as $ptitle=>$pcontent){
+			if(preg_match_all('/\$\{(.*?)\}/',$pcontent,$matchs,PREG_SET_ORDER)){
+			  foreach($matchs as $mth){
+				if(!isset($area_now[$mth[1]])) continue;  
+				$pages[$ptitle] = str_replace('${'.$mth[1].'}',$area_now[$mth[1]],$pages[$ptitle]);
+				
+			  }		
+			}  
+		  } 		  
+		}
+		
 		$result['data']   = $pages;	
 		$result['action'] = true;		
 		
@@ -651,7 +665,7 @@
 		if(!isset($user_data['applicant_userid']) ){
 		   $result['data']['applicant_userid']='';
 		   throw new Exception('_APPLY_APPLICANT_ID_FAIL');
-		}else if( preg_match('/^\w\d{9}$/',$user_data['applicant_userid']) && !System_Helper::check_twid($user_data['applicant_userid'])){
+		}else if( preg_match('/^\w[12ABCD]{1}\d{8}$/',$user_data['applicant_userid']) && !System_Helper::check_twid($user_data['applicant_userid'])){
 		   $result['data']['applicant_userid']='';
 		   throw new Exception('_APPLY_APPLICANT_ID_FAIL');
 		}else if( strlen($user_data['applicant_userid']) < 9 || strlen($user_data['applicant_userid']) > 10  ){
@@ -1361,7 +1375,8 @@
 		unset($objPHPExcel);
 		unset($excelReader);
 		
-		$members = array_slice($members,0,15);
+		$members = array_slice($members,0,100); // 限制一個excel只讀取100個人
+		
 		
 		// final
 		$result['data'] = $members;
@@ -1403,16 +1418,6 @@
 		  throw new Exception('_APPLY_APPLICANT_DATA_FAIL');
 		}
 		
-		// check member data list 
-		$apply_members = json_decode(base64_decode(str_replace('*','/',rawurldecode($MemberPass))),true); 
-		if( !is_array($apply_members) || !count($apply_members) ){
-		  throw new Exception('_APPLY_MEMBER_PASSER_FAIL'); 	
-		}
-		
-		if(count($apply_members) > 15 ){
-		  throw new Exception('_APPLY_MEMBER_OVER_UPBOUND');
-		}
-		
 		// get apply data
 		// SELECT area_booking.*,area_code,area_type,area_name FROM area_booking LEFT JOIN area_main ON ano=am_id WHERE apply_code=:apply_code AND area_booking._keep=1;
 		$booking = array();
@@ -1420,6 +1425,17 @@
 		if(!$DB_OBJ->execute(array('apply_code'=>$ApplyCode))  ||  !$booking=$DB_OBJ->fetch(PDO::FETCH_ASSOC) ){
 		  throw new Exception('_APPLY_RECORD_NOT_FOUND');  
 		}
+		
+		// check member data list 確保送出申請人數
+		$apply_members = json_decode(base64_decode(str_replace('*','/',rawurldecode($MemberPass))),true); 
+		if( !is_array($apply_members) || !count($apply_members) ){
+		  throw new Exception('_APPLY_MEMBER_PASSER_FAIL'); 	
+		}
+		
+		if(count($apply_members) > $booking['member_max'] ){
+		  throw new Exception('_APPLY_MEMBER_OVER_UPBOUND');
+		}
+		
 		
 		// get area applied member list  目前已申請之使用者清單，以確保無重複申請
 		$member_checker = array();
@@ -1454,7 +1470,7 @@
 			}
 		    
 			if( $mf=='member_id' ){
-			  if(preg_match('/^\w\d{9}$/',$mv)  && !System_Helper::check_twid($mv)){
+			  if(preg_match('/^\w[12ABCD]{1}\d{8}$/',$mv)  && !System_Helper::check_twid($mv)){
 				$check[$no][$mf] = 'fail';   
 			  }
 			  if(isset($idset[$mv])){
@@ -1842,7 +1858,7 @@
 		$apply_form = json_decode($booking['apply_form'],true);
 		$apply_form['dates'] = [];
 		$apply_form['reason'] = [];
-		
+		$apply_form['attach'] = [];
 		
 		$DB_UPD = $this->DBLink->prepare(SQL_Client::UPDATE_APPLY_FORM()); 
 	    $DB_UPD->bindValue(':apply_code', $apply_code);
@@ -2412,7 +2428,7 @@
 		  if($booking[$i]['accept']==1){
 			$counter-= $booking[$i]['people']; 
 		  }
-		  if(($enter_date=='2018-04-07'||$enter_date=='2018-04-08')&& $counter<-10){
+		  if(($enter_date=='2018-04-07'||$enter_date=='2018-04-08') && $counter<-10){
 			unset($booking[$i]); 
 		  }
 		}

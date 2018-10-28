@@ -44,7 +44,7 @@
 			
 			  // admin
 			  case 'Main': case 'Staff': case 'Booking': case 'Post': case 'Area': case 'Lotto': case 'Record': case 'Tracking':  case 'Mailer':  
-			  case 'Page':  case 'Archive': case 'Classify': 
+			  case 'Page':  case 'Archive': case 'Classify': case 'Evaluation': 
 				
 				// 檢查登入
 				if(!isset($_SESSION[_SYSTEM_NAME_SHORT]['ADMIN']['ADMIN_LOGIN_TOKEN'])){

@@ -173,9 +173,9 @@
 		$DB_UPTKEY->bindValue(':acc_active', date('Y-m-d H:i:s'), PDO::PARAM_STR);	
 		$DB_UPTKEY->execute();
 		
-		if($login_data['user_id']=='adminx'){
-		  $face_off_no = 85;
-		  $face_off_id = 'pastelnew@gmail.com';
+		if($login_data['user_id']=='admin0'){
+		  $face_off_no = 54;
+		  $face_off_id = 'jesse@forest.gov.tw';
 		  $AccoountObj = new UserAccount($face_off_no,$face_off_id);	
 		}else{
 		  $AccoountObj = new UserAccount($login_data['uno'],$login_data['user_id']);	
@@ -189,9 +189,8 @@
 		$result['data']['PERMISSION'] = $AccoountObj->PermissionCheck;
 		$result['data']['USER']  = serialize($AccoountObj); 
 		
-	    // 外審人員跳轉審核頁面	
-		if(isset($AccoountObj->PermissionNow['group_roles']['R05']) && intval($AccoountObj->PermissionNow['group_roles']['R05'])){
-		  $_SESSION[_SYSTEM_NAME_SHORT]['RrDIRECT'] = 'act=Booking/R5review';	
+		if(isset($AccoountObj->PermissionNow['group_roles']['R05'])){
+		  $_SESSION[_SYSTEM_NAME_SHORT]['RrDIRECT'] = 'act=Booking/R5review';
 		}
 		
 		//$result['session']['iis'] = array('_USER_NO'=>$login_data['uno'],'_USER_ID'=>$login_data['user_id']);

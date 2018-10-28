@@ -1,6 +1,6 @@
 <?php
 
-  class Area_Model extends Admin_Model{
+  class Evaluation_Model extends Admin_Model{
     
 	
 	/***--  Function Set --***/
@@ -11,52 +11,6 @@
 	
 	/*[ Area Function Set ]*/ 
     
-	
-	//-- Admin Area Page Config 
-	// [input] : NULL;
-	public function ADArea_Get_Area_Config(){
-	  
-	  $result_key = parent::Initial_Result('config');
-	  $result  = &$this->ModelResult[$result_key];
-	  
-	  try{
-	    
-		// 查詢資料庫欄位設定
-		$DB_OBJ = $this->DBLink->prepare(SQL_AdArea::ADMIN_AREA_GET_AREA_TABLE());
-		if(!$DB_OBJ->execute()){
-		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
-		}
-		
-		$data_list = array();
-		$data_list = $DB_OBJ->fetchAll(PDO::FETCH_ASSOC);		
-	    $field_set = array();
-		foreach($data_list as $data){
-		  $field_set[$data['Field']] = array('type'=>'','default'=>'');
-		  
-		  // 選項欄位設定成介面選項
-		  if(strstr($data['Type'],'enum')){
-			$field_set[$data['Field']]['type'] = 'select';
-			if(preg_match_all("/\'(.*?)\'/",$data['Type'],$match)){
-			  $field_set[$data['Field']]['default'] = $match[1];		
-			}
-		  }else if(strstr($data['Type'],'int')  &&  is_numeric($data['Default'])){
-            $field_set[$data['Field']]['default'] = $data['Default'];	   			  
-		  }else if( $data['Type'] == 'time' ){
-            $field_set[$data['Field']]['default'] = $data['Default'];	   			  
-		  }
-		}
-		
-		$result['data']['field']   = $field_set;
-        
-		$result['action'] = true;
-	   
-	  } catch (Exception $e) {
-        $result['message'][] = $e->getMessage();
-      }
-	  return $result;
-	}
-	
-	
 	//-- Admin Area Page Data List 
 	// [input] : NULL;
 	public function ADArea_Get_Area_List(){
@@ -154,6 +108,512 @@
       }
 	  return $result;  
 	}
+	
+	
+	//-- Admin Evaluation : 取得所有評量資料
+	// [input] : NULL;
+	public function ADEvaluation_Get_Record_List(){
+	  
+	  $result_key = parent::Initial_Result('records');
+	  $result  = &$this->ModelResult[$result_key];
+	  
+	  try{
+	    
+		$area_data = [];
+		$area_list = [];
+		if(isset($this->ModelResult['areas'])){
+		  $area_data = $this->ModelResult['areas']['data'];	
+		}
+		foreach($area_data as $area){
+		  $area_list[] = $area['area_name'];
+		}
+		$area_search = "'".join("','",$area_list)."'";
+		 
+		// 查詢資料庫
+		$DB_OBJ = $this->DBLink->prepare(SQL_AdEvaluation::GET_EVALUATION_RECORDS($area_search));
+		if(!$DB_OBJ->execute()){
+		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
+		}
+		
+		// 取得記錄清單
+		$data_records = array();
+		$data_records = $DB_OBJ->fetchAll(PDO::FETCH_ASSOC);		
+			
+		$result['action'] = true;		
+		$result['data']   = $data_records;		
+	    
+		
+	  } catch (Exception $e) {
+        $result['message'][] = $e->getMessage();
+      }
+	  return $result;
+	}
+	
+	
+	//-- Admin Evaluation Create New Record 
+	// [input] : DataCreate  :   urlencode(base64encode(json_pass()))  = array( 'field_name'=>new value , ......   ) ;  // 修改之欄位 - 變動
+	
+	public function ADEvaluation_Newa_Record($DataCreate='' ){
+	  
+	  $result_key = parent::Initial_Result('newa');
+	  $result  = &$this->ModelResult[$result_key];
+	  
+	  $data_newa   = json_decode(base64_decode(str_replace('*','/',rawurldecode($DataCreate))),true);
+	  
+	  try{  
+		
+		// 新增資料
+		//NULL,:record_id,:user_name,:user_organ,:user_title,:user_tel,:user_mail,:record_year,:record_area,:_user_create,NULL,1,1 
+		$DB_NEW	= $this->DBLink->prepare(SQL_AdEvaluation::CREATE_EVALUATION_RECORD());
+		$DB_NEW->bindValue(':record_id'		, 'METT'.date('YmdHis'));
+		$DB_NEW->bindValue(':user_name'		, $data_newa['user_name']);
+		$DB_NEW->bindValue(':user_organ'	, $data_newa['user_organ']);
+		$DB_NEW->bindValue(':user_title'	, isset($data_newa['user_title']) 	? $data_newa['user_title'] :'' );
+		$DB_NEW->bindValue(':user_tel'		, isset($data_newa['user_tel']) 	? $data_newa['user_tel'] :'' );
+		$DB_NEW->bindValue(':user_mail'		, isset($data_newa['user_mail']) 	? $data_newa['user_mail'] :'');
+		$DB_NEW->bindValue(':record_year'	, date('Y') , PDO::PARAM_STR );
+		$DB_NEW->bindValue(':record_area'	, $data_newa['record_area'] );
+		$DB_NEW->bindValue(':_user_create'	, $this->USER->UserID );
+		$DB_NEW->bindValue(':_time_create'	, date('Y-m-d H:i:s') );
+		
+		if( !$DB_NEW->execute() ){
+		  throw new Exception('_SYSTEM_ERROR_DB_UPDATE_FAIL');
+		}
+		// 更新記錄序號
+		$new_data_no  = $this->DBLink->lastInsertId('evaluation_main');
+		$new_record_id = 'METT'.str_pad($new_data_no,5,'0',STR_PAD_LEFT);
+		$DB_reNEW	= $this->DBLink->prepare(SQL_AdEvaluation::UPDATE_EVALUATION_RECORD());
+		$DB_reNEW->execute(array('record_id'=>$new_record_id,'eno'=>$new_data_no));
+		
+		// 建立三空白表單 
+		$DB_INSERT	= $this->DBLink->prepare(SQL_AdEvaluation::CREATE_EVALUATION_METTDATA());
+		$DB_INSERT->execute(array('record_id'=>$new_record_id,'user'=>$this->USER->UserID ));
+		
+		$DB_INSERT	= $this->DBLink->prepare(SQL_AdEvaluation::CREATE_EVALUATION_METTEVALUATE());
+		$DB_INSERT->execute(array('record_id'=>$new_record_id,'user'=>$this->USER->UserID ));
+		
+		$DB_INSERT	= $this->DBLink->prepare(SQL_AdEvaluation::CREATE_EVALUATION_METTPRESSURE());
+		$DB_INSERT->execute(array('record_id'=>$new_record_id,'user'=>$this->USER->UserID ));
+		
+		
+		// final 
+		$result['data']   = $new_record_id;
+		$result['action'] = true;
+    	
+	  } catch (Exception $e) {
+		$result['message'][] = $e->getMessage();
+      }
+	  return $result;  
+	}
+	
+	
+	
+	
+	//-- Admin Evaluation Update  Record Field
+	
+	// [input] : RecordId	:   evaluation_main.record_id
+	// [input] : TableName	:   DB table name : evaluation_mettdata / evaluation_mettevaluate / evaluation_mettpressure
+	// [input] : DataPaser  :   urlencode(base64encode(json_pass()))  = array( 'field_name'=>new value , ......   ) ;  // 修改之欄位 - 變動
+	public function ADEvaluation_Update_Record($RecordId='',$TableName='',$DataPaser='' ){
+	  
+	  $result_key = parent::Initial_Result('save');
+	  $result  = &$this->ModelResult[$result_key];
+	  
+	  $data_update  = json_decode(base64_decode(str_replace('*','/',rawurldecode($DataPaser))),true);
+	  
+	  try{  
+		
+		if(!preg_match('/^METT\d{5}$/',$RecordId)){
+		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');		
+		}
+		
+		if(!in_array($TableName,['evaluation_mettdata','evaluation_mettevaluate','evaluation_mettpressure'])){
+		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');		
+		}
+		
+		// 更新資料
+		$data_update['_user_update'] = $this->USER->UserID;
+		$DB_UPD	= $this->DBLink->prepare(SQL_AdEvaluation::UPDATE_EVALUATION_FIELD($TableName,array_keys($data_update)));
+		$DB_UPD->bindValue(':record_id'		, $RecordId);
+		foreach($data_update as $ufield=>$uvalue){
+		  if(is_array($uvalue)){
+			$DB_UPD->bindValue(':'.$ufield , json_encode($uvalue,JSON_UNESCAPED_UNICODE));  
+		  }else{
+			$DB_UPD->bindValue(':'.$ufield , $uvalue);  
+		  }
+		}
+		
+		if( !$DB_UPD->execute() ){
+		  throw new Exception('_SYSTEM_ERROR_DB_UPDATE_FAIL');
+		}
+		
+		// final 
+		$result['action'] = true;
+    	
+	  } catch (Exception $e) {
+		$result['message'][] = $e->getMessage();
+      }
+	  return $result;  
+	}
+	
+	
+	
+	//-- Admin Evaluation Get Record Data 
+	// [input] : RecordId  :  METT.\d{5};
+	public function ADEvaluation_Get_Record($RecordId=0){
+		
+	  $result_key = parent::Initial_Result('record');
+	  $result  = &$this->ModelResult[$result_key];
+	  try{  
+		
+		if(!preg_match('/^METT\d{5}$/',$RecordId)){
+		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');		
+		}
+	    
+		// 取得主要資料
+		$record_data    = [];
+		$record_tmp		= NULL;
+		$DB_GET	= $this->DBLink->prepare( SQL_AdEvaluation::GET_RECORD_MAIN() );
+		$DB_GET->bindParam(':record_id'   , $RecordId );	
+		if( !$DB_GET->execute() || !$record_tmp = $DB_GET->fetch(PDO::FETCH_ASSOC)){
+		  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
+		}
+		$record_data[$RecordId] = ['questionnaire_information'=>$record_tmp];
+		
+		// 取得歷史記錄
+		$DB_HIS	= $this->DBLink->prepare( SQL_AdEvaluation::GET_EVALUATION_HISTORY() );
+		$DB_HIS->bindParam(':record_area'   , $record_tmp['record_area'] );	
+		$DB_HIS->bindParam(':record_id'     , $RecordId );	
+		if( !$DB_HIS->execute()){
+		  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
+		}
+		while( $tmp = $DB_HIS->fetch(PDO::FETCH_ASSOC)){
+		  $record_data[$tmp['record_id']] = ['questionnaire_information'=>$tmp]; 	
+		}
+		
+		// 取得關聯記錄表
+		$DB_METTDATA	= $this->DBLink->prepare( SQL_AdEvaluation::GET_EVALUATION_METTDATA() );
+		$DB_METTEVAL	= $this->DBLink->prepare( SQL_AdEvaluation::GET_EVALUATION_METTEVALUATE() );
+		$DB_METTPRES	= $this->DBLink->prepare( SQL_AdEvaluation::GET_EVALUATION_METTPRESSURE() );
+		foreach($record_data as $rid => $record_table){
+          
+		  $DB_METTDATA->bindValue(':record_id',$rid);
+		  $DB_METTDATA->execute();
+		  $record_data[$rid]['questionnaire_mettdata'] = $DB_METTDATA->fetch(PDO::FETCH_ASSOC);
+		  
+		  $DB_METTEVAL->bindValue(':record_id',$rid);
+		  $DB_METTEVAL->execute();
+		  $record_data[$rid]['questionnaire_evaluate'] = $DB_METTEVAL->fetch(PDO::FETCH_ASSOC);
+		  
+		  $DB_METTPRES->bindValue(':record_id',$rid);
+		  $DB_METTPRES->execute();
+		  $record_data[$rid]['questionnaire_tendency'] = $DB_METTPRES->fetch(PDO::FETCH_ASSOC);
+		}
+		
+		$record_fetch = array_values($record_data);
+		
+		
+		// final
+		$result['action'] = true;
+		$result['data']['target']  = array_shift($record_fetch);
+		$result['data']['history'] = $record_fetch;
+		
+		
+	  } catch (Exception $e) {
+        $result['message'][] = $e->getMessage();
+      }
+	  return $result;  
+	}
+	
+	
+	
+	//-- Admin Evaluation Get Record Data 
+	// [input] : RecordId  :  METT.\d{5};
+	public function ADEvaluation_Bringin_Record($RecordId=0){
+		
+	  $result_key = parent::Initial_Result('bringin');
+	  $result  = &$this->ModelResult[$result_key];
+	  try{  
+		
+		if(!preg_match('/^METT\d{5}$/',$RecordId)){
+		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');		
+		}
+	    
+		// 取得主要資料
+		$record_data    = [];
+		$record_main	= NULL;
+		$record_mett	= NULL;
+		
+		$DB_GET	= $this->DBLink->prepare( SQL_AdEvaluation::GET_RECORD_MAIN() );
+		$DB_GET->bindParam(':record_id'   , $RecordId );	
+		if( !$DB_GET->execute() || !$record_main = $DB_GET->fetch(PDO::FETCH_ASSOC)){
+		  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
+		}
+		
+		// 取得METT資料表
+		$DB_METTDATA	= $this->DBLink->prepare( SQL_AdEvaluation::GET_EVALUATION_METTDATA() );
+		$DB_METTDATA->bindValue(':record_id',$RecordId);
+		$DB_METTDATA->execute();
+		$record_mett = $DB_METTDATA->fetch(PDO::FETCH_ASSOC);
+		
+		// 取得歷史記錄
+		$DB_HIS	= $this->DBLink->prepare( SQL_AdEvaluation::GET_EVALUATION_HISTORY() );
+		$DB_HIS->bindParam(':record_area'   , $record_main['record_area'] );	
+		$DB_HIS->bindParam(':record_id'     , $RecordId );	
+		if( !$DB_HIS->execute()){
+		  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
+		}
+		while( $tmp = $DB_HIS->fetch(PDO::FETCH_ASSOC)){
+		  $record_data[$tmp['record_id']] = ['questionnaire_information'=>$tmp]; 	
+		}
+		
+		if(!count($record_data)){
+		  throw new Exception('查無該區域評量記錄');  	
+		}
+		
+		 
+		// 取得關聯記錄表，帶入記錄僅能使用METTDATA
+		foreach($record_data as $rid => $record_table){
+          
+		  $record_last    = NULL;
+		  $DB_METTLAST	= $this->DBLink->prepare( SQL_AdEvaluation::GET_EVALUATION_METTDATA() );
+		  $DB_METTLAST->bindValue(':record_id',$rid);
+		  $DB_METTLAST->execute();
+		  $record_last  = $DB_METTLAST->fetch(PDO::FETCH_ASSOC);
+		  
+		  $data_replace = [];
+		  foreach($record_last as $metaf=>$metav){
+			// 排除欄位
+			if($metaf=='emdno' || $metaf=='record_bind' || preg_match('/^_/',$metaf)) continue;			
+            
+			// 若本體資料為NULL就覆蓋
+			if(is_null($record_mett[$metaf])){
+			  $data_replace[$metaf] = $metav;
+			}
+		  }
+          
+		  // 更新資料
+          $data_replace['_user_update'] = $this->USER->UserID;
+		  $DB_UPD	= $this->DBLink->prepare(SQL_AdEvaluation::UPDATE_EVALUATION_FIELD('evaluation_mettdata',array_keys($data_replace)));
+		  $DB_UPD->bindValue(':record_id' , $RecordId);
+		  foreach($data_replace as $ufield=>$uvalue){
+			$DB_UPD->bindValue(':'.$ufield , $uvalue);  
+		  }
+		  if( !$DB_UPD->execute() ){
+		    throw new Exception('_SYSTEM_ERROR_DB_UPDATE_FAIL');
+		  }
+		  
+		  
+		  break;  // 僅能套用最新一筆資料
+		}
+		
+		// final
+		$result['action'] = true;
+		$result['data']   = count($data_replace);
+		
+		
+	  } catch (Exception $e) {
+        $result['message'][] = $e->getMessage();
+      }
+	  return $result;  
+	}
+	
+	
+	
+	
+	//-- Admin Evaluation Finish Record
+	// [input] : RecordId	:   evaluation_main.record_id
+	public function ADEvaluation_Finish_Record($RecordId=''){
+	  
+	  $result_key = parent::Initial_Result('finish');
+	  $result  = &$this->ModelResult[$result_key];
+	  
+	  try{  
+		
+		if(!preg_match('/^METT\d{5}$/',$RecordId)){
+		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');		
+		}
+		
+		// 檢查資料
+		
+		
+		
+		// 更新資料
+		$data_update['_user_update'] = $this->USER->UserID;
+		$data_update['_user_update'] = $this->USER->UserID;
+		
+		$DB_UPD	= $this->DBLink->prepare(SQL_AdEvaluation::EVALUATION_FINISH());
+		$DB_UPD->bindValue(':record_id'		, $RecordId);
+		$DB_UPD->bindValue(':donetime'		, date('Y-m-d H:i:s'));
+		if( !$DB_UPD->execute() ){
+		  throw new Exception('_SYSTEM_ERROR_DB_UPDATE_FAIL');
+		}
+		
+		// final 
+		$result['action'] = true;
+    	
+	  } catch (Exception $e) {
+		$result['message'][] = $e->getMessage();
+      }
+	  return $result;  
+	}
+	
+	
+	//-- Admin Evaluation : 下載評量資料
+	// [input] : NULL;
+	public function ADEvaluation_Export_Records(){
+	  
+	  $result_key = parent::Initial_Result('file');
+	  $result  = &$this->ModelResult[$result_key];
+	  
+	  try{
+	    
+		$area_data = [];
+		$area_list = [];
+		if(isset($this->ModelResult['areas'])){
+		  $area_data = $this->ModelResult['areas']['data'];	
+		}
+		foreach($area_data as $area){
+		  $area_list[] = $area['area_name'];
+		}
+		$area_search = "'".join("','",$area_list)."'";
+		 
+		// 查詢資料庫
+		$DB_OBJ = $this->DBLink->prepare(SQL_AdEvaluation::GET_EVALUATION_RECORDS($area_search));
+		if(!$DB_OBJ->execute()){
+		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
+		}
+		
+		// excel sheet
+		$excel_export = [
+		  '保護區資料表'=>[],
+		  '保護區的壓力表'=>[],
+		  '經營管理評量表'=>[],
+		  '訪談基本資料'=>[]
+		];
+		
+		// 取得關聯記錄表
+		$DB_METTDATA	= $this->DBLink->prepare( SQL_AdEvaluation::GET_EVALUATION_METTDATA() );
+		$DB_METTEVAL	= $this->DBLink->prepare( SQL_AdEvaluation::GET_EVALUATION_METTEVALUATE() );
+		$DB_METTPRES	= $this->DBLink->prepare( SQL_AdEvaluation::GET_EVALUATION_METTPRESSURE() );
+		
+		while($tmp = $DB_OBJ->fetch(PDO::FETCH_ASSOC)){
+		  		  
+		  if(!$tmp['_active']) continue;		  
+		  
+		  
+		  
+		  $sheet1 = [$tmp['record_id'],$tmp['record_year'],$tmp['record_area']];
+		  $DB_METTDATA->bindValue(':record_id',$tmp['record_id']);
+		  $DB_METTDATA->execute();
+		  while($record = $DB_METTDATA->fetch(PDO::FETCH_ASSOC)){
+            foreach($record as $f=>$v){
+			  if(substr($f,0,3)!='emd') continue;	
+			  $export_value = '';
+			  if(is_null($v)){
+				$export_value = 'X';  
+			  }else if(preg_match('/^\{/',$v) && preg_match('/\}$/',$v)){
+				$value_set  = json_decode($v,true); 
+				$export_get = [];
+                foreach($value_set as $setid=>$setarray){
+				  $export_get[] = join('/',array_values($setarray));
+				}
+				$export_value = join("\n",$export_get);
+			  }else{
+				$export_value = $v;   
+			  }
+			  $sheet1[] =  $export_value;
+			}
+		  }
+		  
+		  $sheet2 = [$tmp['record_id'],$tmp['record_year'],$tmp['record_area']];
+		  $DB_METTEVAL->bindValue(':record_id',$tmp['record_id']);
+		  $DB_METTEVAL->execute();
+		  while($record=$DB_METTEVAL->fetch(PDO::FETCH_ASSOC)){
+			foreach($record as $f=>$v){
+			  if(substr($f,0,3)!='eme') continue;	
+			  $export_value = '';
+			  if(is_null($v)){
+				$export_value = 'X';  
+			  }else{
+				$export_value = $v;   
+			  }
+			  $sheet2[] =  $export_value;
+			}  
+		  }
+		  
+		  $sheet3 = [$tmp['record_id'],$tmp['record_year'],$tmp['record_area']];
+		  $DB_METTPRES->bindValue(':record_id',$tmp['record_id']);
+		  $DB_METTPRES->execute();
+		  while($record=$DB_METTPRES->fetch(PDO::FETCH_ASSOC)){
+			foreach($record as $f=>$v){
+			  if(substr($f,0,3)!='emp') continue;	
+			  $export_value = '';
+			  if(is_null($v)){
+				$export_value = 'X';  
+			  }else{
+				$export_value = $v;   
+			  }
+			  $sheet3[] =  $export_value;
+			} 
+		  }
+		  
+		  $excel_export['保護區資料表'][]	= $sheet1;
+		  $excel_export['保護區的壓力表'][]	= $sheet2;
+		  $excel_export['經營管理評量表'][]	= $sheet3;
+		  $excel_export['訪談基本資料'][]	= array_values($tmp);
+		  
+		}
+		
+		
+		//php excel initial
+	    $objReader = PHPExcel_IOFactory::createReader('Excel2007');
+	    $objPHPExcel = $objReader->load(_SYSTEM_FILE_PATH.'template_mettexport.xlsx');
+	    
+		
+	    $sheetindex = 0;
+	    foreach($excel_export as $sheet_name=>$data_list ){	
+		
+			$objPHPExcel->setActiveSheetIndex($sheetindex);
+			$objPHPExcel->getActiveSheet()->setTitle($sheet_name);
+			
+			
+			$row = 3 ;
+			foreach( $data_list as $data){
+			  foreach($data as $col=>$v){
+				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow($col, $row)->setValueExplicit($v, PHPExcel_Cell_DataType::TYPE_STRING);  	
+			  }
+			  $row++;
+			}
+			//$objPHPExcel->getActiveSheet()->getCellByColumnAndRow($col, $row)->setValueExplicit($data[0], PHPExcel_Cell_DataType::TYPE_STRING); //set value to string 
+			//$objPHPExcel->getActiveSheet()->getProtection()->setSheet(true);
+			//$objPHPExcel->getActiveSheet()->getStyle("B4:AS$x")->getProtection()->setLocked(PHPExcel_Style_Protection::PROTECTION_UNPROTECTED);
+	        
+			$objPHPExcel->createSheet(); 
+		    $sheetindex++;
+		}
+  	    
+		$file_export_save = _SYSTEM_FILE_PATH.'mettexport/mettexport_'.date('YmdHis').'.xlsx';
+		$objPHPExcel->setActiveSheetIndex(0);
+	    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+	    $objWriter->save($file_export_save); 
+	    $objPHPExcel->disconnectWorksheets();
+	    unset($objPHPExcel);
+		 
+		// final 
+		$result['data']['name']   = 'METT評量匯出'.date('Y-m-d').'.xlsx';
+		$result['data']['size']   = filesize($file_export_save);
+		$result['data']['location']   = $file_export_save;
+		
+		$result['action'] = true;  
+		
+	  } catch (Exception $e) {
+        $result['message'][] = $e->getMessage();
+      }
+	  return $result;
+	}
+	
+	
 	
 	
 	
@@ -906,16 +1366,6 @@
 		foreach($form_config as $field_id => $field_config){
           $area_apply_form[$field_id] = $field_config;
 		}
-		
-		// 移除不存在的設定
-		foreach($area_apply_form as $field_id => $field_config){
-          if(!isset($form_config[$field_id])){
-			unset($area_apply_form[$field_id]); 
-		  }
-		}
-		
-		
-		
 		
 		
 		$DB_SAVE	= $this->DBLink->prepare(SQL_AdArea::ADMIN_AREA_UPDATE_AREA_DATA(array('form_json')));

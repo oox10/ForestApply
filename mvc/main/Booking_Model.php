@@ -1156,6 +1156,8 @@
 		$joinmember	 = json_decode($booking['member'],true);
 		$application = json_decode($booking['apply_form'],true);
 		
+		$progress    = json_decode($booking['_progres'],true);
+		
 		$enter_dates = ($booking['date_exit'] == $booking['date_enter']) ? 1 : intval(abs(strtotime($booking['date_exit']) - strtotime($booking['date_enter']))/86400);
 		
 		
@@ -1278,6 +1280,17 @@
 		$result['data']['BOOKED_DATE']   = $booking['apply_date'];
 		$result['data']['BOOKED_CODE']   = $booking['apply_code'];
 		$result['data']['REVIEW_NOTE']   = $booking['check_note'];
+		
+		if(isset($progress['admin'][1])&&count($progress['admin'][1])){
+		  $outer_review=[];
+		  foreach($progress['admin'][1] as $logs){
+			$outer_review[] = $logs['status'].':'.$logs['note'].' @ '.$logs['time']; 
+		  }
+		  if(count($outer_review)){
+			$result['data']['REVIEW_NOTE'] =  join('<br/>',$outer_review).'<br/>'.$result['data']['REVIEW_NOTE']; 
+		  }
+		}
+		
 		$result['data']['PAGE_CONTENT']   = "<div class='license_page'>". $license_display ."</div>";
 		
 		
@@ -1425,9 +1438,11 @@
 		while($tmp = $DB_OBJ->fetch(PDO::FETCH_ASSOC)){
 		  if($this->USER->UserInfo['user_info']==$tmp['area_code']){
 			$area_list[$tmp['ano']] = $tmp;
-		    $area_sets[$tmp['ano']] = $tmp['area_code'];     
+		    $area_sets[$tmp['ano']] = $tmp['area_code'];  
 		  }
+		  
 		}
+		
 		
 		// 搜尋條件
 		$condition = array();
@@ -1462,7 +1477,7 @@
 		$records = array(); // 存放列表資料
 		
 		$sqlsearch = count($condition) ? join(' AND ',$condition) : 1;
-		$sqlsearch = "((".$sqlsearch.") OR apply_date <= '".date('Y-m-d')."') AND _status IN('收件待審','正取送審','備取送審')";
+		$sqlsearch = "((".$sqlsearch.") OR date_enter <= '".date('Y-m-d',strtotime('+20 day'))."') AND _status IN('正取送審','備取送審')";
 		
 		
 		$DB_BOOK = $this->DBLink->prepare(SQL_AdBook::SELECT_AREA_BOOKING(array_keys($area_list),$sqlsearch,$orderby));
@@ -1563,11 +1578,11 @@
             $review_note = date('Y-m-d H:i:s').':外審同意 by '.$this->USER->UserID;
 			$check_note = trim($booking['check_note']);
 			$check_note = $check_note ? $review_note."\n".$check_note : $review_note;
-			
-			$DB_UPD = $this->DBLink->prepare(SQL_AdBook::UPDATE_BOOK_DATA(array('check_note'))); 
-			$DB_UPD->bindValue(':apply_code' , $booking['apply_code']);
-		    $DB_UPD->bindValue(':check_note' , $check_note );
-		    $DB_UPD->execute();
+			/*20180504 外審審查資料不放在審查意見*/
+			//$DB_UPD = $this->DBLink->prepare(SQL_AdBook::UPDATE_BOOK_DATA(array('check_note'))); 
+			//$DB_UPD->bindValue(':apply_code' , $booking['apply_code']);
+		    //$DB_UPD->bindValue(':check_note' , $check_note );
+		    //$DB_UPD->execute();
 			
 			break;
 		  
@@ -1577,11 +1592,11 @@
             $review_note = date('Y-m-d H:i:s').'外審不同意 by '.$this->USER->UserID."\n"."理由：".$apply_review['notes'];
 			$check_note = trim($booking['check_note']);
 			$check_note = $check_note ? $review_note."\n".$check_note : $review_note;
-			
-			$DB_UPD = $this->DBLink->prepare(SQL_AdBook::UPDATE_BOOK_DATA(array('check_note'))); 
-			$DB_UPD->bindValue(':apply_code' , $booking['apply_code']);
-		    $DB_UPD->bindValue(':check_note' , $check_note );
-		    $DB_UPD->execute();
+			/*20180504 外審審查資料不放在審查意見*/
+			//$DB_UPD = $this->DBLink->prepare(SQL_AdBook::UPDATE_BOOK_DATA(array('check_note'))); 
+			//$DB_UPD->bindValue(':apply_code' , $booking['apply_code']);
+		    //$DB_UPD->bindValue(':check_note' , $check_note );
+		    //$DB_UPD->execute();
 			break;
 		  
 		  default:
@@ -1657,11 +1672,11 @@
 			$review_note = date('Y-m-d H:i:s').':外審同意 by '.$this->USER->UserID;
 			$check_note = trim($booking['check_note']);
 			$check_note = $check_note ? $review_note."\n".$check_note : $review_note;
-			
-			$DB_UPD = $this->DBLink->prepare(SQL_AdBook::UPDATE_BOOK_DATA(array('check_note'))); 
-			$DB_UPD->bindValue(':apply_code' , $booking['apply_code']);
-			$DB_UPD->bindValue(':check_note' , $check_note );
-			$DB_UPD->execute();
+			/*20180504 外審審查資料不放在審查意見*/
+			//$DB_UPD = $this->DBLink->prepare(SQL_AdBook::UPDATE_BOOK_DATA(array('check_note'))); 
+			//$DB_UPD->bindValue(':apply_code' , $booking['apply_code']);
+			//$DB_UPD->bindValue(':check_note' , $check_note );
+			//$DB_UPD->execute();
 			
 			// UPDATE status & progress 
 			$DB_UPD = $this->DBLink->prepare(SQL_Client::UPDATE_APPLY_STATUS()); 
@@ -1689,6 +1704,105 @@
       }
 	  return $result;  
 	}
+	
+	
+	
+	//-- Admin Booking Get Book Data 
+	// [input] : DataCode        :  \d+ / area_booking.apply_code;
+	// [input] : AreaAccessMap       :  array(abno=>1); // from get list save to session
+	public function ADBook_Get_Book_RawData($DataCode='',$AreaAccessMap=array()){
+		
+	  $result_key = parent::Initial_Result('read');
+	  $result  = &$this->ModelResult[$result_key];
+	  try{  
+		
+		// 檢查序號
+	    if(!preg_match('/^[\d\w]{8,10}$/',$DataCode)){
+		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
+		}
+		
+		// 取得申請資料
+		$record = NULL;
+		$DB_GET	= $this->DBLink->prepare( SQL_AdBook::GET_BOOKING_RECORD() );
+		$DB_GET->bindParam(':abno'   , $DataCode );	
+		if( !$DB_GET->execute() || !$record = $DB_GET->fetch(PDO::FETCH_ASSOC)){
+		  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
+		}
+	    
+		// 檢查是否有存取權限
+	    if(!isset($AreaAccessMap[intval($record['am_id'])])){
+		  throw new Exception('_SYSTEM_ERROR_PERMISSION_DENIAL');
+		}
+		
+		// 取得區域資料
+		$area_meta = array();
+		$DB_AREA= $this->DBLink->prepare( SQL_AdBook::GET_AREA_META() );
+		$DB_AREA->bindParam(':ano'   , $record['am_id'] );	
+		if( !$DB_AREA->execute()){
+		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');
+		}
+		$area_meta = $DB_AREA->fetch(PDO::FETCH_ASSOC);
+		
+		
+		// 取得申請紀錄
+		// area_name,apply_date,apply_reason,member_count
+		$DB_HIS= $this->DBLink->prepare( SQL_AdBook::GET_APPLY_HISTORY() );
+		$DB_HIS->bindParam(':apply_code'   	   , $DataCode );	
+		$DB_HIS->bindParam(':applicant_name'   , $record['applicant_name']  );	
+		$DB_HIS->bindParam(':applicant_mail'   , $record['applicant_mail']  );	
+		if( !$DB_HIS->execute()){
+		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');
+		}
+		$apply_history = $DB_HIS->fetchAll(PDO::FETCH_ASSOC);
+		
+		
+		//-- 整理輸出資料
+		$apply_read = array();
+		
+		 
+		$apply_data = json_decode($record['apply_form'],true);
+		
+		$apply_read['apply_record'] = $record;
+		$apply_read['apply_form']   = $apply_data;
+		
+		$apply_read['area_name'] = $area_meta['area_name'];
+		$apply_read['area_type'] = $area_meta['area_type'];
+		$apply_read['apply_code'] = $record['apply_code'];
+		$apply_read['apply_date'] = $record['apply_date'];
+		$apply_read['apply_review'] = $record['_review'];
+		$apply_read['applicant_name'] = $record['applicant_name'];
+		$apply_read['apply_checker'] = $record['_checker'];
+		$apply_read['check_note'] = $record['check_note'];
+		
+		
+		
+		
+		
+		// for field
+		$result['data']['apply'] = $apply_read;
+		
+		// for applicant
+		$result['data']['applicant'] = array('info'=>array(),'history'=>array());
+		$result['data']['applicant']['info'] = $record['applicant_info']  ? json_decode($record['applicant_info'],true) : array();
+		
+		// for attachment
+		$result['data']['attachment'] = isset($apply_data['attach']) ? $apply_data['attach'] : array();
+		
+		// for progress
+		$result['data']['progress'] = $record['_progres'] ? json_decode($record['_progres'],true) :  ['client'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[] ],'review'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]],'admin'=>[ 0=>[], 1=>[], 2=>[], 3=>[], 4=>[], 5=>[]]];
+		$result['data']['stagenow'] = $record['_stage'];
+		
+		// for applicant history 
+		$result['data']['history'] = $apply_history;
+		
+		$result['action'] = true;
+		
+	  } catch (Exception $e) {
+        $result['message'][] = $e->getMessage();
+      }
+	  return $result;  
+	}
+	
 	
 	
 	

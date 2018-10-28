@@ -23,7 +23,7 @@
 	
 	<script type="text/javascript" src="js_library.js"></script>
 	<script type="text/javascript" src="js_admin.js"></script>
-	<script type="text/javascript" src="js_book_admin.js"></script>
+	<script type="text/javascript" src="js_book_admin.js?<?php echo time();?>"></script>
 	
 	
 	<!-- PHP -->
@@ -166,6 +166,7 @@
 					<option value='備取成功' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='備取成功' ? 'selected':'';?> > 備取成功 </option>
 					<option value='備取失敗' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='備取失敗' ? 'selected':'';?> > 備取失敗 </option>
 					<option value='審查未過' <?php echo isset($data_filter['apply_status'])&&$data_filter['apply_status']=='審查未過' ? 'selected':'';?> > 審查未過 </option>
+					
 				    <option value='' > 不篩選狀態 </option>
 				  </optgroup>
 				</select>，
@@ -326,8 +327,8 @@
 			  <span>
 			    <?php if(isset($user_info['user']['user_roles']['R00']) || (isset($user_info['user']['user_roles']['R03']) && $user_info['user']['user_roles']['R03'] > 1 )) :?>
 				<?php endif; ?>
-				
 				<i class='sysbtn' id='act_apply_license' title='下載許可' >許可</i>
+				
 				<i class='sysbtn' id='act_apply_ticket' title='下載申請資料' ><a class='btn_mark pic_pdf_file_s'  ></a></i>
 				<i class='sysbtn' id='act_apply_save'   title='儲存資料'  ><a class='btn_mark pic_save'  ></a></i>
 			    <i class='sysbtn data_trival' id='act_apply_prev' title='上一筆'  > 上一筆 </i>

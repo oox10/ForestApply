@@ -282,7 +282,7 @@
 		}	
 		
 		var captcha = $('#captcha_input').val();
-		var reg_data = encodeURIComponent(JSON.stringify(reg_check));
+		var reg_data = encodeURIComponent(Base64M.encode(JSON.stringify(reg_check)));
 			
 		$.ajax({
           url: 'index.php',

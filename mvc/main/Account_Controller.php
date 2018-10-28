@@ -58,13 +58,15 @@ class Account_Controller extends Admin_Controller{
 	  }
 	  
 	  self::data_output('session','ADMIN',$this->Model->ModelResult);
+	  
 	  if(isset($_SESSION[_SYSTEM_NAME_SHORT]['RrDIRECT']) && $_SESSION[_SYSTEM_NAME_SHORT]['RrDIRECT'] !=''){
 		// 舊有連結導回搜尋頁面
 		self::redirectTo('index.php?'.$_SESSION[_SYSTEM_NAME_SHORT]['RrDIRECT']);   
 		unset($_SESSION[_SYSTEM_NAME_SHORT]['RrDIRECT']);
 	  }else{
 		self::redirectTo('index.php?act=Staff'); 
-	  } 
+	  }
+	  
 	  
 	}
 	
@@ -94,7 +96,7 @@ class Account_Controller extends Admin_Controller{
 	public function signup($Captcha,$RegData){
 	  $captcha_save = isset($_SESSION['turing_string']) ? $_SESSION['turing_string'] : false ;
 	  $captcha_user = strlen($Captcha) ? $Captcha : '';
-	  $account_data = strlen($RegData) ? json_decode(rawurldecode($RegData),true) : array();
+	  $account_data = strlen($RegData) ? json_decode(base64_decode(str_replace('*','/',rawurldecode($RegData))),true) : array();
 	  $regist = $this->Model->Account_Sign_Up($captcha_save,$captcha_user,$account_data);
 	  if($regist['action']) $this->Model->Account_System_Space_Allocat($regist['data']['group'],$regist['data']['account']);
 	  self::data_output('json','',$this->Model->ModelResult); 

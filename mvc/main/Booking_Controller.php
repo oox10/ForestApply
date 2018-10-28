@@ -121,8 +121,6 @@
 	}
 	
 	
-	
-	
 	// AJAX: 批次匯出
 	public function batchexport($Records){
 	  $this->Model->ADBook_Export_Selected($Records);
@@ -169,6 +167,18 @@
 	  $this->Model->ADBook_LocalAD_Batch_Review_Accept($ReviewData,$access);
 	  self::data_output('json','',$this->Model->ModelResult);
 	}
+	
+	
+	
+	// AJAX: 系統檢視RAWDATA
+	public function rawdata($DataNo){
+	  $access = isset($_SESSION[_SYSTEM_NAME_SHORT]['ADAREASMAP']) ? $_SESSION[_SYSTEM_NAME_SHORT]['ADAREASMAP'] : array();	
+	  $active = $this->Model->ADBook_Get_Book_RawData($DataNo,$access);
+	  echo "<pre>";
+	  var_dump($this->Model->ModelResult);
+	  exit(1);
+	}
+	
 	
   }
   

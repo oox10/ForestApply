@@ -42,6 +42,7 @@
 	
 	
 	
+	
 	//-- select batch function
 	$('#act_selected_export').click(function(){
 	  
@@ -512,7 +513,6 @@
 		
 	});
 	
-	
 	//-- 下載許可證
 	$('#act_apply_license').click(function(){
       
@@ -530,9 +530,7 @@
 	  }
 	  
 	  window.open('index.php?act=Booking/license/'+data_no)
-	})
-	
-	
+	})	
 	
 	//-- Input Meta Json To Edit Dom 
 	function insert_applicant_form(DObj){

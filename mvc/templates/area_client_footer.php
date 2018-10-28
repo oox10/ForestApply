@@ -4,7 +4,7 @@
 		<div class='information'>
 		  <h2> 相關文件 </h2>
 		  <ul>
-		    <li> <a href='docs/apply_process.pdf' target=_blank >申請流程</a>  </li>
+		    <li> <a href='docs/林務局自然保護區域進入申請系統申請流程圖2018.pdf' target=_blank >申請流程</a>  </li>
 		    <li> 申請規則說明</a></li>
 		    <li> 申請須知 </li>
 		    <li>  </li>

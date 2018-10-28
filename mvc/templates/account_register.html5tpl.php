@@ -17,7 +17,7 @@
 	
 	<script type="text/javascript" src="js_library.js"></script>
 	<script type="text/javascript" src="js_admin.js"></script>
-	<script type="text/javascript" src="js_account.js"></script>
+	<script type="text/javascript" src="js_account.js?<?php echo time(); ?>"></script>
 	<!-- PHP DATA -->
 	
 	<?php
@@ -59,8 +59,6 @@
 				  </div>
 				  <div class='desc_border'>連絡我們</div>
 				  <table class='contact_table'>
-					<tr> <td> 國立臺灣大學森林環境暨資源學系 </td></tr>
-					<tr> <td >(02) - 33665275 賴小姐</td> </tr>
 					<tr> <td> 系統維護 </td></tr>
 					<tr> <td >0919350793 蕭先生 <br/> hsiaoiling@ntu.edu.tw</td> </tr>
 				  </table>

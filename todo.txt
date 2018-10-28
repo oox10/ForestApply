@@ -1,11 +1,36 @@
+20181028修正註記
+新增 附件檔案數量可控制
+新增 人數下限控制
+新增 信件內容加註
+修正 訊息模組：:信件檢索與顯示 
+修正 性別增加其他選項
+
+新增：附件檔案匯入知識管理
+檢視:知識管理功能並修正
+
+修正：問卷系統項目
+
+
+
+
+20180420 修正註記
+ 
+修改  SQL_Account GET_ACCOUNT_INFO_DATA() 增加  user_info 欄位
+修改   Account_model inter  R5 跳轉檢驗區
+修改  Booking R5review
+新增  Booking license
+新增  admin_booking act_apply_license 按鈕
+新增  js_booking_admin 下載許可證處理
+
+## 限制外審人員僅檢視五天內的審查資料
+
 [ 修正項目 ]
 - 清除隱私資料 - done
 - 申請管理：批次下載 - done
 - 超過處理日期時操作項目移除 - done
 - 陳核列印跑版 - done
-- 匯入最後兩個月的申請
+- 匯入最後兩個月的申請 - done
 - 匯入申請進入檔案
-- 模擬抽籤
 
 
 [ 局內伺服器 ] 

@@ -22,9 +22,7 @@
 					<tr> <td >(02) - 33665275 賴小姐</td> </tr>
 					<tr> <td> 系統維護 </td></tr>
 					<tr> <td >0919350793 蕭先生 <br/> hsiaoiling@ntu.edu.tw</td> </tr>
-					<tr> <td style='color:red;'>3/11-25 工程師外出，
-					         聯絡請使用email 或 line : 0919350793<br>
-							 收到訊息後將盡快處理，敬請見諒
+					<tr> <td style='color:#FFFFFF;font-weight:bold;'>若有系統上問題請先聯繫蕭先生，將盡快為您處理，謝謝您
 						 </td> 
 				    </tr>
 					

@@ -170,8 +170,8 @@
 	  
 	  $d1=strpos($wd_str, $id[0])%10;
 	  $sum=0;
-	  
-	  if($id[1]>='A')$id[1]=chr($id[1])-65; //第2碼非數字轉換依[4]說明處理
+		
+	  if(preg_match('/[ABCD]/',$id[1])) $id[1]=ord($id[1])-65; //第2碼非數字轉換依[4]說明處理
 	  
 	  for($ii=1;$ii<9;$ii++) $sum+= (int)$id[$ii]*(9-$ii);
 	  

@@ -225,18 +225,18 @@
 						<td><input type='number' class='_variable _update' id='wait_list' <?php echo isset($field_conf['wait_list']) ? 'data-default='.$field_conf['wait_list']['default'] :'';  ?>  value=0 /> 隊</td>
 					  </tr>
 					  <tr>
+						<th>隊伍人數上限</th>
 						<th>審核自動通過</th>
-						<th></th>
 						<th></th>
 						<th></th>
 						<th>  </th>
 						<th colspan=2>區域開關時間</th>
 					  </tr>
 					  <tr>
-						<td>前 <input type='number'   class='_variable _update' id='auto_pass'      <?php echo isset($field_conf['auto_pass']) ? 'data-default='.$field_conf['auto_pass']['default'] :'';  ?>  value=0  /> 天</td>
+							<td><input type='number'   class='_variable _update' id='member_max'      <?php echo isset($field_conf['member_max']) ? 'data-default='.$field_conf['member_max']['default'] :'';  ?>  value=0  /> 人</td>
+							<td>前 <input type='number'   class='_variable _update' id='auto_pass'      <?php echo isset($field_conf['auto_pass']) ? 'data-default='.$field_conf['auto_pass']['default'] :'';  ?>  value=0  /> 天</td>
 						<td > </td>
-						<td > </td>
-						<td > </td>
+					    <td > </td>
 						<td >  </td>
 						<td colspan=2> 
 						  <input type='time' class='_variable _update' id='time_open' <?php echo isset($field_conf['time_open']) ? 'data-default='.$field_conf['time_open']['default'] :'';  ?>   value='' /> 

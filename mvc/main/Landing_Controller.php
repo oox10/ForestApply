@@ -87,9 +87,6 @@ class Landing_Controller extends Admin_Controller{
 	  $MonthStart = '_now'; //default month
       $MonthLength=1;  
 	  
-	  $this->Model->Access_Get_Active_Area_List();
-	  $this->Model->Access_Get_System_Page_Content();
-	  
 	  $active = $this->Model->Access_Get_Select_Area_Info($AreaCode);
 	  if(!$active['action']){
 		self::data_output('html','wrong',$this->Model->ModelResult);   
@@ -98,6 +95,10 @@ class Landing_Controller extends Admin_Controller{
 	  
 	  $this->Model->Access_Get_Select_Area_Date($AreaCode,$MonthStart,$MonthLength);
 	  $this->Model->Access_Get_Area_DatePicker_Config($AreaCode);
+	  
+	  $this->Model->Access_Get_Active_Area_List();
+	  $this->Model->Access_Get_System_Page_Content();
+	  
 	  self::data_output('html','client_booking',$this->Model->ModelResult);
 	  
 	}
