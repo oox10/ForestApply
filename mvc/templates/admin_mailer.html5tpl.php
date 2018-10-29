@@ -51,14 +51,20 @@
 	<!-- PHP -->
 	<?php
 	$user_info 		= isset($this->vars['server']['data']['user']) 		? $this->vars['server']['data']['user']    : array('user'=>array('user_name'=>'Anonymous'),'group'=>array());
-	$data_list  	= isset($this->vars['server']['data']['records']) 	? $this->vars['server']['data']['records']['list'] : array();  
-	$data_type 		= isset($this->vars['server']['data']['records']) 	? $this->vars['server']['data']['records']['type'] : '_all';  
 	
+	$data_list  	= isset($this->vars['server']['data']['records']['list']) 	? $this->vars['server']['data']['records']['list'] : array();  
+	$data_count 	= isset($this->vars['server']['data']['records']['count']) 	? $this->vars['server']['data']['records']['count'] : 0;  
+	$data_limit 	= isset($this->vars['server']['data']['records']['limit'])    ? $this->vars['server']['data']['records']['limit'] : array();
+	$data_page  	= isset($this->vars['server']['data']['records']['page'])    ? $this->vars['server']['data']['records']['page'] : '1-10';
+	$data_type  	= isset($this->vars['server']['data']['records']['type'])    ? $this->vars['server']['data']['records']['type'] : 'all';
+	$html_conf      = isset($this->vars['server']['data']['records']['config'])    ? $this->vars['server']['data']['records']['config'] : '';
+	$page_conf  	= isset($this->vars['server']['data']['page'])    ? $this->vars['server']['data']['page'] : array();
 	
-	$data_count 	= count($data_list);
 	
 	$page_info 		= isset($this->vars['server']['info']) ? $this->vars['server']['info'] : '';  
 	
+	 
+	 
 	?>
   </head>
   
@@ -129,20 +135,25 @@
 			</div> 
 			<div class='record_body'>
 		      <div class='record_control'>
-			    <span class='record_limit'>  
-			      顯示 : <select class='record_view' ><option value=1> 1 </option><option value=5> 5 </option><option value=10 selected> 10 </option><option value='all' > ALL </option></select> 筆
-			    </span>
+			    <select class='record_view' >
+				    <option value='1-10'	<?php echo $data_limit['range']  =='1-10'	? 'selected': '' ?> > 10 </option>
+					<option value='1-50'	<?php echo $data_limit['range']  =='1-50'	? 'selected': '' ?> > 50 </option>
+					<option value='1-100'	<?php echo $data_limit['range']  =='1-100'	? 'selected': '' ?> > 100 </option>
+				</select> 
 				、
 				<span class='record_limit'>  
 			      篩選 : 
-				  <input type='radio' name='record_type' value='_all' <?php echo $data_type=='_all' ? 'checked':''; ?> > 所有信件
-				  <input type='radio' name='record_type' value='wait' <?php echo $data_type=='wait' ? 'checked':''; ?>> 待發信件
-				  <input type='radio' name='record_type' value='sent' <?php echo $data_type=='sent' ? 'checked':''; ?>> 已發信件
-				  <input type='radio' name='record_type' value='fail' <?php echo $data_type=='fail' ? 'checked':''; ?>> 寄送失敗
+				  <input type='radio' name='data_type' value='all' <?php echo $data_type=='all' ? 'checked':''; ?> > 所有信件
+				  <input type='radio' name='data_type' value='wait'	 <?php echo $data_type=='wait' ? 'checked':''; ?>> 待發信件
+				  <input type='radio' name='data_type' value='sent'	 <?php echo $data_type=='sent' ? 'checked':''; ?>> 已發信件
+				  <input type='radio' name='data_type' value='fail'	 <?php echo $data_type=='fail' ? 'checked':''; ?>> 寄送失敗
 			    </span>
-			    <span class='record_search'>
-			      搜尋 : <input class='search_input' type=text >
-			    </span>
+				<span class='record_filter' style='position:absolute;right:0;'>
+					<span class='record_search_field'> 
+					  <input  type='text'   id='data_search_condition' name='data_search' value='<?php echo isset($html_conf['condition'])&&$html_conf['condition'] ?$html_conf['condition']:'';?>' placeholder='輸入搜尋條件'  />
+					  <button type='button' class='active' id='act_record_search' ><i class="fa fa-search" aria-hidden="true"></i></button>
+					</span>
+				</span>
 			  </div>
 			  <table class='record_list'>
 		        <tr class='data_field'>
@@ -157,7 +168,7 @@
 			    <tbody class='data_result' mode='list' >  <!-- list / search-->
 			    <?php foreach($data_list as $num => $data): ?>  
 			      <tr class='data_record _data_read ' no='<?php echo $data['smno'];?>' page='' filter='' status='' >
-                    <td field='no'  	   ><?php echo ($num+1); ?>.</td>
+                    <td field='no'  	   ><?php echo ($data_limit['start']+$num+1); ?>.</td>
 			        <td field='mail_type'  ><?php echo $data['mail_type']; ?></td>
 				    <td field='mail_to'    ><?php echo $data['mail_to']; ?></td>
 				    <td field='mail_title'    ><?php echo $data['mail_title']; ?></td>
@@ -184,12 +195,29 @@
 			  </table>
 			  <div class='record_control'>
 			    <span class='record_result'>  
-			      顯示 <span> 1 </span> - <span> 10 </span> /  共 <span> <?php echo $data_count; ?></span>  筆
-			    </span>
+			      共 <span> <?php echo $data_count; ?></span>  筆
+				  / 顯示 <span> <?php echo $data_limit['range']; ?> </span>
+				</span>
 				<span class='record_pages'>
-				  <a class='page_tap page_to' page='prev' > &#171; </a>
-				  <span class='page_select'></span>
-				  <a class='page_tap page_to' page='next' > &#187; </a>
+				  <a class='page_tap page_to' page='<?php echo $page_conf['prev'];?>' > &#171; </a>
+				  <span class='page_select'>
+				  <?php foreach($page_conf['list'] as $p=>$limit ): ?>
+				  <a class="page_tap <?php echo $p==$page_conf['now'] ? 'page_now':'page_to'; ?>" page="<?php echo $limit;?>" ><?php echo $p; ?></a>
+				  <?php endforeach; ?>
+				  </span>
+				  <a class='page_tap page_to' page='<?php echo $page_conf['next'];?>' > &#187; </a>
+				  ，跳至
+				  <select class='page_jump'>
+				    <optgroup label="首尾頁">
+					  <option value='<?php echo $page_conf['top'];?>' >首頁</option>
+					  <option value='<?php echo $page_conf['end'];?>' >尾頁</option>
+					</optgroup>
+					<optgroup label="-">
+					  <?php foreach($page_conf['all'] as $p=>$limit ): ?>
+				      <option value="<?php echo $limit; ?>"  <?php echo $p==$page_conf['now'] ? 'selected':''; ?> ><?php echo 'P.'.$p; ?></option>
+				      <?php endforeach; ?>
+                    </optgroup>					  
+				  </select>
 				</span>
 			  </div>
 		    </div>

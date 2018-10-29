@@ -406,8 +406,8 @@
 						<div class='term_conf'>
 						  <span>設定：</span>
 						  <span title='選項是否設定為預設值'><input type='checkbox'	 name='option_set'  value='default'  /> 預設 </span>
-						  <span title='選項是否受申請人數限制'><input type='checkbox'	 name='option_set'  value='limit'    /> 名額 </span>
-						  <span title='選項是否需要附件'><input type='checkbox'		 name='option_set'  value='attach'   /> 附件 </span>
+						  <span title='選項是否受申請人數限制'><input type='checkbox'	 name='option_set'  value='limit'    /> 名額，至少<input type='number' name='option_test' bind='limit'  value='' min=1 size='1' title='人數下限' readonly />人 </span>
+						  <span title='選項是否需要附件'><input type='checkbox'		 name='option_set'  value='attach'   /> 附件，至少<input type='number' name='option_test' bind='attach' value='' min=1 size='1' title='附件數量' readonly />件 </span>
 						  <span title='申請日期是否可跨日'><input type='checkbox'		 name='option_set'  value='crossday' /> 跨日 </span>
 						  ，備註內容：<input type='text' class='term_note' name='option_note' value='' placeholder='..備註' />  
 						</div>
@@ -438,7 +438,7 @@
 				  </tr>
 				  <tr><td>隸屬項目：</td><td><input    class='input_form' name='field_class' type='text' value='' placeholder='' /></td></tr>
 				  <tr><td>欄位標題：</td><td><input    class='input_form' name='field_label' type='text' value='' placeholder='' /></td></tr>
-				  <tr><td>欄位內容：</td><td><input    class='input_form' name='field_value' type='text' value='' placeholder='' /></td></tr>
+				  <tr><td>欄位內容：</td><td><input    class='input_form' name='field_value' type='text' value='' placeholder='預設欄位內容；若模式為選項則將選項設定於此並用分號隔開' /></td></tr>
 				  <tr><td>欄位備註：</td><td><textarea class='input_note' name='field_notes' placeholder='項目備註'></textarea></td></tr>
 				</table>
 				

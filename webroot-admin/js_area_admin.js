@@ -320,8 +320,16 @@
 			option.find("input[name='option_name']").val(conf.name);  
 			option.find("input[name='option_note']").val(conf.note);  
 			$.each( conf.conf.split(';') , function(i,set){
-			  option.find("input[name='option_set'][value='"+set+"']").prop('checked',true);		
+			  option.find("input[name='option_set'][value='"+set+"']").prop('checked',true);
+              option.find("input[name='option_test'][bind='"+set+"']").prop('readonly',false); 
 			});
+			
+			// 20181024 增加選項的檢測條件    test:{'attach':1}
+			if(conf.test){
+			  $.each( conf.test, function(c,v){
+			    option.find("input[name='option_test'][bind='"+c+"']").val(v);		
+			  });	
+			}
 			option.appendTo('.field_options');
 		  });
 		  
@@ -895,6 +903,22 @@
       $(this).parents('li.sel_term').empty().remove();
 	});
 	
+	//-- switch apply reason option_test
+	$(document).on('click','input[name="option_set"]',function(){
+	  var test_dom = $(this).next('input[name="option_test"][bind="'+$(this).val()+'"]');
+	  if(test_dom.length){
+		var option_switch = $(this).prop('checked') ? false:true;
+		test_dom.prop('readonly',option_switch);
+		if(!option_switch && !test_dom.val()){
+		  const defaultval = test_dom.attr('min');
+		  test_dom.val(defaultval);
+		}else{
+		  test_dom.val('');	
+		}
+	  }
+	});
+	
+	
 	//-- Save Apply Reason
 	$(document).on('click','.act_save_apply_form',function(){
 	 
@@ -915,6 +939,8 @@
 	  }	   
 	  
 	  
+	  
+	  
 	  $(".field_config[id!='sample_form_editor']").each(function(){
 		  
 		var config_dom = $(this); 
@@ -931,6 +957,11 @@
 			option_config['name'] = $(this).find("input[name='option_name']").val();
 			option_config['conf'] = $(this).find("input[name='option_set']:checked").map(function(){return $(this).val(); }).get().join(';');
 			option_config['note'] = $(this).find("input[name='option_note']").val();
+			option_config['test'] = {};
+			$(this).find("input[name='option_test']").each(function(){
+			  if($(this).prop('readonly')) return true;
+			  option_config['test'][$(this).attr('bind')]= $(this).val();
+			});
 			form_config[field_id]['elements'][i] = option_config;
 		  });
 		  
@@ -974,7 +1005,8 @@
 	//-- Add New Apply Form Field
 	$('.act_add_form_field').click(function(){
       var new_field_term = $('table#sample_form_editor').clone(); 	 
-      var field_count = $("table.field_config[id!='sample_form_editor']").length;	  
+      var field_count = $("table.field_config[id!='sample_form_editor']").length;	 
+	  new_field_term.find("input[name='input_type_']").attr('name','input_type_application_field_'+field_count);	  
 	  new_field_term.attr('id','application_field_'+(field_count+1)).find('.feno').text(field_count+1).end().appendTo(".apply_form");  
 	  new_field_term.find('input[name="field_class"]').focus();
 	});

@@ -26,9 +26,27 @@
 	/***-- Admin Mailer SQL --***/  
 	
 	
+	//-- Admin Collect : 計算資料顯示總筆數
+	public static function SELECT_COUNT_RECORD( $Condition = array(1) ){
+	  $SQL_String = "SELECT count(*) ".
+	                " FROM  system_mailer ".
+					" WHERE _keep=1 ".join(' AND ',$Condition);
+	  return $SQL_String;
+	}
+	
+	//-- Admin Collect : 取得資料顯示列表
+	public static function SELECT_SEARCH_RECORD( $Condition = array(1), $OrderBySet=' ORDER BY import_id DESC,citno ASC' ){
+	  $SQL_String = "SELECT smno,mail_type,mail_to,mail_title,_status_code,_mail_date,_active_time ".
+	                " FROM system_mailer WHERE _keep=1 ".join(' AND ',$Condition).
+					" ".$OrderBySet." LIMIT :page_start,:page_length";
+	  return $SQL_String;
+	}
+	
+	
+	
 	//-- Admin Mailer :  get mail job list 
 	public static function GET_MAILER_JOBS(){
-	  $SQL_String = "SELECT smno,mail_type,mail_to,mail_title,_status_code,_mail_date,_active_time FROM system_mailer WHERE _keep=1 ORDER BY _status_code ASC,_mail_date DESC,smno ASC;";
+	  $SQL_String = "SELECT  FROM system_mailer WHERE _keep=1 ORDER BY _status_code ASC,_mail_date DESC,smno ASC;";
 	  return $SQL_String;
 	}  
 	

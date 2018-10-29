@@ -18,7 +18,7 @@
 	
 	<script type="text/javascript" src="js_library.js"></script>
 	<script type="text/javascript" src="js_client.js"></script>
-	<script type="text/javascript" src="js_apply.js"></script>
+	<script type="text/javascript" src="js_apply.js?<?php echo time();?>"></script>
 	
 	<!-- plugin -->
 	<script type="text/javascript" src="tool/jonthornton-jquery-timepicker/jquery.timepicker.min.js"></script>
@@ -392,9 +392,9 @@
 					         class='apply_data apply_reason' 
 							 name='apply_reason' 
 							 value='<?php echo $input['name']; ?>' 
-							 attach='<?php echo strstr($input['conf'],'attach') ? 1:0; ?>'   
+							 attach='<?php echo strstr($input['conf'],'attach') ? (isset($input['test']['attach']) ? intval($input['test']['attach']):1) : 0; ?>'    
 					         crossday='<?php echo strstr($input['conf'],'crossday') ? 1:0; ?>' 
-                             limit='<?php echo strstr($input['conf'],'limit') ? 1:0; ?>'   							 
+                             limit='<?php echo strstr($input['conf'],'limit') ? (isset($input['test']['limit']) ? intval($input['test']['limit']):3) : 0; ?>'
 					  />  
 					  <span><?php echo $input['name']; ?></span>
 					  <?php if(isset($input['note']) && $input['note']): ?>
@@ -451,13 +451,20 @@
 				<?php   foreach($apply_form as $class => $fields ):   ?>
 				<h2>5. <?php echo $class; ?></h2>
 				<?php     foreach($fields as $fid=>$fconf): ?>
-				<div  class='form_element other_form'>
+				<div  class='form_element other_form' id='<?php echo $fid; ?>' mode='<?php echo isset($fconf['input']) ? $fconf['input'] : 'textarea';?>'>
 				  <label><?php echo $fconf['label']; ?></label>
-				  <div>
+				  <div  >
 				    <?php if(isset($fconf['input']) && $fconf['input']=='textarea'): ?>
-				    <textarea class='apply_data' id='<?php echo $fid; ?>' ><?php echo $fconf['value']; ?></textarea>
-				    <?php else: ?> 
-				    <input type="text" class='apply_data' id='<?php echo $fid; ?>' value='<?php echo $fconf['value']; ?>' />
+				    <textarea class='apply_data' name='<?php echo $fid; ?>' ><?php echo $fconf['value']; ?></textarea>
+				    <?php elseif(isset($fconf['input']) && $fconf['input']=='text'): ?> 
+				    <input type="text" class='apply_data' name='<?php echo $fid; ?>' value='<?php echo $fconf['value']; ?>' />
+					<?php elseif(isset($fconf['input']) && ($fconf['input']=='radio' || $fconf['input']=='checkbox')): ?> 
+					<?php   $options = explode(';',$fconf['value']); ?>
+					<?php   foreach($options as $o=>$opt): ?>   
+					<input type="<?php echo $fconf['input'];?>" class='apply_data' name='<?php echo $fid; ?>' value='<?php echo $opt; ?>' /> <?php echo $opt; ?>       
+					<?php   endforeach;?>
+					<?php else: ?>
+					<input type="text" class='apply_data' name='<?php echo $fid; ?>' value='<?php echo $fconf['value']; ?>' />
 					<?php endif; ?>
 				  </div> 
 				  <i><?php echo nl2br($fconf['notes']); ?></i>
@@ -505,7 +512,7 @@
 			<h1>
 			  <span class='step_title'>申請步驟 4 - 填寫進入成員名單 (每團上限15人) </span>
 			  <span class='step_option'>
-			    <button type='button' class='active' id='apply_step_04' ischeck=0 > 確認成員 </button>
+			    <button type='button' class='active' id='apply_step_04' ischeck=0  mbrlower=1 > 確認成員 </button>
 			    <button type='button' class='active' id='apply_submit'  disabled=true  > 遞交申請 </button>
 			  </span>
 			</h1>
@@ -534,7 +541,8 @@
 						  <div><label>生日</label><span class='mbr_data'><input type='text' class='member_birth' placeholder='1950-01-01 或 061-01-01' title='請輸入西元日期 1950-01-01 共10碼 或 民國日期 061-01-01 共9碼' /></span>
 						       <label>性別</label><span class='mbr_data'>
 							   <input type='radio' class='member_sex' name='p01' value='男' />男 
-							   <input type='radio' class='member_sex' name='p01' value='女' />女 
+							   <input type='radio' class='member_sex' name='p01' value='女' />女
+							   <input type='radio' class='member_sex' name='p01' value='其他' />其他							   
 							   </span>
 						  </div>
 						  <div><label>通訊電話</label><span class='mbr_data'><input type='text' class='member_tel' placeholder='電話含區碼：03-333333' /></span class='mbr_data'><label>行動電話</label><span class='mbr_data'><input type='text' class='member_cell' placeholder='行動電話' /></span></div>

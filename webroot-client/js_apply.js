@@ -6,11 +6,12 @@ $(window).load(function () {   //  || $(document).ready(function() {
 	/*--    Landing Function set    --*/
 	/*================================*/
 	
+	
+	
 	//-- page link 
 	$('#system_mark').click(function(){
 	  location.href='index.php';	
 	});
-	
 	
 	
 	/*================================*/
@@ -316,6 +317,10 @@ $(window).load(function () {   //  || $(document).ready(function() {
         picker_is_signal_day = setSingleDate;		
 	  }
 	  
+	  // set mbr check lower
+	  var mbrcheck = parseInt($(this).attr('limit')) ? parseInt($(this).attr('limit')) : 1;
+	  $('#apply_step_04').attr('mbrlower',mbrcheck);
+	  
 	});
 	
 	
@@ -389,6 +394,7 @@ $(window).load(function () {   //  || $(document).ready(function() {
 	  // 1. 申請理由
 	  apply['form']['reason'] = [];
 	  var have_attach = false;
+	  
 	  if($("input[name='apply_reason']").length){
 		$("input[name='apply_reason']").each(function(){
 		  if( ( ( $(this).attr('type')=='checkbox' || $(this).attr('type')=='radio')  && $(this).prop('checked')) || 
@@ -400,7 +406,7 @@ $(window).load(function () {   //  || $(document).ready(function() {
 			apply['form']['reason'].push(reason);	
 			
 			if(parseInt($(this).attr('attach'))){
-			  have_attach = true; 	
+			  have_attach = parseInt($(this).attr('attach')); 	
 			}
 			
 		  }
@@ -423,9 +429,9 @@ $(window).load(function () {   //  || $(document).ready(function() {
         apply['form']['attach'].push(attachment);
 	  });
 	  
-	  if(have_attach && !apply['form']['attach'].length){
+	  if(have_attach && apply['form']['attach'].length < have_attach  ){
 		$('#apply_attachment_upload').focus();  
-		system_message_alert('','請上傳所需附件!!');  
+		system_message_alert('','請上傳所需附件，您所勾選的申請項目附件至少需要『'+have_attach+'』件!!');  
 	    return false;	  
 	  }
 	  
@@ -470,16 +476,38 @@ $(window).load(function () {   //  || $(document).ready(function() {
 		
 		$('.other_form').each(function(){
           
-		  if( !$(this).find('.apply_data').val() ){
-			system_message_alert('','請填寫欄位內容');			
-		    $(this).find('.apply_data').addClass('_fail').focus();
-			date_checked = false;
-			return false;
+		  var oth_title = $(this).find('label').text() 
+		  var oth_field = $(this).attr('id');
+		  var oth_value = '';
+		  
+		  switch($(this).attr('mode')){
+			case 'radio': case 'checkbox':
+			  if( !$(this).find('.apply_data:checked').length ){
+				system_message_alert('',"申請資料選項：『"+oth_title+"』 尚未勾選!!");			
+				date_checked = false;
+				return false;
+			  }
+			  oth_value = $(this).find('.apply_data:checked').map(function(){return $(this).val();}).get().join(';');
+			  break;
+			  
+			case 'textarea': 
+            case 'text':
+            default:			
+			  if( !$(this).find('.apply_data').val() ){
+				system_message_alert('',"請填寫欄位『"+oth_title+"』內容");			
+				$(this).find('.apply_data').addClass('_fail').focus();
+				date_checked = false;
+				return false;
+			  }
+			  oth_value = $(this).find('.apply_data').val();
+			  break;  
 		  }
-		  apply['form']['fields'][$(this).find('.apply_data').attr('id')]={
-			'field': $(this).find('label').text() ,
-			'value': $(this).find('.apply_data').val()
+		  
+		  apply['form']['fields'][oth_field]={
+			'field': oth_title ,
+			'value': oth_value
 		  }
+		
 		});
 	  }
 	  
@@ -704,6 +732,14 @@ $(window).load(function () {   //  || $(document).ready(function() {
 	  } 
 	  
 	  var mmeber_list = get_apply_member();
+	  
+	  // check mber lower
+	  const member_lowerbound = parseInt($(this).attr('mbrlower')) ? parseInt($(this).attr('mbrlower')) : 1;  
+	  if( mmeber_list.length < member_lowerbound){
+		system_message_alert('',"您所申請的項目，進入成員至少需要『 "+member_lowerbound+" 』位");
+		return false;  
+	  }
+	  
 	  var pass_data = encodeURIComponent(Base64M.encode(JSON.stringify(mmeber_list)));
 	  
 	  // active ajax
@@ -1011,6 +1047,11 @@ $(window).load(function () {   //  || $(document).ready(function() {
 					  var visibility = parseInt($("input.apply_reason[value='"+r.item+"']").attr('attach')) ? 'visible':'hidden';
 					  $('#apply_documents').css('visibility',visibility);   
 					  
+					  // set mbr check lower
+					  const mbrcheck = parseInt( $("input.apply_reason[value='"+r.item+"']").attr('limit')) ? parseInt( $("input.apply_reason[value='"+r.item+"']").attr('limit')) : 1;
+					  $('#apply_step_04').attr('mbrlower',mbrcheck);
+					  
+					  
 					}else{
 					  $('#apply_reason_other').val(r.item);	
 					}
@@ -1047,7 +1088,15 @@ $(window).load(function () {   //  || $(document).ready(function() {
 				case 'fields':  				
                   $.each(av,function(id,fconf){
 					if($('#'+id).length){
-					  $('#'+id).val(fconf.value);
+					  var main_dom = $('#'+id);
+					  if(main_dom.attr('mode')=='checkbox' || main_dom.attr('mode')=='radio'){
+						var checked = fconf.value.split(';');
+                        $.each(checked,function(i,v){
+						  main_dom.find('.apply_data[name="'+id+'"][value="'+v+'"]').prop('checked',true);	
+						});
+					  }else{
+						main_dom.find('.apply_data[name="'+id+'"]').val(fconf.value);  
+					  }	 
 					}
 				  });
 				  break; 

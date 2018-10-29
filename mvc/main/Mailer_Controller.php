@@ -21,11 +21,23 @@
 	}
 	
 	// PAGE: 管理訊息介面 O
-	public function index($DataType='_all'){
+	public function xxx($DataType='_all'){
 	  $this->Model->GetUserInfo();
 	  $this->Model->ADMailer_Get_Mailer_List($DataType);
 	  self::data_output('html','admin_mailer',$this->Model->ModelResult);
 	}
+	
+	// PAGE: 入館紀錄列表
+	public function index($DataType='all',$DataPages='1-50',$Search=''){
+	  $DataType  = trim($DataType) ? $DataType:'all';
+	  $DataPages = trim($DataPages) ? $DataPages:'1-50';
+	  $this->Model->GetUserInfo();
+	  $this->Model->ADMailer_Get_Record_List($DataType,$DataPages,$Search);
+	  $this->Model->ADMailer_Get_Page_List(5);	
+	  self::data_output('html','admin_mailer',$this->Model->ModelResult);	
+	}
+	
+	
 	
 	// AJAX: 取得發信內容
 	public function read($DataNo){

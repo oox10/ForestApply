@@ -1,5 +1,7 @@
 /* [ Admin Mailer Function Set ] */
 	
+    
+	
   $(window).load(function () {   //  || $(document).ready(function() {		
 	
 	/*  Froala Sample 
@@ -7,6 +9,79 @@
     INSERT : froalaEditor('html.insert',valfill,true);
     check : $(this).data('froala.editor')
 	*/
+	
+	
+	//-- 設定分頁 資料超過上萬，分頁自訂
+	$(document).off('click','.page_to');
+	$(document).off('change','.record_view');
+
+	$('.record_view').change(function(){
+	  var link = location.search.replace('/#.*?$/','').split('/');
+	  link[3] = $(this).val();
+	  location.search = link.join('/');
+	});
+
+	$('.page_to').click(function(){
+	  if(!$(this).attr('page')){
+		return false;
+	  }	
+	  var link = location.search.replace('/#.*?$/','').split('/');
+	  link[3] = $(this).attr('page');
+	  location.search = link.join('/');
+	});
+
+	$('.page_jump').change(function(){
+	  if(!$(this).val()){
+		return false;
+	  }	
+	  var link = location.search.replace('/#.*?$/','').split('/');
+	  link[3] = $(this).val();
+	  location.search = link.join('/');
+	});	
+	
+	
+	//-- 搜尋資料
+	$('#act_record_search').click(function(){
+	  module_page_rebuilt(); 	
+	});
+	
+	//-- data type selecter	
+	$("input:radio[name='data_type']").click(function(){
+	  if($(this).val()=='search'){
+		$('#data_search_condition').focus();
+		return true;  
+	  }	
+	  
+	  if($(this).val()=='all'){
+		$('#data_search_condition').val('')		
+	  }
+	  
+	  module_page_rebuilt();
+	});
+	
+	//-- submit condition
+	function module_page_rebuilt(){
+      
+	  var parameter 	= {};
+	  
+	  // get data group  
+	  var record_mode = $("input[name='data_type']:checked").val();
+	  
+	   
+	  parameter['condition'] = $('#data_search_condition').val();	  
+	  
+	  // get data order
+	  if($(".order_by[mode != '0']").length){
+		parameter['orderby']   = {'field':$(".order_by[mode!='0']").attr('order'),'mode':$(".order_by[mode!='0']").attr('mode') , 'name':$(".order_by[mode!='0']").attr('name') };  
+	  }
+	  
+	  // get page config
+	  var pager = $('.record_view').val();
+	  
+	  var passer_data	= encodeURIComponent(Base64.encode(JSON.stringify(parameter)));
+	  location.href='index.php?act=Mailer/index/'+record_mode+'/'+pager+'/'+passer_data;  
+	}
+	
 	
 	
 	/* [editor tool setting] */
@@ -324,8 +399,6 @@
 	    }
 	}
 	
-	//-- 設定分頁
-	$('.record_view').val(10).trigger('change');
 	
 	
   });	

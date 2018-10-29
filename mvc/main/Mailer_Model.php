@@ -9,6 +9,12 @@
 	  parent::initial_user($_SESSION[_SYSTEM_NAME_SHORT]['ADMIN']['USER']);
 	}
 	
+	protected $SearchString;  // 查詢條件
+	protected $ResultCount;   // 查詢結果數量
+	protected $PageNow;       // 當前頁數 
+	protected $LengthEachPage;// 每頁筆數
+	protected $Metadata;
+	
 	
 	/*[ Module Function Set ]*/ 
     
@@ -46,6 +52,174 @@
       }
 	  return $result;
 	}
+	
+	
+	//-- Admin Meta Page Data OList 
+	// [input] : $PagerMaxNum => int // 頁面按鈕最大數量
+	public function ADMailer_Get_Page_List( $PagerMaxNum=1 ){
+	  
+	  $result_key = parent::Initial_Result('page');
+	  $result  = &$this->ModelResult[$result_key];
+      
+	  try{
+        
+		$page_show_max = intval($PagerMaxNum) > 0 ? intval($PagerMaxNum) : 1;
+		
+	    $pages = array();
+		
+		$pages['all'] = array(1=>'');
+		
+		
+		// 必要參數，從ADMeta_Get_Meta_List而來
+		$this->ResultCount;   // 查詢結果數量
+	    $this->PageNow;   
+	    $this->LengthEachPage;
+		
+		$total_page = ( $this->ResultCount / $this->LengthEachPage ) + ($this->ResultCount%$this->LengthEachPage ? 1 :0 );
+		
+		// 建構分頁籤
+		for($i=1;$i<=$total_page;$i++){
+		  $pages['all'][$i] = (($i-1)*$this->LengthEachPage+1).'-'.($i*$this->LengthEachPage);
+		}
+		
+		$pages['top']   = reset($pages['all']);
+		$pages['end']   = end($pages['all']);
+		$pages['prev']  = ($this->PageNow-1 > 0 ) ? $pages['all'][$this->PageNow-1] : $pages['all'][$this->PageNow];
+		$pages['next']  = ($this->PageNow+1 < $total_page ) ? $pages['all'][$this->PageNow+1] : $pages['all'][$this->PageNow];
+		$pages['now']   = $this->PageNow;  
+		
+		$check = ($page_show_max-1)/2;
+		
+	    if($total_page < $page_show_max){
+		  $pages['list'] = $pages['all'];  	
+		}else {  
+          if( ($this->PageNow - $check) <= 1 ){    // 抓最前面 X 個
+            $start = 0;
+		  }else if( ($this->PageNow + $check) > $total_page ){  // 抓最後面 X 個
+            $start = $total_page-(2*$check)-1;    
+		  }else{
+            $start = $this->PageNow - $check -1;
+		  }
+	      $pages['list'] = array_slice($pages['all'],$start,$page_show_max,TRUE);
+		}
+		
+		$result['data']   = $pages;
+		$result['action'] = true;
+		
+	  } catch (Exception $e) {
+        $result['message'][] = $e->getMessage();
+      }
+	  return $result;
+	}
+	
+	
+	//-- Admin Collect Page Initial  取得目前資料列表
+	// [input] : RecordType   = (string) all ;
+	// [input] : PageLimit    = (string) 1-10 / ;
+	// [input] : SearchString = (string) base64_decode ;  [condition = [] , orderby? = [field: , mode: 0 1 2 ]]
+	public function ADMailer_Get_Record_List($RecordType,$PageLimit,$SearchString){
+	  
+	  $result_key = parent::Initial_Result('records');
+	  $result  = &$this->ModelResult[$result_key];
+	  
+	  try{
+	    
+		
+		// 處理頁數參數
+		$limit = explode('-',$PageLimit);
+        $limit_start   = 0;
+        $limit_length  = 0;
+		
+        $limit_start = (isset($limit[0]) && intval($limit[0]) ) ? intval($limit[0])-1 : 0;
+		$limit_length= (isset($limit[1]) && intval($limit[1]) && intval($limit[1]) > intval($limit[0]) ) ?  (intval($limit[1])-$limit_start) : 10;
+		
+		$record_count = 0;
+		
+		// 解析頁面建構參數
+		$search_config = json_decode(base64_decode(str_replace('*','/',rawurldecode($SearchString))),true);
+		 
+		// 欄位參數
+		$search_fields = [
+		    'mail_type','mail_from','mail_to','mail_title','mail_content',
+		];  
+		
+		// 條件參數		
+		$search_condition=[''];  // 存放SQL條件，第一個為空白，用來串接SQL
+		$search_patterns=[];     // 存放搜尋條件作為資料標示
+		
+        // 依據類型篩選資料
+		switch($RecordType){
+		  case 'all': break;
+		  case 'sent': $search_condition[] = "_status_code='1'" ; break; 
+		  case 'wait': $search_condition[] = "_status_code='0'" ; break; 
+		  case 'fail': $search_condition[] = "_status_code='-1'" ; break; 
+		  default:  $search_condition[] = "_status_code='".$RecordType."'" ; break; 
+		}
+		
+		
+		// 處理搜尋條件
+		if($search_config && isset($search_config['condition']) && trim($search_config['condition']) ){
+			$terms  = explode('&',$search_config['condition']);
+			$querys = array();
+			foreach($terms as $t){
+			  $condition = array();
+			  foreach($search_fields as $f){
+				$condition[] =  $f." LIKE '%".$t."%'";
+				$search_patterns[] = '/('.$t.')/u';
+			  }	
+			  $querys[] = "(".join(" OR ",$condition).")"; 
+			}
+			$search_condition[] = join(' AND ',$querys);  
+		}	  
+		  
+        // 處理排序條件
+        $order_by_config = 'ORDER BY _mail_date DESC,smno ASC '; 
+		
+		
+		$DB_COUNT = $this->DBLink->prepare( SQL_AdMailer::SELECT_COUNT_RECORD($search_condition) );
+		if(!$DB_COUNT->execute()){
+		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
+	   	}
+		
+		$record_count = $DB_COUNT->fetchColumn();	
+     	$record_list  = [];
+		
+		$DB_OBJ = $this->DBLink->prepare(SQL_AdMailer::SELECT_SEARCH_RECORD($search_condition,$order_by_config));
+		$DB_OBJ->bindValue(':page_start',$limit_start,PDO::PARAM_INT);
+		$DB_OBJ->bindValue(':page_length',$limit_length,PDO::PARAM_INT);
+		 
+		if(!$DB_OBJ->execute()){
+	      throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
+	   	}
+		
+		// 取得列表
+		$record_list = array();
+		$record_list = $DB_OBJ->fetchAll(PDO::FETCH_ASSOC);		
+		 
+		
+		// 共用參數
+		$this->ResultCount    = $record_count;
+		$this->PageNow        = round($limit_start/$limit_length)+1;
+		$this->LengthEachPage = $limit_length;
+		
+		$result['action'] = true;		
+		$result['data']['type']   = $RecordType;
+		$result['data']['list']   = $record_list;		
+	    $result['data']['count']  = $record_count;		
+	    $result['data']['config'] = $search_config;		
+	    $result['data']['limit']  = array('start'=>$limit_start,'length'=>$limit_length,'range'=> '1-'.$limit_length);	
+       	$result['data']['nums']   = $limit_length;
+        $result['data']['page']   = $PageLimit;		
+	    
+	  } catch (Exception $e) {
+		$result['message'][] = $e->getMessage();
+      }
+	  
+	  return $result;
+	}
+	
+	
+	
 	
 	
 	
