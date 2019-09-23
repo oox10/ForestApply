@@ -36,8 +36,8 @@
 	}
 	
 	// AJAX: 取得區域內容
-	public function read($DataID){
-	  $this->Model->ADEvaluation_Get_Record($DataID);
+	public function read($DataID,$HistoryId=''){
+	  $this->Model->ADEvaluation_Get_Record($DataID,$HistoryId);
 	  self::data_output('json','',$this->Model->ModelResult);
 	}
 	
@@ -50,6 +50,12 @@
 	// AJAX: 更新評量記錄 
 	public function update($DataID,$TableID,$DataJson){
 	  $action = $this->Model->ADEvaluation_Update_Record($DataID,$TableID,$DataJson);
+	  self::data_output('json','',$this->Model->ModelResult); 
+	}
+	
+	// AJAX: 更新評量記錄 
+	public function delrecord($DataID){
+	  $action = $this->Model->ADEvaluation_Delete_Record($DataID);
 	  self::data_output('json','',$this->Model->ModelResult); 
 	}
 	

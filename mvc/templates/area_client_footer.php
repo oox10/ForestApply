@@ -30,11 +30,11 @@
 			  <td> <i class="fa fa-map-marker" aria-hidden="true"></i> 所轄保護/保留區</td>
 			</tr>
 			<tbody>
-			<?php foreach($area_contect as $gcode=>$ginfo): ?>    
-			<?php  if(count($ginfo['areas']) && isset($ginfo['contect']) && count($ginfo['contect']) ): ?>   
+			<?php foreach($area_contact as $gcode=>$ginfo): ?>    
+			<?php  if(count($ginfo['areas']) && isset($ginfo['contact']) && count($ginfo['contact']) ): ?>   
 				<tr>
-					<td><?php echo $ginfo['organ']; ?> - <?php echo $ginfo['contect'][0]['user_organ']; ?></td>
-					<td><?php echo $ginfo['contect'][0]['user_tel']; ?></td>
+					<td><?php echo $ginfo['organ']; ?> - <?php echo $ginfo['contact'][0]['user_organ']; ?></td>
+					<td><?php echo $ginfo['contact'][0]['user_tel']; ?></td>
 					<td >
 					   <?php echo join('、',$ginfo['areas']); ?>
 					</td>

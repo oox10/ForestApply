@@ -106,6 +106,18 @@
 	.data_value textarea:disabled{
 	  background-color:#e4e4e4;	
 	}	
+	
+    
+	div.data_col._need,
+	ul.optionset._need,
+	.data_value input._need,
+	.data_value textarea._need{
+		border:1px #e8383d solid; 
+	}
+	
+	tbody._need td.topic,tbody._need td.element{
+	  	border-color:#e8383d;
+	}
 
 	::-webkit-input-placeholder { /* Chrome/Opera/Safari */
 	  color: #c0c0c0;
@@ -252,7 +264,7 @@
       margin-right:5px;  
 	}
 	span.rarea{flex:1 1 200px; text-align:left;}
-	span.ractive{flex:0 0 50px; text-align:center;	}
+	span.ractive{flex:0 0 70px; text-align:center;	}
 	
 	
 	
@@ -281,7 +293,7 @@
 	ul.increase_form > li{margin-bottom:5px;}
 	li.pattern{display:none;}
 	
-	#block-emd14 table td{padding:3px 0;}
+	#block-emd11 table td{padding:3px 0;}
 	#block-emd12 ul > li{padding:3px 0;}
 	
 	/* [ 問卷第三區 ] */	 
@@ -310,7 +322,7 @@
 	table.tendency_block > thead > *{font-weight:bold;}
 	table.tendency_block td{vertical-align:middle; padding:8px 5px; border:1px #dedede solid;}
 	table.tendency_block td:nth-child(1){width:250px;}
-	table.tendency_block td:nth-child(2){width:110px; }
+	table.tendency_block td:nth-child(2){width:110px; background-color:#efefef;}
 	table.tendency_block td:nth-child(3){min-width:100px;}
 	 
 	.optionset{
@@ -329,8 +341,8 @@
 	table.evaluate_table > thead > *{font-weight:bold;}
 	table.evaluate_table td{vertical-align:top; border:1px #dedede solid;padding:8px 5px; line-height:1.3em;}
 	
-	table.evaluate_table td.element{width:50px;}
-	table.evaluate_table td.topic{min-width:200px;}
+	table.evaluate_table td.element{width:50px; opacity:0;}
+	table.evaluate_table td.topic{min-width:200px; }
 	table.evaluate_table td:selecter{width:300px;}
 	table.evaluate_table td.score{width:50px;text-align:center;}
 	table.evaluate_table td.checked{width:50px; text-align:center; cursor:pointer;}
@@ -338,6 +350,8 @@
 	table.evaluate_table td.descrip {font-size:0.8em;}
 	table.evaluate_table td.descrip > textarea{width:100%; min-height:7em;}
 	table.evaluate_table td.descrip > input{width:100%;}
+	
+	 
 	
 	table.evaluate_table tbody:nth-child(even){background-color:#fafdff;}
 	table.evaluate_table tbody:nth-child(odd){background-color:#f7f6f5;}

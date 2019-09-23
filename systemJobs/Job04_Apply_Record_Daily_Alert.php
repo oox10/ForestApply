@@ -69,7 +69,7 @@
 	  
 	  // 取得區域管理者
 	  $admin_mails = array();
-	  $DB_GET	= $db->DBLink->prepare( "SELECT user_name,user_mail FROM (SELECT uid,gid, COLUMN_GET(rset,'R01' as char) AS R01, COLUMN_GET(rset,'R02' as char) AS R02 FROM permission_matrix WHERE master=1) AS PM LEFT JOIN user_info ON PM.uid=user_info.uid WHERE gid=:gid AND (R01=1 OR R02=1);" );
+	  $DB_GET	= $db->DBLink->prepare( "SELECT user_name,user_mail FROM (SELECT uid,gid, COLUMN_GET(rset,'R01' as char) AS R01, COLUMN_GET(rset,'R02' as char) AS R02 FROM permission_matrix WHERE master=1) AS PM LEFT JOIN user_info ON PM.uid=user_info.uid WHERE gid=:gid AND (R01=1 OR R02=1) AND user_pri>0;" );
 	  if( !$DB_GET->execute(array('gid'=>$gcode)) ){
 	    throw new Exception('_DB_ERROR_GET_GROUP_CODE_SQL_FAIL');
       }
@@ -148,5 +148,8 @@
   $logs_message = date("Y-m-d H:i:s").' [TASK] '.date('Y-m-d').' DAILY ALERT FINISH.'.PHP_EOL;
   file_put_contents($logs_file,$logs_message,FILE_APPEND);
   echo $logs_message;
+  
+  //執行備份
+  pclose(popen("start /b "._SYSTEM_PHP_ROOT.ROOT."systemJobs/Task_DBBACKUP.php","r")); 
   
 ?>

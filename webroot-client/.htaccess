@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteBase /ForestApply/webroot-client/
+RewriteRule ApplyApi\/(.*?)$ index.php?act=ApplyApi/$1 [NC,L]

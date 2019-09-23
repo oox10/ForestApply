@@ -94,7 +94,57 @@
 	  	
 	});
 	
-	
+	//-- 重新寄發申請編號
+	$('#user_recover').click(function(){
+	  
+	  $('.form_raw.fail').removeClass('fail');
+	  var applied = {};
+	  
+	  if( !$('#applicant_id').val() || $('#applicant_id').val().length < 8 ){
+		$('#applicant_id').focus().parents('.form_raw').addClass('fail');
+			system_message_alert('','請輸入正確的申請人ID')  
+			return false;
+	  }
+	  
+	  if( !$('#applicant_mail').val() ){
+		$('#applicant_mail').focus().parents('.form_raw').addClass('fail');  
+		system_message_alert('','請輸入申請人的電子郵件/email')  
+	    return false;
+	  }
+	  
+	  if( !$('#date_enter').val() || !$('#date_enter').val().match(/^\d{4}\-\d{2}\-\d{2}$/) ){
+		$('#date_enter').focus().parents('.form_raw').addClass('fail');  
+		system_message_alert('','請輸入正確的進入日期')  
+	    return false;
+	  }
+	  
+	  applied.user = $('#applicant_id').val();
+	  applied.mail = $('#applicant_mail').val();
+	  applied.date = $('#date_enter').val();
+	  
+	  $.ajax({
+		  url: 'index.php',
+		  type:'POST',
+		  dataType:'json',
+		  data: {act:'Landing/resend/'+encodeURIComponent(Base64M.encode(JSON.stringify(applied)))},
+		  beforeSend: 	function(){ system_loading();  },
+		  error: 		function(xhr, ajaxOptions, thrownError) {  console.log( ajaxOptions+" / "+thrownError);},
+		  success: 		function(response) {
+			if(!response.action){  
+			  system_message_alert('',response.info);
+			  return false;
+			}
+			$('#recover_form').find('input').val('');
+			system_message_alert('alert',"已將申請序號寄到您的信箱");
+			
+			//$('#act_gohome').trigger('click')
+			
+		  },
+		  complete:		function(){   }
+	  }).done(function() { system_loading();   });
+	 
+	  	
+	});
 	
 	
 	// reform date stop info 

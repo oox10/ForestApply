@@ -33,6 +33,7 @@
 			  case 'Landing': break;
 			  case 'Error': break;
 			  case 'Jobs': break;
+			  case 'ApplyApi': break;
 			  
 			  // archive
 			  case 'Display':

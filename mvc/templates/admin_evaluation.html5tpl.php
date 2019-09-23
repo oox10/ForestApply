@@ -19,11 +19,11 @@
 	<!-- Self -->
 	<link rel="stylesheet" type="text/css" href="theme/css/css_default.css" />
 	<link rel="stylesheet" type="text/css" href="theme/css/css_main.css" />
-	<link rel="stylesheet" type="text/css" href="theme/css/css_evaluation_admin.css" />
+	<link rel="stylesheet" type="text/css" href="theme/css/css_evaluation_admin.css?<?php echo time();?>" />
 	
 	<script type="text/javascript" src="js_library.js"></script>
 	<script type="text/javascript" src="js_admin.js"></script>
-	<script type="text/javascript" src="js_evaluation_admin.js"></script>
+	<script type="text/javascript" src="js_evaluation_admin.js?<?php echo time();?>"></script>
 	
 	
 	<!-- PHP -->
@@ -35,7 +35,7 @@
 	$data_list  	= isset($this->vars['server']['data']['records']) 	? $this->vars['server']['data']['records'] : array();  
 	
 	//echo "<pre>";
-	//var_dump($user_info );
+	//var_dump($user_info );  
 	//exit(1);
 	 
 	?>
@@ -91,9 +91,9 @@
 		</div>
 		
 		<div class='topic_banner'>
-		  <h2>保護區經營管理效能評量：<span id='record_id' no='' >新增訪談資料</span></h2> 
+		  <h2>保護區經營管理效能評量：<span id='record_id' no='' >新增評量資料</span></h2> 
 		  <ul class='section_switch' >
- 		    <li class='session active'  dom='questionnaire_information' > 訪談基本資料 </li>
+ 		    <li class='session active'  dom='questionnaire_information' > 填答者基本資料 </li>
 			<li class='session ' 		dom='questionnaire_mettdata' 	> (一) 保護區資料表 </li>
 			<li class='session '		dom='questionnaire_tendency' 	> (二) 保護區的壓力表 </li>
 			<li class='session '		dom='questionnaire_evaluate' 	> (三) 經營管理評量表 </li>
@@ -113,8 +113,18 @@
 		    <div class='record_header'>
 			  <span class='record_name'>基本資料</span> 
 			  <span class='record_option'>
-			    <button type='button' class='active' id='act_create_record'><i class="fa fa-quora" aria-hidden="true"></i> 開始評量</button>
-			    <button type='button' class='cancel' id='act_test_record'> 讀取測試資料 </button>
+			    <label>參考評量：</label>
+				<select id='evaluate_history'>
+				  <option value=''>參考最新一筆資料</option>
+				  <optgroup label='歷年評量'>
+				  <?php foreach($data_list  as $meta): ?>  
+				    <?php if(!$meta['_active']) continue;?>
+				    <option value='<?php echo $meta['record_id'];?>' area='<?php echo $meta['record_area'];?>'> <?php echo $meta['record_year'];?> 年度 , <?php echo $meta['record_area'];?> </option>
+				  <?php endforeach; ?>
+				  </optgroup>
+				</select>
+				<button type='button' class='active' id='act_create_record' style='padding:5px 3px;'><i class="fa fa-quora" aria-hidden="true"></i> 開始評量</button>
+			    <!--<button type='button' class='cancel' id='act_test_record'> 讀取測試資料 </button>-->
 			  </span> 
 			  
 			</div>  
@@ -178,17 +188,26 @@
 				<h1 >填寫紀錄</h1>
                 <ol class='user_record_list'>  
                 <?php foreach($data_list  as $meta): ?>  
-				  <li>
+				  <li >
+				    <span class='ryear'> <a class='option act_evaluate_delete' no='<?php echo $meta['record_id'];?>'  ><i class="fa fa-trash" aria-hidden="true"></i></a>  </span>
 				    <span class='ryear'> <?php echo $meta['record_year'];?> 年度  </span>
 				    <span class='rarea'> <?php echo $meta['record_area'];?>  </span>
 				    <span class='ruser' title='於 <?php echo substr($meta['_time_create'],0,10);?>'> <?php echo $meta['_user_create'];?>  填寫  </span>
 					<span class='ractive'> 
 					<?php if(!$meta['_active']): ?>   
-					  <button type='button' class='active act_evaluate_continue' no='<?php echo $meta['record_id'];?>' >  繼續  </button>
+					  / <i title='<?php echo $meta['_time_create'];?>'>填寫中</i> /
 					<?php else: ?>
-					   <i title='<?php echo $meta['_time_finish'];?>'>完成</i>
+					  / <i title='<?php echo $meta['_time_finish'];?>'>已遞交</i> /
 					<?php endif; ?>
 					</span>
+					<span class='ractive' title='完成時間：<?php echo $meta['_time_finish'];?>' > 
+					  <?php if($user_info['signin']==$meta['_user_create']):?>
+					  <button type='button' class='active act_evaluate_continue' no='<?php echo $meta['record_id'];?>' >  <?php echo $meta['_active'] ? '修改' : '繼續'; ?>  </button>
+					  <?php else: ?>
+					  <i ><?php echo $meta['_active'] ? "完成" : "...." ?></i>
+					  <?php endif; ?>
+					</span>
+					 
 				  </li> 
 				<?php endforeach; ?>
 				</ol> 
@@ -200,10 +219,10 @@
 		  <!-- session 2 -->
 		  <div class='data_record_block' id='questionnaire_mettdata' data-table='evaluation_mettdata'>
 		    <div class='record_header'>
-			  <span class='record_name'>(一) 保護區資料表 </span> 
-			  <span class='record_option'>
-			    <button type='button' class='active' id='act_import_lastone'> 帶入上次資料 </button>
-			  </span> 
+			  <span class='record_name'>(一) 保護區資料表  </span> 
+			  <span class='record_name'> / 前次評量：<span class='history_record'></span> / <button type='button' class='active' id='act_import_lastone'>  帶入上次資料 </button></span> 
+			  
+			  <span class='record_option'></span> 
 			</div> 
 		    <div class='record_body' id=''>  
 			  
@@ -236,7 +255,7 @@
 				  <div class='data_value'>  
                     <ul class='mutiselecter'>
 					  <li><input type='checkbox' name='emd04' class='_variable _update ' value='國家公園法' 	bind='#emd04oth' effect='bundle'	/>國家公園法</li>
-					  <li><input type='checkbox' name='emd04' class='_variable _update ' value='濕地法' 		bind='#emd04oth' effect='bundle'	/>濕地法</li>
+					  <li><input type='checkbox' name='emd04' class='_variable _update ' value='濕地保育法' 		bind='#emd04oth' effect='bundle'	/>濕地保育法</li>
 					  <li><input type='checkbox' name='emd04' class='_variable _update ' value='海岸法' 		bind='#emd04oth' effect='bundle'	/>海岸法</li>
 					  <li><input type='checkbox' name='emd04' class='_variable _update ' value='水利法' 		bind='#emd04oth' effect='bundle'	/>水利法</li>
 					  <li><input type='checkbox' name='emd04' class='_variable _update ' value='水土保持法' 	bind='#emd04oth' effect='bundle'	/>水土保持法</li>
@@ -299,6 +318,8 @@
 							<input type='text'  class='_variable _update _element' partof='#emd0800' name="emd0800_area"		id=''  placeholder='數值' value='' size='10' />公頃，
 							占比=
 							<input type='text'  class='_variable _update _element' partof='#emd0800' name="emd0800_proportion"	id=''  placeholder=''	value=''  readonly size='5' />%  
+						    ，
+							<a class='option act_remove_element' ><i class="fa fa-trash" aria-hidden="true"></i></a>
 						  </li>
 						  <li class='listrecord default' id='emd0800owner' >
 						    <select class='_variable _update _element' partof='#emd0800' name="emd0800_type"  > 
@@ -340,86 +361,89 @@
 				    <i> - 請填寫實際經營管理機關名稱（含承辦單位）</i>
 				  </div>
 				  
-				</div>
-				
-				<div class='data_col _hashentry' id='block-emd10' > 
-				  <label > 10. 備註：</label>
 				  <div class='data_value'>   
-					<textarea type='text'  class='_variable _update _wide' name="emd10" id='emd10'  placeholder='請補充' value=''  ></textarea>
+					其他管理機關：
+					<input type='text'  class='_variable _update ' name="emd0903" id='emd0903'  placeholder='' value=''  />
+				    <i> - 請填寫其他管理機關(備註)</i>
 				  </div>
 				</div>
+				
+				 
 			    
-				<div class='data_col _hashentry' id='block-emd11' > 
+				<div class='data_col _hashentry' id='block-emd10' > 
 					<label >
-					  11. 人力資源：(可自行新增<a class='option act_add_value' title='新增'><i class='fa fa-plus'></i></a>)
+					  10. 人力資源：(可自行新增<a class='option act_add_value' title='新增'><i class='fa fa-plus'></i></a>)
 					</label>
 					<div class='data_value'>  
-						<ul class='increase_form _update' name='emd1100' id='emd1100'>
+						<ul class='increase_form _update' name='emd1000' id='emd1000'>
 						  <li class='listrecord pattern ' id=''>
-						    <select name='emd1100_type'  class='_variable _update _element' partof='#emd1100'> 
+						    <select name='emd1000_type'  class='_variable _update _element' partof='#emd1000'> 
 							  <option value='' disabled selected>人力類型</option>
 						      <option value='編制內'	>編制內</option>
 							  <option value='約聘僱'	>約聘僱</option>
 							  <option value='臨時'		>臨時</option>
 							  <option value='外包'		>外包</option>
 							</select>
-							/ <input type='text'  class='_variable _update _element' partof='#emd1100'		name="emd1100_number" id=''  placeholder='人次' value='' size='5' /> 人
-							/ 工作比重=<input type='text'  class='_variable _update _element' partof='#emd1100' name="emd1100_loading" id=''  placeholder='百分比' value=''  size='5' />%
+							/ <input type='text'  class='_variable _update _element' partof='#emd1000'		name="emd1000_number" id=''  placeholder='人次' value='' size='5' /> 人
+							/ 工作比重=<input type='text'  class='_variable _update _element' partof='#emd1000' name="emd1000_loading" id=''  placeholder='百分比' value=''  size='5' />%
+						  　，
+							<a class='option act_remove_element' ><i class="fa fa-trash" aria-hidden="true"></i></a>　
 						  </li>
-						  <li class='listrecord default ' id='emd1100default'>
-						    <select name='emd1100_type' class='_variable _update _element' partof='#emd1100' > 
+						  <li class='listrecord default ' id='emd1000default'>
+						    <select name='emd1000_type' class='_variable _update _element' partof='#emd1000' > 
 							  <option value='' disabled selected>人力類型</option>
 						      <option value='編制內'	>編制內</option>
 							  <option value='約聘僱'	>約聘僱</option>
 							  <option value='臨時'		>臨時</option>
 							  <option value='外包'		>外包</option>
 							</select>
-							/ <input type='text'  class='_variable _update _element' partof='#emd1100' name="emd1100_number" id=''  placeholder='人次' value='' size='5' /> 人
-							/ 工作比重=<input type='text'  class='_variable _update _element' partof='#emd1100' name="emd1100_loading" id=''  placeholder='百分比' value=''  size='5' />%
+							/ <input type='text'  class='_variable _update _element' partof='#emd1000' name="emd1000_number" id=''  placeholder='人次' value='' size='5' /> 人
+							/ 工作比重=<input type='text'  class='_variable _update _element' partof='#emd1000' name="emd1000_loading" id=''  placeholder='百分比' value=''  size='5' />%
 						  </li>
 						</ul>
 					</div>
 				</div>
 				
-				<div class='data_col _hashentry' id='block-emd12' > 
-					<label >12. 近五年年度預算：<i>專職員工薪資不列入</i></label>
-					<div class='data_value'>  
-						<ul>
-						  <li>
-						    年度：<input type='text'  class='_variable _update ' name="emd1201" id='emd1201'  placeholder='年度' value='' size='5' />
-						    金額：<input type='text'  class='_variable _update ' name="emd1202" id='emd1202'  placeholder='數值' value='' size='5' />(千元) 
-						  </li>
-						  <li>
-						    年度：<input type='text'  class='_variable  _history' name="H-emd1201" hisindex=0 placeholder='年度' value='' size='5' readonly />
-						    金額：<input type='text'  class='_variable  _history' name="H-Hemd1202" hisindex=0 placeholder='數值' value='' size='5' readonly />(千元) 
-						  </li>
-						  <li>
-						    年度：<input type='text'  class='_variable  _history' name="H-emd1201" hisindex=1 placeholder='年度' value='' size='5' readonly />
-						    金額：<input type='text'  class='_variable  _history' name="H-emd1202" hisindex=1 placeholder='數值' value='' size='5' readonly />(千元) 
-						  </li>
-						  <li>
-						    年度：<input type='text'  class='_variable  _history' name="H-emd1201" hisindex=2 placeholder='年度' value='' size='5' readonly />
-						    金額：<input type='text'  class='_variable  _history' name="H-emd1202" hisindex=2 placeholder='數值' value='' size='5' readonly />(千元) 
-						  </li>
-						  <li>
-						    年度：<input type='text'  class='_variable  _history' name="H-emd1201" hisindex=3 placeholder='年度' value='' size='5' readonly />
-						    金額：<input type='text'  class='_variable  _history' name="H-emd1202" hisindex=3 placeholder='數值' value='' size='5' readonly />(千元) 
-						  </li>
-						</ul>
-					</div>
+				
+				<div class='data_col _hashentry' id='block-emd11' > 
+				  <label >11. 設立保護區的主要價值：<i>請依照EOH選項填寫（填入選單，例如：生物多樣性…等）</i></label>
+				  
+				  <div class='data_value'>
+					<table>
+					  <tr><td><input type='checkbox' name='emd110101' value='1' class='_variable _update ' bind='#emd110102' effect='switch'	/>生物多樣性價值</td><td>說明:<input type='text'  class='_variable _update ' name="emd110102" id='emd110102'  placeholder='' value=''  disabled /></td></tr>
+                      <tr><td><input type='checkbox' name='emd110201' value='1'	class='_variable _update ' bind='#emd110202' effect='switch'	/>地景價值</td><td>說明:<input type='text'  class='_variable _update ' name="emd110202" id='emd110202'  placeholder='' value='' disabled  /></td></tr>
+                      <tr><td><input type='checkbox' name='emd110301' value='1'	class='_variable _update ' bind='#emd110302' effect='switch'	/>文化價值</td><td>說明:<input type='text'  class='_variable _update ' name="emd110302" id='emd110302'  placeholder='' value='' disabled  /></td></tr>					  
+					  <tr><td><input type='checkbox' name='emd110401' value='1'	class='_variable _update ' bind='#emd110402' effect='switch'	/>經濟價值</td><td>說明:<input type='text'  class='_variable _update ' name="emd110402" id='emd110402'  placeholder='' value='' disabled  /></td></tr>
+					  <tr><td><input type='checkbox' name='emd110501' value='1'	class='_variable _update ' bind='#emd110502' effect='switch'	/>教育價值</td><td>說明:<input type='text'  class='_variable _update ' name="emd110502" id='emd110502'  placeholder='' value='' disabled  /></td></tr>
+					  <tr><td><input type='checkbox' name='emd110601' value='1'	class='_variable _update ' bind='#emd110602' effect='switch'	/>其他社會價值</td><td>說明:<input type='text'  class='_variable _update ' name="emd110602" id='emd110602'  placeholder='' value='' disabled  /></td></tr>
+			          <tr><td><input type='text'  class='_variable _update ' name="emd110701" id='emd110701'  placeholder='其他' value='' bind='#emd110702' effect='together'  /></td><td>說明:<input type='text'  class='_variable _update ' name="emd110702" id='emd110702'  placeholder='' value='' disabled /></td></tr>
+					</table> 
+				  </div>
 				</div>
+
+
+                <div class='data_col _hashentry' id='block-emd12' > 
+				  <label >12. 保護區的保育目標</label>
+				  <div class='data_value'>   
+					<textarea type='text'  class='_variable _update _wide' name="emd12" id='emd12'  placeholder='請依照保育計畫書內容填寫' value=''  ></textarea>
+				  </div>
+				</div>	
 				
 				<div class='data_col _hashentry' id='block-emd13' > 
-					<label >13. 其他單位投入預算：(可自行新增<a class='option act_add_value' title='新增'><i class='fa fa-plus'></i></a>)</label>
+					<label >13. 本年度各單位投入經費：(可自行新增<a class='option act_add_value' title='新增'><i class='fa fa-plus'></i></a>)</label>
 					<div class='data_value'>  
 						<ul class='increase_form _update' name='emd1300' id='emd1300'>
 						  <li class='listrecord pattern' id=''>
 						    單位：<input type='text'  class='_variable _update _element' partof='#emd1300' name="emd1300_organ" 	id=''  placeholder='單位名稱'	value=''	size='20' />
 						    金額：<input type='text'  class='_variable _update _element' partof='#emd1300' name="emd1300_funding"	id=''  placeholder='數值'		value=''	size='5' />(千元) 
+						  　，
+							<a class='option act_remove_element' ><i class="fa fa-trash" aria-hidden="true"></i></a>　
 						  </li>
 						  <li class='listrecord default ' id='emd1300default' >
 						    單位：<input type='text'  class='_variable _update _element' partof='#emd1300' name="emd1300_organ"		id=''  placeholder='單位名稱'	value=''	size='20' />
 						    金額：<input type='text'  class='_variable _update _element' partof='#emd1300' name="emd1300_funding"	id=''  placeholder='數值'		value=''	size='5' />(千元) 
+						  　，
+							<a class='option act_remove_element' ><i class="fa fa-trash" aria-hidden="true"></i></a>　
 						  </li>
 						</ul>
 					</div>
@@ -427,39 +451,7 @@
 				
 				
 				<div class='data_col _hashentry' id='block-emd14' > 
-				  <label >14. 設立保護區的主要價值：<i>請依照EOH選項填寫（填入選單，例如：生物多樣性…等）</i></label>
-				  
-				  <div class='data_value'>
-					<table>
-					  <tr><td><input type='checkbox' name='emd140101' value='1' class='_variable _update ' bind='#emd140102' effect='switch'	/>生物多樣性價值</td><td>說明:<input type='text'  class='_variable _update ' name="emd140102" id='emd140102'  placeholder='' value=''  disabled /></td></tr>
-                      <tr><td><input type='checkbox' name='emd140201' value='1'	class='_variable _update ' bind='#emd140202' effect='switch'	/>地景價值</td><td>說明:<input type='text'  class='_variable _update ' name="emd140202" id='emd140202'  placeholder='' value='' disabled  /></td></tr>
-                      <tr><td><input type='checkbox' name='emd140301' value='1'	class='_variable _update ' bind='#emd140302' effect='switch'	/>文化價值</td><td>說明:<input type='text'  class='_variable _update ' name="emd140302" id='emd140302'  placeholder='' value='' disabled  /></td></tr>					  
-					  <tr><td><input type='checkbox' name='emd140401' value='1'	class='_variable _update ' bind='#emd140402' effect='switch'	/>經濟價值</td><td>說明:<input type='text'  class='_variable _update ' name="emd140402" id='emd140402'  placeholder='' value='' disabled  /></td></tr>
-					  <tr><td><input type='checkbox' name='emd140501' value='1'	class='_variable _update ' bind='#emd140502' effect='switch'	/>教育價值</td><td>說明:<input type='text'  class='_variable _update ' name="emd140502" id='emd140502'  placeholder='' value='' disabled  /></td></tr>
-					  <tr><td><input type='checkbox' name='emd140601' value='1'	class='_variable _update ' bind='#emd140602' effect='switch'	/>其他社會價值</td><td>說明:<input type='text'  class='_variable _update ' name="emd140602" id='emd140602'  placeholder='' value='' disabled  /></td></tr>
-			          <tr><td><input type='text'  class='_variable _update ' name="emd140701" id='emd140701'  placeholder='其他' value='' bind='#emd140702' effect='together'  /></td><td>說明:<input type='text'  class='_variable _update ' name="emd140702" id='emd140702'  placeholder='' value='' disabled /></td></tr>
-					</table> 
-				  </div>
-				</div>
-
-
-                <div class='data_col _hashentry' id='block-emd15' > 
-				  <label >15. 保護區的經營管理目標</label>
-				  <div class='data_value'>   
-					<textarea type='text'  class='_variable _update _wide' name="emd15" id='emd15'  placeholder='請依照保育計畫書內容填寫' value=''  ></textarea>
-				  </div>
-				</div>				
-				
-				<div class='data_col _hashentry' id='block-emd16' > 
-				  <label >16. 保育價值與目標參考文獻</label>
-				  <div class='data_value'>   
-					<textarea type='text'  class='_variable _update _wide' name="emd16" id='emd16'  placeholder='保育價值與目標參考文獻' value=''  ></textarea>
-				  </div>
-				</div>
-				
-				
-				<div class='data_col _hashentry' id='block-emd17' > 
-				  <label >(尚未完成)17. 請填寫本年度已執行結束與本保護區相關的計畫成果報告：</label>
+				  <label >(尚未完成)14. 請填寫本年度已執行結束與本保護區相關的計畫成果報告：</label>
 				  <div class='data_value'>   
 					<table class='record_list'>
 						<tr class='data_field'>
@@ -488,6 +480,50 @@
 				  </div>
 				</div>
 				
+				<div class='data_col _hashentry' id='block-emd15' > 
+					<label >15. 近五年年度總預算：<i>專職員工薪資不列入</i></label>
+					<div class='data_value'>  
+						<ul>
+						  <li>
+						    年度：<input type='text'  class='_variable _update ' name="emd1501" id='emd1501'  placeholder='年度' value='' size='5' />
+						    金額：<input type='text'  class='_variable _update ' name="emd1502" id='emd1502'  placeholder='數值' value='' size='5' />(千元) 
+						  </li>
+						  <li>
+						    年度：<input type='text'  class='_variable  _history' name="H-emd1501" hisindex=0 placeholder='年度' value='' size='5' readonly />
+						    金額：<input type='text'  class='_variable  _history' name="H-Hemd1502" hisindex=0 placeholder='數值' value='' size='5' readonly />(千元) 
+						  </li>
+						  <li>
+						    年度：<input type='text'  class='_variable  _history' name="H-emd1501" hisindex=1 placeholder='年度' value='' size='5' readonly />
+						    金額：<input type='text'  class='_variable  _history' name="H-emd1502" hisindex=1 placeholder='數值' value='' size='5' readonly />(千元) 
+						  </li>
+						  <li>
+						    年度：<input type='text'  class='_variable  _history' name="H-emd1501" hisindex=2 placeholder='年度' value='' size='5' readonly />
+						    金額：<input type='text'  class='_variable  _history' name="H-emd1502" hisindex=2 placeholder='數值' value='' size='5' readonly />(千元) 
+						  </li>
+						  <li>
+						    年度：<input type='text'  class='_variable  _history' name="H-emd1501" hisindex=3 placeholder='年度' value='' size='5' readonly />
+						    金額：<input type='text'  class='_variable  _history' name="H-emd1502" hisindex=3 placeholder='數值' value='' size='5' readonly />(千元) 
+						  </li>
+						</ul>
+					</div>
+				</div>
+				
+				
+				
+				
+							
+				<?php /*
+				<div class='data_col _hashentry' id='block-emd16' > 
+				  <label >16. 保育價值與目標參考文獻</label>
+				  <div class='data_value'>   
+					<textarea type='text'  class='_variable _update _wide' name="emd16" id='emd16'  placeholder='保育價值與目標參考文獻' value=''  ></textarea>
+				  </div>
+				</div>
+				*/
+				?>
+				
+				
+				
 			  </div>	
 				
 			  <ul class='guide_area'>
@@ -500,14 +536,14 @@
 				<li dom='block-emd07' >五年內產權是否有產生變動？</li>
 				<li dom='block-emd08' >產權所有者</li>
 				<li dom='block-emd09' >管理機關</li>
-				<li dom='block-emd10' >備註</li>
-				<li dom='block-emd11' >人力資源</li>
-				<li dom='block-emd12' >近五年年度預算</li>
+				<li dom='block-emd10' >人力資源</li>
+				<li dom='block-emd11' >設立保護區的主要價值</li>
+				<li dom='block-emd12' >保護區的保育目標</li>
 				<li dom='block-emd13' >其他單位投入預算</li>
-				<li dom='block-emd14' >設立保護區的主要價值</li>
-				<li dom='block-emd15' >保護區的經營管理目標</li>
-				<li dom='block-emd16' >保育價值與目標參考文獻</li>
-				<li dom='block-emd17' >本年度已執行結束與本保護區相關的計畫成果報告</li>
+				<li dom='block-emd14' >本年度已執行結束與本保護區相關的計畫成果報告</li>
+				<li dom='block-emd15' >近五年年度預算</li>
+				<!--<li dom='block-emd16' >保育價值與目標參考文獻</li>-->
+				
 			  </ul>	
 				
 			</div>   
@@ -517,7 +553,11 @@
 		  <!-- session 3 -->
 		  <div class='data_record_block' id='questionnaire_tendency' data-table='evaluation_mettpressure'>
 		    <div class='record_header'>
-			  (二) 保護區的壓力表
+			   <span class='record_name'>(二) 保護區的壓力表</span> 
+			   <span class='record_name'> / 前次評量：<span class='history_record'></span> </span> 
+			   <span class='record_option'>
+			     <button type='button' class='active act_check_input'> 檢查資料 </button>
+			   </span> 
 			</div> 
 		    <div class='record_body' id=''>  
 			  <div class='form_area'>  
@@ -938,7 +978,12 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 		  <!-- session 4 -->
 		  <div class='data_record_block' id='questionnaire_evaluate' data-table='evaluation_mettevaluate'>
 		    <div class='record_header'>
-			  (三) 經營管理評量表
+			    <span class='record_name'>(三) 經營管理評量表</span> 
+			    <span class='record_name'> / 前次評量：<span class='history_record'></span> </span> 
+			  
+				<span class='record_option'>
+			        <button type='button' class='active act_check_input'> 檢查資料 </button>
+			    </span>
 			</div> 
 		    <div class='record_body' id=''>  
 			  <div class='form_area'>
@@ -947,9 +992,9 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 				    <table class='evaluate_table'>
 				      <thead>
 					    <tr> 
-						  <td>元素</td>
+						  <td><!--元素--></td>
 						  <td>議題</td>
-						  <td>準則(單選)</td>
+						  <td>評量標準說明(單選)</td>
 						  <td>分數</td>
 						  <td>上次</td>
 						  <td>本次</td>
@@ -963,7 +1008,7 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td class='selecter' 	>該保護區未經公告</td>
 						  <td class='score'  	>0</td>
 						  <td class='checked' 	><input type='radio'	name='H-eme01Score' value='0' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked' 	><input type='radio'	name='eme01Score'   value='0' class='_variable _update' /></td>
+						  <td class='checked' 	><input type='radio'	name='eme01Score'   value='0' class='_variable _update ' /></td>
 						  <td class='descrip'   rowspan=4>
 						    <textarea	name='eme01Descrip' value=''  class='_variable _update' placeholder='請說明給分原因'></textarea>
 							<h2><span>上次評論：</span><a class='option act_copy_emedescrip'><i class="fa fa-clone" aria-hidden="true"></i>沿用</a></h2>
@@ -974,19 +1019,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>保護區籌備與規劃完成 (林務局內部已通過劃設案)，但還沒有開始劃設公告的程序</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme01Score' value='1' class='_variable _history' hisindex=0 disabled /></td>
-						  <td class='checked'	><input type='radio'	name='eme01Score' value='1' class='_variable _update'  /></td>
+						  <td class='checked'	><input type='radio'	name='eme01Score' value='1' class='_variable _update _descrip'  /></td>
 						</tr>
 						<tr> 
 						  <td>在公告劃設的程序中</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme01Score' value='2' class='_variable _history' hisindex=0 disabled /></td>
-						  <td class='checked'	><input type='radio'	name='eme01Score' value='2' class='_variable _update'  /></td>
+						  <td class='checked'	><input type='radio'	name='eme01Score' value='2' class='_variable _update _descrip'  /></td>
 						</tr>
 						<tr> 
 						  <td>該保護區已經正式公告</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme01Score' value='3' class='_variable _history' hisindex=0 disabled /></td>
-						  <td class='checked'	><input type='radio'	name='eme01Score' value='3' class='_variable _update'  /></td>
+						  <td class='checked'	><input type='radio'	name='eme01Score' value='3' class='_variable _update _descrip'  /></td>
 						</tr>
 					  </tbody>
 					  
@@ -1007,19 +1052,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>有指涉管控保護區內土地利用與人為活動的法規，但明顯不足</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme02Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme02Score' value='1' class='_variable _update' /></td>
+						  <td class='checked'	><input type='radio'	name='eme02Score' value='1' class='_variable _update _descrip' /></td>
 						</tr>
 						<tr> 
 						  <td>有管控保護區內土地利用與人為活動的法規，但稍嫌不足或有缺失</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme02Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme02Score' value='2' class='_variable _update' /></td>
+						  <td class='checked'	><input type='radio'	name='eme02Score' value='2' class='_variable _update _descrip' /></td>
 						</tr>
 						<tr> 
 						  <td>有管控保護區內不當土地利用與人為活動的法規，並能提供絕佳的經營管理基礎</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme02Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme02Score' value='3' class='_variable _update' /></td>
+						  <td class='checked'	><input type='radio'	name='eme02Score' value='3' class='_variable _update _descrip' /></td>
 						</tr>
 					  </tbody>
 					  
@@ -1041,19 +1086,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>員工執行保護區法規的能力/ 資源明顯 (嚴重) 不足 (如能力不足、沒有巡護經費、缺乏制度上的支持)<br/>(近五年每年都有非法案件，如盜伐、盜墾、盜獵、抗爭等情形發生)</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme03Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme03Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme03Score' value='1' class='_variable _update _descrip'/></td>
 						</tr>
 						<tr> 
 						  <td>員工有堪可接受的能力/ 資源執行保護區的法規，但仍嫌不足</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme03Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme03Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme03Score' value='2' class='_variable _update _descrip'/></td>
 						</tr>
 						<tr> 
 						  <td>員工有傑出的能力/ 資源執行保護區的法規</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme03Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme03Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme03Score' value='3' class='_variable _update _descrip'/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1075,19 +1120,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>保護區訂有確定的目標，但未依其進行經營管理</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme04Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme04Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme04Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>保護區訂有確定的目標，但僅依部份進行經營管理</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme04Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme04Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme04Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>保護區訂有確定的目標，並依其進行經營管理</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme04Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme04Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme04Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1109,19 +1154,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>保護區設計不適當，雖很難達到保護區的主要目標，但仍有一些緩和行動 (如與鄰近的土地所有權人協議設置野生生物廊道、或引進適當的流域管理)</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme05Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme05Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme05Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>保護區的設計對於目標達成影響不大，但仍有待改善的空間 (如就較大尺度的生態過程而言)</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme05Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme05Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme05Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>保護區的設計有助於達成目標；對於物種與棲地保育而言相當適當；也維持了生態過程，如維持流域尺度下的地表逕流與地下水流、自然擾動的型態等</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme05Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme05Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme05Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1143,19 +1188,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>經營管理機關清楚保護區的界線，但在地居民/ 鄰近土地使用者則不然</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme06Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme06Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme06Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>經營管理機關與在地居民/ 鄰近土地使用者清楚保護區界線，但其標定不夠明確</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme06Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme06Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme06Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>經營管理機關與在地居民/ 鄰近土地使用者清楚保護區的界線，且其標定明確</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme06Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme06Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme06Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1177,19 +1222,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>經營管理計畫正在發展中，或既有但未被執行</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme07Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme07Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme07Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>有經營管理計畫，但受經費限制或其他問題，僅部分被執行</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme07Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme07Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme07Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>有正在執行中的經營管理計畫</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme07Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme07Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme07Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 						
 						<tr> 
@@ -1198,7 +1243,7 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td class='selecter' 	>規劃過程讓關鍵的權益關係人有適當機會參與並影響經營管理計畫 (經營管理計畫有納入權益關係人的意見，如目標、重要工作項目或威脅壓力的議定)</td>
 						  <td class='score'  	>+1</td>
 						  <td class='checked' 	><input type='radio'	name='H-eme07aScore' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked' 	><input type='checkbox'	name='eme07aScore'   value='1' class='_variable _update' /></td>
+						  <td class='checked' 	><input type='checkbox'	name='eme07aScore'   value='1' class='_variable _update _descrip ' /></td>
 						  <td class='descrip'   ><input type='text'		name='eme07aDescrip' value=''  class='_variable _update' placeholder='請說明給分原因'/></td>
 						</tr>
 						
@@ -1208,7 +1253,7 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td class='selecter' 	>已建立定期回顧與更新經營管理計畫的時程與流程 (依政策規定，五年進行一次定期回顧與更新)</td>
 						  <td class='score'  	>+1</td>
 						  <td class='checked' 	><input type='radio'	name='H-eme07bScore' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked' 	><input type='checkbox'	name='eme07bScore'   value='1' class='_variable _update' /></td>
+						  <td class='checked' 	><input type='checkbox'	name='eme07bScore'   value='1' class='_variable _update _descrip ' /></td>
 						  <td class='descrip'   ><input type='text'		name='eme07bDescrip' value=''  class='_variable _update' placeholder='請說明給分原因'/></td>
 						</tr>
 						
@@ -1218,7 +1263,7 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td class='selecter' 	>定期將監測、研究及評量的結果納入規劃</td>
 						  <td class='score'  	>+1</td>
 						  <td class='checked' 	><input type='radio'	name='H-eme07cScore' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked' 	><input type='checkbox'	name='eme07cScore'   value='1' class='_variable _update' /></td>
+						  <td class='checked' 	><input type='checkbox'	name='eme07cScore'   value='1' class='_variable _update _descrip ' /></td>
 						  <td class='descrip'   ><input type='text'		name='eme07cDescrip' value=''  class='_variable _update' placeholder='請說明給分原因'/></td>
 						</tr>
 						
@@ -1242,19 +1287,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>有常態性的工作計畫，但僅執行少數項目 (1/2以下) </td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme08Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme08Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme08Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>有常態性的工作計畫，且執行許多項目 (1/2以上但未完全) </td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme08Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme08Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme08Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>有常態性的工作計畫，且執行所有項目</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme08Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme08Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme08Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1276,19 +1321,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>保護區關鍵的棲地、物種、生態過程及文化價值的資訊不足以支持規劃與決策 </td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme09Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme09Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme09Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>保護區關鍵的棲地、物種、生態過程及文化價值的資訊足以支持大多數重要區域的規劃與決策</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme09Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme09Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme09Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>保護區關鍵的棲地、物種、生態過程及文化價值的資訊足以支持所有區域的規劃與決策</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme09Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme09Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme09Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1310,19 +1355,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>保護系統僅能部份有效控管進出/ 資源使用 </td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme10Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme10Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme10Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>控管進出/ 資源使用的保護系統中度有效 (可達到約50%的效果)</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme10Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme10Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme10Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>控管進出/ 資源使用的措施大多或全部有效</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme10Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme10Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme10Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1344,19 +1389,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>有少量的調查與研究工作，但並不直接符合保護區經營管理的需求 (涵蓋項目少於1/3五年內預定執行之計畫項目，且不符合五年的保護區經營管理計畫時程與安排的需求)</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme11Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme11Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme11Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>有相當多的調查與研究工作，但並不直接符合保護區經營管理的需求 (涵蓋項目少於2/3，大於1/3五年內預定執行之計畫項目)</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme11Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme11Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme11Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>有全面、整合性的調查與研究工作計畫，並符合經營管理的需求 (涵蓋項目大於2/3五年內預定執行之計畫項目和五年內預定執行之計畫項目之關鍵項目)</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme11Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme11Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme11Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1378,19 +1423,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>針對關鍵棲地、物種、生態過程及文化價值的積極經營管理要求幾乎沒有執行</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme12Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme12Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme12Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>積極執行許多關鍵棲地、物種、生態過程及文化價值的經營管理，但一些重要議題未被強調</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme12Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme12Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme12Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>持續或充分積極地執行關鍵棲地、物種、生態過程及文化價值的經營管理</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme12Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme12Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme12Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1412,23 +1457,23 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>員工數量不足以執行關鍵的經營管理行動</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme13Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme13Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme13Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>員工數量少於進行關鍵經營管理行動的理想人數</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme13Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme13Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme13Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>員工數量能滿足保護區經營管理的需求</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme13Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme13Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme13Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
-					  <tbody  class='_hashentry' id='block-eme14a'>
+					  <tbody  class='_hashentry' id='block-eme14'>
 					    <tr> 
 						  <td class='element'   rowspan=4>投入/ 過程</td>
 						  <td class='topic' 	rowspan=4>14A. 員工訓練<br/><br/>員工是否受到適當的訓練以符合且應對經營管理目標？</td>
@@ -1446,19 +1491,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>員工的訓練和保護區的需求關聯較低</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme14aScore' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme14aScore' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme14aScore' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>員工的訓練適當，但仍可再改善以充分符合且應對經營管理目標</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme14aScore' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme14aScore' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme14aScore' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>員工的訓練能符合且應對該保護區的經營管理需求</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme14aScore' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme14aScore' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme14aScore' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1480,19 +1525,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>員工的技能和保護區的需求關聯較低</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme14bScore' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme14bScore' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme14bScore' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>員工的技能適當，但仍可再改善以充分符合且應對經營管理目標</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme14bScore' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme14bScore' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme14bScore' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>員工的技能能符合且應對該保護區的經營管理需求</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme14bScore' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme14bScore' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme14bScore' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1514,19 +1559,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>可用經費不足以符合且應對經營管理的基本需求 (關鍵經營管理動作)，且嚴重限制了經營管理能力</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme15Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme15Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme15Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>可用經費尚可接受，但仍有改善空間以充分符合且應對有效經營管理</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme15Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme15Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme15Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>可用經費充足且充分符合且應對保護區的經營管理需求</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme15Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme15Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme15Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1548,19 +1593,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>經費幾乎沒有保障，且在沒有外界資金的情況下，保護區不能適當地運作</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme16Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme16Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme16Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>有適當無虞的核心經費供保護區日常運作，但許多創新與方案仍仰賴外界資金</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme16Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme16Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme16Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>保護區與其經營管理需求具有充足無虞的經費</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme16Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme16Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme16Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1582,19 +1627,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>經費經營管理不足且限制了效能</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme17Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme17Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme17Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>經費經營管理適當但仍可改善</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme17Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme17Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme17Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>經費經營管理卓越且符合且應對經營管理需求</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme17Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme17Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme17Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1616,19 +1661,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>有一些經營管理所需的設備與設施，但不足以應付大部分的經營管理需求</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme18Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme18Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme18Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>有經營管理所需的設備與設施，但仍有稍微落差而限制經營管理</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme18Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme18Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme18Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>有適當的設備與設施</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme18Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme18Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme18Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1650,19 +1695,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>有一些設備與設施的臨時性維護 (以現有材料進行非永久性或固定性的修繕)</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme19Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme19Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme19Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>有設備與設施的基礎維護</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme19Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme19Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme19Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>設備與設施維護良好 (即時且完善)</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme19Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme19Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme19Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1684,19 +1729,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>具備有限與臨時的教育與推廣計畫</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme20Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme20Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme20Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>有教育與推廣計畫，但僅滿足部分需求，仍有待改善</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme20Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme20Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme20Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>有適當且全面實行的教育與推廣計畫</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme20Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme20Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme20Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1718,19 +1763,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>鄰近的土地與水資源利用規劃未考量保護區的長期需求，但其活動不會對保護區有害</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme21Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme21Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme21Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>鄰近的土地與水資源利用規劃局部考量保護區的長期需求</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme21Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme21Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme21Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>鄰近的土地與水資源利用規劃完整考量保護區的長期需求(例如：周邊土地使用有經營管理計畫)</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme21Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme21Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme21Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 						
 						<tr> 
@@ -1739,7 +1784,7 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td class='selecter' 	>涵括保護區的流域或地景規劃與經營管理，有考量提供永續相關棲地的適當環境條件 (如水流流量、水質與時段、空氣汙染程度等)</td>
 						  <td class='score'  	>+1</td>
 						  <td class='checked' 	><input type='radio'	name='H-eme21aScore' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked' 	><input type='checkbox'	name='eme21aScore'   value='1' class='_variable _update' /></td>
+						  <td class='checked' 	><input type='checkbox'	name='eme21aScore'   value='1' class='_variable _update _descrip ' /></td>
 						  <td class='descrip'   ><input type='text'		name='eme21aDescrip' value=''  class='_variable _update'  placeholder='請說明給分原因'/></td>
 						</tr>
 						<tr> 
@@ -1748,7 +1793,7 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td class='selecter' 	>連結保護區提供野生生物通往區外關鍵棲地的廊道經營管理 (如：讓遷徙性魚類能夠在淡水產卵地與海洋間移動，或讓動物能夠遷徙)</td>
 						  <td class='score'  	>+1</td>
 						  <td class='checked' 	><input type='radio'	name='H-eme21bScore' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked' 	><input type='checkbox'	name='eme21bScore'   value='1' class='_variable _update'  /></td>
+						  <td class='checked' 	><input type='checkbox'	name='eme21bScore'   value='1' class='_variable _update _descrip '  /></td>
 						  <td class='descrip'   ><input type='text'		name='eme21bDescrip' value=''  class='_variable _update'  placeholder='請說明給分原因'/></td>
 						</tr>
 						<tr> 
@@ -1757,7 +1802,7 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td class='selecter' 	>〝著重生態系特定需求與/ 或考量特定物種在生態系尺度上需求的規劃 (如：淡水的流量、品質及時機以維持特定物種，為維持莽原棲地進行火的管理等)〞</td>
 						  <td class='score'  	>+1</td>
 						  <td class='checked' 	><input type='radio'	name='H-eme21cScore' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked' 	><input type='checkbox'	name='eme21cScore'   value='1' class='_variable _update' /></td>
+						  <td class='checked' 	><input type='checkbox'	name='eme21cScore'   value='1' class='_variable _update _descrip ' /></td>
 						  <td class='descrip'   ><input type='text'		name='eme21cDescrip' value=''  class='_variable _update'  placeholder='請說明給分原因'/></td>
 						</tr>
 						
@@ -1781,19 +1826,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>管理者和鄰近的經營管理機關或土地與水資源使用團體間有聯繫，但幾乎沒有或沒有合作</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme22Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme22Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme22Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>管理者和鄰近的經營管理機關或土地與水資源使用團體間有聯繫，但僅有一些合作</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme22Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme22Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme22Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>管理者和鄰近的經營管理機關或土地與水資源使用團體間有規律定期的聯繫，且在經營管理上有實質合作</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme22Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme22Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme22Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1803,7 +1848,7 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td class='topic' 	rowspan=4>
 						    23.在地社區（非原住民）<br/><br/>居住或是鄰近於保護區的在地社區是否投入經營管理決策中？<br/><br/>
 							<div class='exclude_record'>
-							  不列入計分：<input type='checkbox'	name='eme23Option' value='1' class='_variable _update'  /><br/>
+							  不列入計分：<input type='checkbox'	name='eme23Option' value='1' class='_variable _update _descrip '  /><br/>
 						 	  請說明理由：<input type='text' 		name='eme23Reason' value=''  class='_variable _update' 	   />
 							</div>
 						  </td>
@@ -1821,19 +1866,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>在地社區有參與一些經營管理的討論，但沒有實質的角色扮演</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme23Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme23Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme23Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>在地社區直接影響一些經營管理決策，但其參與仍有待提升</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme23Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme23Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme23Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>在地社區直接參與所有經營管理決策 (如共管)</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme23Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme23Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme23Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1843,7 +1888,7 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td class='topic' 	rowspan=4>
 						    24. 原住民族在地社區（原住民）<br/><br/>原住民是否投入經營管理決策中？<br/><br/>
 							<div class='exclude_record'>
-							  不列入計分：<input type='checkbox'	name='eme24Option' value='1' class='_variable _update'  /><br/>
+							  不列入計分：<input type='checkbox'	name='eme24Option' value='1' class='_variable _update _descrip '  /><br/>
 						 	  請說明理由：<input type='text' 		name='eme24Reason' value=''  class='_variable _update' 	/>
 							</div>
 						  </td>
@@ -1861,19 +1906,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>原住民有參與一些經營管理的討論，但沒有實質的角色扮演</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme24Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme24Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme24Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>原住民直接影響一些經營管理決策，但其參與仍有待提升</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme24Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme24Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme24Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>原住民直接參與所有經營管理決策 (如共管)</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme24Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme24Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme24Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 						
 						
@@ -1883,7 +1928,7 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td class='selecter' 	>在地社區與/ 或原住民、權益關係人及保護區經營管理者間有開放的溝通與信任</td>
 						  <td class='score'  	>+1</td>
 						  <td class='checked' 	><input type='radio'	name='H-eme24aScore'	value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked' 	><input type='checkbox'	name='eme24aScore'		value='1' class='_variable _update' /></td>
+						  <td class='checked' 	><input type='checkbox'	name='eme24aScore'		value='1' class='_variable _update _descrip ' /></td>
 						  <td class='descrip'   ><input type='text'		name='eme24aDescrip'	value=''  class='_variable _update' placeholder='請說明給分原因'/></td>
 						</tr>
 						<tr> 
@@ -1892,7 +1937,7 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td class='selecter' 	>在保育保護區資源的同時，也會增進社區福祉 (除經濟誘因外) </td>
 						  <td class='score'  	>+1</td>
 						  <td class='checked' 	><input type='radio'	name='H-eme24bScore'	value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked' 	><input type='checkbox'	name='eme24bScore'		value='1' class='_variable _update' /></td>
+						  <td class='checked' 	><input type='checkbox'	name='eme24bScore'		value='1' class='_variable _update _descrip ' /></td>
 						  <td class='descrip'   ><input type='text'		name='eme24bDescrip'	value=''  class='_variable _update' placeholder='請說明給分原因'/></td>
 						</tr>
 						<tr> 
@@ -1901,7 +1946,7 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td class='selecter' 	>在地居民與/ 或原住民主動支持該保護區</td>
 						  <td class='score'  	>+1</td>
 						  <td class='checked' 	><input type='radio'	name='H-eme24cScore'	value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked' 	><input type='checkbox'	name='eme24cScore'		value='1' class='_variable _update' /></td>
+						  <td class='checked' 	><input type='checkbox'	name='eme24cScore'		value='1' class='_variable _update _descrip ' /></td>
 						  <td class='descrip'   ><input type='text'		name='eme24cDescrip'	value=''  class='_variable _update' placeholder='請說明給分原因'/></td>
 						</tr>
 						
@@ -1925,19 +1970,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>有潛在的經濟利益，且有發展計畫以實現之</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme25Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme25Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme25Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>有分配在地社區一些經濟利益</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme25Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme25Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme25Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>相關保護區的活動分配給在地社區大量的經濟利益</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme25Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme25Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme25Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1959,19 +2004,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>有一些臨時性的監測與評量，但沒有全面的策略與/ 或定期性彙整結果</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme26Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme26Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme26Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>有一議定並實施的監測與評量系統，但結果未(完全) 回饋納入經營管理</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme26Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme26Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme26Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>存在良好與貫徹執行的監測與評量系統，並使用於適應性經營管理</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme26Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme26Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme26Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -1993,19 +2038,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>對於既有的參訪程度，訪客設施與服務是不足的</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme27Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme27Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme27Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>對於既有的參訪程度，訪客設施與服務是足夠的，但仍有改善空間</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme27Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme27Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme27Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>訪客設施與服務能良善應對既有的參訪程度</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme27Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme27Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme27Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -2015,7 +2060,7 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td class='topic' 	rowspan=4>
 						    28. 商業旅遊業者<br/><br/>商業旅遊業者是否對保護區的經營管理做出貢獻？<br/><br/>
 							<div class='exclude_record'>
-							  不列入計分：<input type='checkbox'	name='eme28Option' value='1' class='_variable _update '  /><br/>
+							  不列入計分：<input type='checkbox'	name='eme28Option' value='1' class='_variable _update _descrip'  /><br/>
 						 	  請說明理由：<input type='text' 		name='eme28Reason' value=''  class='_variable _update '   />
 							</div>
 						  </td>
@@ -2033,19 +2078,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>管理者與利用保護區的旅遊業者間有聯繫，但大多止於行政或管制事宜</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme28Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme28Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme28Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>管理者與使用保護區的旅遊業者間存在有限的合作 (營運合作)，以提升訪客經驗並維持保護區價值</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme28Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme28Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme28Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>管理者與使用保護區的商業旅遊業者之間有良好的合作 (營運合作)，以提升訪客經驗並維持保護區價值</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme28Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme28Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme28Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -2067,19 +2112,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>有收取費用，但對保護區或其環境沒有貢獻</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme29Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme29Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme29Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>有收取費用，並且對保護區與其環境有一點貢獻</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme29Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme29Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme29Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>有收取費用，並且對保護區與其環境有顯著貢獻</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme29Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme29Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme29Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 					  </tbody>
 					  
@@ -2101,19 +2146,19 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td>一些生物多樣性、生態或文化價值正嚴重衰退中</td>
 						  <td class='score'		>1</td>
 						  <td class='checked'	><input type='radio'	name='H-eme30Score' value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme30Score' value='1' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme30Score' value='1' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>一些生物多樣性、生態與文化價值正局部衰退中，但最重要的價值仍未受到顯著衝擊</td>
 						  <td class='score'		>2</td>
 						  <td class='checked'	><input type='radio'	name='H-eme30Score' value='2' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme30Score' value='2' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme30Score' value='2' class='_variable _update _descrip '/></td>
 						</tr>
 						<tr> 
 						  <td>生物多樣性、生態與文化價值普遍未受損害</td>
 						  <td class='score'		>3</td>
 						  <td class='checked'	><input type='radio'	name='H-eme30Score' value='3' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked'	><input type='radio'	name='eme30Score' value='3' class='_variable _update'/></td>
+						  <td class='checked'	><input type='radio'	name='eme30Score' value='3' class='_variable _update _descrip '/></td>
 						</tr>
 						
 						
@@ -2123,7 +2168,7 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td class='selecter' 	>有根據研究與/ 或監測的評估價值狀況</td>
 						  <td class='score'  	>+1</td>
 						  <td class='checked' 	><input type='radio'	name='H-eme30aScore'	value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked' 	><input type='checkbox'	name='eme30aScore'		value='1' class='_variable _update' /></td>
+						  <td class='checked' 	><input type='checkbox'	name='eme30aScore'		value='1' class='_variable _update _descrip ' /></td>
 						  <td class='descrip'   ><input type='text'		name='eme30aDescrip'	value=''  class='_variable _update' placeholder='請說明給分原因'/></td>
 						</tr>
 						<tr> 
@@ -2132,7 +2177,7 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td class='selecter' 	>有因應生物多樣性、生態及文化價值所受的威脅的特定經營管理計畫</td>
 						  <td class='score'  	>+1</td>
 						  <td class='checked' 	><input type='radio'	name='H-eme30bScore' 	value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked' 	><input type='checkbox'	name='eme30bScore'		value='1' class='_variable _update' /></td>
+						  <td class='checked' 	><input type='checkbox'	name='eme30bScore'		value='1' class='_variable _update _descrip ' /></td>
 						  <td class='descrip'   ><input type='text'		name='eme30bDescrip'	value=''  class='_variable _update' placeholder='請說明給分原因'/></td>
 						</tr>
 						<tr> 
@@ -2141,7 +2186,7 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 						  <td class='selecter' 	>例行的保護區經營管理包括維持關鍵生物多樣性、生態及文化價值的行動</td>
 						  <td class='score'  	>+1</td>
 						  <td class='checked' 	><input type='radio'	name='H-eme30cScore'    value='1' class='_variable _history' hisindex=0 disabled  /></td>
-						  <td class='checked' 	><input type='checkbox'	name='eme30cScore'		value='1' class='_variable _update'/></td>
+						  <td class='checked' 	><input type='checkbox'	name='eme30cScore'		value='1' class='_variable _update _descrip '/></td>
 						  <td class='descrip'   ><input type='text'		name='eme30cDescrip'	value=''  class='_variable _update' placeholder='請說明給分原因'/></td>
 						</tr>
 						
@@ -2172,8 +2217,8 @@ function BuiltTable($EmpCode,$PreValue=[],$NowValue=[]){
 				<li dom='block-eme11'>研究</li>
 				<li dom='block-eme12'>資源經營管理</li>
 				<li dom='block-eme13'>員工數量</li>
-				<li dom='block-eme14a'>員工訓練</li>
-				<li dom='block-eme14b'>員工技能</li>
+				<li dom='block-eme14'>員工訓練</li>
+				  
 				<li dom='block-eme15'>現有經費</li>
 				<li dom='block-eme16'>經費保障</li>
 				<li dom='block-eme17'>經費經營管理</li>

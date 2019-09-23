@@ -298,6 +298,12 @@
 	// [input]  : active function 	: class::method ;
 	public function System_Logs_Used_Action($ControlerAction=''){	
 	  $acc_url = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'] : "comment line";	 
+	  
+	  if($acc_url=="comment line"){
+		return false;
+	    exit(1);
+	  }
+	  
 	  $acc_ip  = System_Helper::get_client_ip();
 	  $DB_OBJ = $this->DBLink->prepare( SQL_Admin::SYSTEM_LOGS_USED_ACTION() );
 	  $DB_OBJ->bindValue(':acc_ip' ,	$acc_ip ? $acc_ip : '');

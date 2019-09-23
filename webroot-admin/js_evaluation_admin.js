@@ -3,15 +3,11 @@
   
   $(window).load(function () {   //  || $(document).ready(function() {		
 	
-	//-- 測試評量
-	$('#act_test_record').click(function(){
-	  location.href='index.php?act=Evaluation/mett/METT00003';	
-	})
-	
+	 
 	
 	//-- 繼續填寫
 	$('.act_evaluate_continue').click(function(){
-      location.href='index.php?act=Evaluation/mett/'+$(this).attr('no');
+      location.href='index.php?act=Evaluation/mett/'+$(this).attr('no')+'/'+$('#evaluate_history').val();
 	})
 	
 	//-- 切換章節
@@ -48,6 +44,15 @@
 	  }
 	});
 	
+	//-- 手動擴充內容
+	$(document).on('click','.act_remove_element',function(){
+	  var main_dom = $(this).parents('.data_col');	
+	  var uldom    = main_dom.find('ul.increase_form'); 
+	  var record_dom = $(this).parents('li.listrecord');	
+	  record_dom.remove();
+	});
+	
+	
 	//-- 複製評論
 	$('.act_copy_emedescrip').click(function(){
 	  var main_dom = $(this).parents('h2');
@@ -57,13 +62,25 @@
 	})
 	
 	//-- 計算面積
-	
 	$(document).on('change','input[name="emd0800_area"]',function(){
 	  var area_total = parseInt($('#emd0501').val())+parseInt($('#emd0502').val())	
 	  var area_owner = parseInt($(this).val());
 	  var area_count = (area_owner/area_total*100).toFixed(2);
 	  $(this).next('input[name="emd0800_proportion"]').val(area_count);
-	})
+	});
+	
+	//-- 計算總預算
+	$(document).on('focus','input[name="emd1502"]',function(){
+	  var total_found = $(this).val();
+	  if(!parseInt(total_found)){
+		var total_count = $('input[name="emd1300_funding"]').map(function(){if($(this).val()){return parseInt($(this).val()); }}).get().reduce(function (a, b) {return a + b;}, 0);
+        $(this).val(total_count).addClass('_modify');
+	  }
+	});
+	
+	
+	
+	
 	
 	
 	//-- 點td即點input
@@ -106,6 +123,142 @@
 	});
 	
 	
+	
+	//-- 評量區域選擇
+	$('#record_area').change(function(){
+		
+		let target_area = $(this).val();
+		
+		if($(this).val()){
+			$('#evaluate_history').val('').find('option').each(function(){  if(target_area == $(this).attr('area')){ $(this).show(); }else{$(this).hide();} })	
+		}else{
+			$('#evaluate_history').val('').find('option').show();
+		}
+		
+	});
+	
+	
+	
+	//-- 刪除評量資料
+	$('.act_evaluate_delete').click(function(){
+	   
+	  var record_id  = $(this).attr('no');
+	  var record_dom = $(this).parents('li');
+	  
+	  if(!record_id){
+		system_message_alert("","資料尚未建立，請先完成訪談基本資料!!");  
+	    return false;
+	  }
+	  
+	  if(!confirm("確定要刪除本評量資料?!")){
+		return false;  
+	  } 
+	    
+	  // active ajax
+	  $.ajax({
+		url: 'index.php',
+		type:'POST',
+		dataType:'json',
+		data: {act:'Evaluation/delrecord/'+record_id},
+		beforeSend: function(){  system_loading();  }
+      }).done(function(response) {
+	    
+		if(!response.action){
+		  system_message_alert('',response.info);
+		  return true;
+		}
+		
+		record_dom.remove();
+		
+	  }).fail(function(xhr, ajaxOptions, thrownError) {
+        console.log( ajaxOptions+" / "+thrownError);
+	  }).always(function(r){
+        system_loading();
+      });
+		  	
+	});
+	
+	
+	
+	//-- 檢查評量資料
+	$('.act_check_input').click(function(){
+		 
+		if(!$('li.session.active').length) return true;
+		
+		let target_table = $('li.session.active').attr('dom');
+		
+		switch(target_table){
+			case 'questionnaire_mettdata':
+			    $('#questionnaire_tendency').find('._need').removeClass('_need');
+				
+				
+				
+				
+				
+				
+				break;
+			case 'questionnaire_tendency':
+			    $('#questionnaire_tendency').find('._need').removeClass('_need');
+				$('.tendency_block').each(function(){
+					if($(this).find('input._variable._update._furthercheck:checked').length){
+					    $(this).find('input._variable._update._furthercheck:checked').each(function(){
+					        if(parseInt($(this).val())){
+							    let table_dom = $(this).parents('.tendency_block');
+                                if(!table_dom.find('input[name$="descrip"]').val())  table_dom.find('input[name$="descrip"]').addClass('_need');
+								table_dom.find('.optionset').each(function(){
+									if(!$(this).find('input[type="radio"]:checked').length) $(this).addClass('_need');
+								})
+						    }
+						})
+				    }else{
+						$(this).parents('.data_col').addClass('_need');
+					}	
+				});
+				break;
+				
+			case 'questionnaire_evaluate':
+				
+				$('#questionnaire_evaluate').find('._need').removeClass('_need');
+				
+				$('#questionnaire_evaluate').find('tbody').each(function(){
+					if($(this).find('input._variable._update[type="radio"]').length && !$(this).find('input._variable._update[type="radio"]:checked').length){
+					    $(this).addClass('_need');
+					}
+				});
+				
+				$('#questionnaire_evaluate').find('input._descrip:checked').each(function(){
+					let descdom = '';
+					if($(this).parents('div.exclude_record').find('input[type="text"]').length){
+					  	descdom = $(this).parents('div.exclude_record').find('input[type="text"]');
+					}else if($(this).parents('tr').find('td.descrip').find('input[type="text"]').length){
+						descdom = $(this).parents('tr').find('td.descrip').find('input[type="text"]') ;
+					}else if($(this).parents('tbody').find('td.descrip').find('textarea').length){
+						descdom = $(this).parents('tbody').find('td.descrip').find('textarea');
+					}
+					
+					if(!descdom.val()){
+						descdom.addClass('_need')
+					}else{
+						descdom.removeClass('_need');
+					}
+				})
+			    break;
+		}
+		
+		if($('._need').length){
+			system_message_alert('',"仍有"+$('._need').length+"位置資料未填!!!!");
+		    return false;
+		}else{
+			system_message_alert('alert',"本區已填寫完畢");
+		}
+		
+	})
+	
+	
+	
+	
+	
+	
 	//-- 遞交評量
 	$('#act_submit_evaluation').click(function(){
 	   
@@ -116,6 +269,61 @@
 		system_message_alert("","資料尚未建立，請先完成訪談基本資料!!");  
 	    return false;
 	  }
+	  
+	  
+	    // 檢查表單
+		$('.system_content_area').find('._need').removeClass('_need');
+		
+	    
+		$('.tendency_block').each(function(){
+			if($(this).find('input._variable._update._furthercheck:checked').length){
+				$(this).find('input._variable._update._furthercheck:checked').each(function(){
+					if(parseInt($(this).val())){
+						let table_dom = $(this).parents('.tendency_block');
+						if(!table_dom.find('input[name$="descrip"]').val())  table_dom.find('input[name$="descrip"]').addClass('_need');
+						table_dom.find('.optionset').each(function(){
+							if(!$(this).find('input[type="radio"]:checked').length) $(this).addClass('_need');
+						})
+					}
+				})
+			}else{
+				$(this).parents('.data_col').addClass('_need');
+			}	
+		});
+		if($('._need').length){
+		    system_message_alert('',"(二) 保護區的壓力表仍有"+$('._need').length+"位置尚未填寫，請補填後再次遞交!");  
+	        return false;
+	    }
+	 	
+		
+		$('#questionnaire_evaluate').find('tbody').each(function(){
+			if($(this).find('input._variable._update[type="radio"]').length && !$(this).find('input._variable._update[type="radio"]:checked').length){
+				$(this).addClass('_need');
+			}
+		});
+		
+		$('#questionnaire_evaluate').find('input._descrip:checked').each(function(){
+			let descdom = '';
+			if($(this).parents('div.exclude_record').find('input[type="text"]').length){
+				descdom = $(this).parents('div.exclude_record').find('input[type="text"]');
+			}else if($(this).parents('tr').find('td.descrip').find('input[type="text"]').length){
+				descdom = $(this).parents('tr').find('td.descrip').find('input[type="text"]') ;
+			}else if($(this).parents('tbody').find('td.descrip').find('textarea').length){
+				descdom = $(this).parents('tbody').find('td.descrip').find('textarea');
+			}
+			
+			if(!descdom.val()){
+				descdom.addClass('_need')
+			}else{
+				descdom.removeClass('_need');
+			}
+		})
+	   
+	    if($('._need').length){
+		    system_message_alert('',"(三) 經營管理評量表仍有"+$('._need').length+"位置尚未填寫，請補填後再次遞交!");  
+	        return false;
+	    }
+	   
 	  
 	  if(!confirm("確定完成本次的評量?!")){
 		return false;  
@@ -154,7 +362,7 @@
 	//-- 讀取資料
 	$('#act_get_record').click(function(){
 	  var record_id 	= $('#record_id').attr('no');	
-	  load_record_to_page(record_id); 
+	  load_record_to_page(record_id,''); 
 	});
 	
 	//-- 建立評量
@@ -199,11 +407,15 @@
 		// 輸入資料
 		$('#record_id').attr('no',response.data.newa).html(response.data.newa);
 		
+		
 		// 開啟介面
 		$('li.session.active').next().trigger('click');
 		
 		// 修正網址
 		history.replaceState({}, "", 'index.php?act=Evaluation/mett/'+response.data.newa);
+		
+		//開始評量
+		load_record_to_page(response.data.newa,$('#evaluate_history').val());
 		
 		
 	  }).fail(function(xhr, ajaxOptions, thrownError) {
@@ -340,6 +552,9 @@
 		  field_dom.find('._modify').removeClass('_modify');	
 		}
 		
+		field_dom.removeClass('_need');
+		
+		
 	  }).fail(function(xhr, ajaxOptions, thrownError) {
         console.log( ajaxOptions+" / "+thrownError);
 	  }).always(function(r){
@@ -382,7 +597,7 @@
 		  return true;
 		}
 		
-		load_record_to_page(record_id);  
+		load_record_to_page(record_id,$('#evaluate_history').val());  
 		
 	  }).fail(function(xhr, ajaxOptions, thrownError) {
         console.log( ajaxOptions+" / "+thrownError);
@@ -390,22 +605,13 @@
         //system_loading();
       });
 		
-		
-		
-	  
-		
 	});
 	
 	
-	//帶資料之網址
-	if(document.location.href.match(/Evaluation\/mett\/(METT\d{5})/)){
-	  var record = document.location.href.match(/Evaluation\/mett\/(METT\d{5})$/)
-      load_record_to_page(record[1]);
-	  
-	}
+	
 	
 	//-- 讀取資料到頁面 
-    function load_record_to_page(record_id){  	       
+    function load_record_to_page(record_id,history_id){  	       
       if(!record_id){
 		system_message_alert("","資料尚未建立，請先完成訪談基本資料!!");  
 	    return false;
@@ -416,7 +622,7 @@
 		url: 'index.php',
 		type:'POST',
 		dataType:'json',
-		data: {act:'Evaluation/read/'+record_id},
+		data: {act:'Evaluation/read/'+record_id+'/'+history_id},
 		beforeSend: function(){  system_loading(); }
       }).done(function(response) {
 	    
@@ -559,21 +765,43 @@
             $.each(rmeta,function(mf,mv){
 			  
 			  var formset  = $('._variable._history[name="H-'+mf+'"][hisindex="'+hisindex+'"]');
-			  
 			  if(!formset.length) return true;
 			  var formtype = formset.prop('tagName')+(typeof formset.attr('type')!='undefined' ? formset.attr('type') : '');   
                
 			  switch(formtype){
 				case 'INPUTtext'	:  mv ? formset.val(mv) : formset.val('未填'); break;  
-				case 'INPUTradio'	:  formset.each(function(){ if($(this).val()==mv) $(this).prop('checked',true); }) 
+				case 'INPUTradio'	:  formset.each(function(){ if($(this).val()==mv) $(this).prop('checked',true); });  break;  
                 case 'DIV'			: 
-			    case 'SPAN'			:	mv ? formset.html(mv) : formset.html('未填'); break;  
+			    case 'SPAN'			:	
+				  if($('input[name="'+mf+'"][type="radio"]').length){
+					if(parseInt(mv) && $('input[name="'+mf+'"][type="radio"]').eq((parseInt(mv)-1)).length ){
+						formset.html( mv + '('+$('input[name="'+mf+'"][type="radio"]').eq((parseInt(mv)-1)).val()+')')
+					}else{
+					    if(mv){
+							formset.html(mv)
+						}else{
+							formset.html('未填')
+						} 	
+					}
+				  }else{
+					    if(mv){
+							formset.html(mv)
+						}else{
+							formset.html('未填')
+						} 	
+				  }
+				  break;  
 				case 'INPUTcheckbox': //還沒有
 				default:break; 
 			  }
 			  
 		    });
 		  });	
+		  
+		  $('.history_record').html(recordset['questionnaire_information']['record_id']+'-'+recordset['questionnaire_information']['record_year']+' 年度由 '+recordset['questionnaire_information']['user_name']+' 填寫')
+		  
+		  
+		  return true;
 		})
 		
 		
@@ -596,242 +824,13 @@
 	  
 	};
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	//-- datepicker initial
-	$("#date_open,#date_access").datepicker({
-	    dateFormat: 'yy-mm-dd',
-	    onClose: function(dateText, inst) { 
-	      if(/\d{4}-\d{2}-\d{2}$/.test(dateText)){
-		    $(this).val(dateText+' 00:00:01');
-		  }
-	    } 
-	});
-	
-	
-	
-	
-	
-	
-	//-- admin staff get user data
-	$(document).on('click','._data_read',function(){
+	 
+    //帶資料之網址
+	if(document.location.href.match(/Evaluation\/mett\/(METT\d{5})/)){
+	  var record = document.location.href.match(/Evaluation\/mett\/(METT\d{5})#?/)
+      load_record_to_page(record[1],'');
 	  
-      // initial	  
-	  $('._target').removeClass('_target');
-	  
-	  // get value
-	  var user_no    = $(this).attr('no');
-	  var dom_record = $(this);
-	  
-	  // active ajax
-	  if( ! user_no ){
-	    system_message_alert('',"資料錯誤");
-		return false;
-	  }
-	  
-	  initial_record_editer();
-	  
-	  if( user_no=='_addnew' ){
-	    dom_record.addClass('_target');
-		data_orl = {};
-		
-		$('#user_id').prop('readonly',false);
-		$('#main_group').html('同管理者');
-		$('#user_status').prop('disabled',true).val(2)
-		
-		$dom = dom_record.clone().removeClass('_data_read');
-	    $('#record_selecter').find('.record_control').hide();
-		$('#record_selecter').find('.record_list').children('.data_result').hide();
-		$('#record_selecter').find('.record_list').children('.data_target').empty().append( $dom).show();
-		$('#record_editor').find('a.view_switch').trigger('click');
-		active_header_footprint_option('record_selecter','新增帳戶','_return_list');
-	  
-	  }else{
-	    
-		$.ajax({
-          url: 'index.php',
-	      type:'POST',
-	      dataType:'json',
-	      data: {act:'Staff/read/'+user_no},
-		  beforeSend: 	function(){ system_loading();  },
-          error: 		function(xhr, ajaxOptions, thrownError) {  console.log( ajaxOptions+" / "+thrownError);},
-	      success: 		function(response) {
-		    if(response.action){  
-			  dom_record.addClass('_target');
-			  
-			  var dataObj =  response.data.user;
-			  data_orl = dataObj;
-			  
-			  // change _data_read area
-			  $dom = dom_record.clone().removeClass('_data_read');
-			  $('#record_selecter').find('.record_control').hide();
-			  $('#record_selecter').find('.record_list').children('.data_result').hide();
-			  $('#record_selecter').find('.record_list').children('.data_target').empty().append( $dom).show();
-			  $('#record_editor').find('a.view_switch').trigger('click');
-			  
-			  // insert data
-			  insert_staff_data_to_form(dataObj);
-			  
-			  // set foot print 
-			  active_header_footprint_option('record_selecter',dataObj.user_name,'_return_list');
-			  
-			  // hash the address
-			  location.hash = dataObj.user_id
-			  
-			  
-		    }else{
-			  system_message_alert('',response.info);
-		    }
-	      },
-		  complete:		function(){   }
-	    }).done(function() { system_loading();   });
-	  }
-	
-	});
-	
-	
-    //-- link to account logs
-	$('#act_staff_logs').click(function(){
-	  
-      // initial	  
-	  var staff_id    =  $('#user_id').val().length? $('#user_id').val() : '';
-	  
-      // check process data
-	  if( !staff_id.length ){
-	    system_message_alert('',"尚未選擇資料");
-	    return false;
-	  } 
-	  window.open('index.php?act=Record/account/'+staff_id,'_blank');
-	});
-    
-    
-	//-- save data modify
-	$('#act_staff_save').click(function(){
-	  
-      // initial	  
-	  var staff_no    =  $('._target').length? $('._target').attr('no') : '';
-	  var modify_data = {};
-	  var roles_data  = {};
-	  
-	  var act_object  = $(this);
-	  var checked = true;
-	  
-	  // option active checked  // 檢查按鈕是否在可執行狀態
-	  if( act_object.prop('disabled') ){
-	    return false;
-	  }
-	  
-	  // check process data
-	  if( !staff_no.length ){
-	    system_message_alert('',"尚未選擇資料");
-	    return false;
-	  } 
-	  
-	  // get value
-	  $('._update').each(function(){
-	    if($(this)[0].tagName=='INPUT' && $(this).attr('name')=='roles'){
-		  var field_name = $(this).attr('name');
-		  roles_data[$(this).val()] = $(this).prop('checked') ? 1 : 0;
-		}else{
-		  var field_name  = $(this).attr('id');
-	      var field_value = $(this).val();
-		  if( data_orl[field_name] !== field_value){
-		    modify_data[field_name]  =  field_value;
-	      }
-		  
-		  if( $(this).parent().prev().hasClass('_necessary') && field_value==''  ){  
-			$(this).focus();
-			system_message_alert('',"請填寫必要欄位 ( * 標示)");
-		    checked = false;
-		    return false;
-		  }
-		}
-	  });
-	  
-	  if(!checked){
-		return false;  
-	  }
-	  
-	  // encode data
-	  var passer_data  = encodeURIComponent(Base64.encode(JSON.stringify(modify_data)));
-	  var passer_roles = encodeURIComponent(Base64.encode(JSON.stringify(roles_data)));
-      // active ajax
-      $.ajax({
-        url: 'index.php',
-	    type:'POST',
-	    dataType:'json',
-	    data: {act:'Staff/save/'+staff_no+'/'+passer_data+'/'+passer_roles},
-		beforeSend: function(){  active_loading(act_object,'initial'); },
-        error: 		function(xhr, ajaxOptions, thrownError) {  console.log( ajaxOptions+" / "+thrownError);},
-	    success: 	function(response) {
-		  
-		  if(response.action){
-			
-			var dataObj = response.data.user;
-			data_orl = dataObj;
-			
-			// insert data
-			insert_staff_data_to_form(dataObj);
-			
-			// update data no 
-			if( staff_no == '_addnew'){  $('._target').attr('no',dataObj.uno) }
-		  
-		  }else{
-			system_message_alert('',response.info);
-	      }
-		  
-	    },
-		complete:	function(){  }
-      }).done(function(r) {  active_loading(act_object , r.action );  });
-	});
-	
-	
-	//--// 從server取得使用者資料並放入編輯區
-	function insert_staff_data_to_form(dataObj){
-	  var dom_record  = $('._target'); 
-	  
-	  $.each(dataObj,function(field,meta){
-		if(field=='roles' && meta){
-		  //  'R01':1 'R02':0 ...	
-		  $.each(meta,function(rid,checked){
-			$("input[name='roles'][value='"+rid+"']").prop('checked',checked);    
-		    $(".role_map[data-role='"+rid+"']").attr('on',checked);
-		  });
-		}else if(field=='groups'){
-			$("span[name='groups']").html('');	  
-			$.each(meta,function(i,g){
-			  if(parseInt(g.master)){
-				$("span#main_group").html("<i title='"+g.ug_info+"'>"+g.ug_name+"</i>");  
-			  }else{
-				$("span#rela_group").append("<i title='"+g.ug_info+"'>"+g.ug_name+"；</i>");	  
-			  }
-			});  
-		}else{
-			if(  $("._variable[id='"+field+"']").length ){  
-			  $("._variable[id='"+field+"']").val(meta);  
-			}
-		}
-		
-		// update target record 
-		var record_field = dom_record.children("td[field='"+field+"']");
-		if( record_field.length && record_field.html() != meta  ){
-		  record_field.html(meta);
-	    }
-	  });
-	  
-	  $('._modify').removeClass('_modify');
 	}
- 
-    
 	 
 	
 	

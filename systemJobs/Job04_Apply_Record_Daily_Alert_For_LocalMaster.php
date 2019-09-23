@@ -41,7 +41,7 @@
 	
 	//取得本日需通知審核之申請單(前一天申請單)
 	$booking = array();
-	$DB_GET	= $db->DBLink->prepare( "SELECT area_booking.*,area_code,area_name,owner FROM area_booking LEFT JOIN area_main ON am_id=ano WHERE (apply_date BETWEEN '".date('Y-m-d',strtotime('-1 day'))."' AND '".date('Y-m-d')."') AND _status IN('收件待審','正取送審') AND area_booking._keep=1 ORDER BY am_id ASC,date_enter ASC;" );
+	$DB_GET	= $db->DBLink->prepare( "SELECT area_booking.*,area_code,area_name,owner FROM area_booking LEFT JOIN area_main ON am_id=ano WHERE (date_enter BETWEEN '".date('Y-m-d',strtotime('+15 day'))."' AND '".date('Y-m-d',strtotime('+20 day'))."') AND _status IN('正取送審','備取送審') AND area_booking._keep=1 ORDER BY am_id ASC,date_enter ASC;" );
 	if( !$DB_GET->execute() ){
 	  throw new Exception('_DB_ERROR_GET_APPLIED_SQL_FAIL');
     }
@@ -75,7 +75,7 @@
 		
 		// 取得區域審查人  user_info = area_code
 		$admin_mails = array();
-		$DB_GET	= $db->DBLink->prepare( "SELECT user_name,user_mail FROM (SELECT uid,gid, COLUMN_GET(rset,'R05' as char) AS R05 FROM permission_matrix WHERE master=1) AS PM LEFT JOIN user_info ON PM.uid=user_info.uid WHERE gid=:gid AND (R05=1) AND user_info=:aid ;" );
+		$DB_GET	= $db->DBLink->prepare( "SELECT user_name,user_mail FROM (SELECT uid,gid, COLUMN_GET(rset,'R05' as char) AS R05 FROM permission_matrix WHERE master=1) AS PM LEFT JOIN user_info ON PM.uid=user_info.uid WHERE gid=:gid AND (R05=1) AND user_info=:aid AND user_pri>0;" );
 		if( !$DB_GET->execute(array('gid'=>$gcode,'aid'=>$area_code)) ){
 		  throw new Exception('_DB_ERROR_GET_GROUP_CODE_SQL_FAIL');
 		}

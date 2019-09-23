@@ -114,6 +114,12 @@
 	  return $SQL_String;
 	}
 	
+	//-- Admin Evaluat : 刪除評量資料
+	public static function EVALUATION_DELETE(){
+	  $SQL_String = "UPDATE evaluation_main SET _keep=0 WHERE record_id=:record_id;";
+	  return $SQL_String;
+	} 
+	
 	
 	//-- Admin Evaluat : 完成評量資料
 	public static function EVALUATION_FINISH(){

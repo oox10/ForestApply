@@ -61,6 +61,11 @@
 	  return $SQL_String;
 	}
 	
+	//-- Client check :  search application by user_id and mail  and enter_date
+	public static function SEARCH_USER_BOOKING(){
+	  $SQL_String = "SELECT abno,apply_code FROM area_booking WHERE applicant_id=:applicant_id AND applicant_mail=:applicant_mail AND date_enter =:date_enter AND _stage > 0  AND _keep=1;";
+	  return $SQL_String;
+	}
 	
 	//-- Client Area :  get open area list 
 	public static function INDEX_GET_AREA_LIST(){
@@ -121,7 +126,7 @@
 	public static function INITIAL_APPLY_ACCOUNT(){
 	  $SQL_String = "INSERT INTO area_booking VALUES(NULL,:am_id,:apply_code,:apply_date,:applicant_name,:applicant_mail,:applicant_id,:applicant_info,".
 	                                                 "'','0000-00-00','0000-00-00','[]',:member_list,1,'',".
-	                                                 "0,'0000-00-00',0,0,0,'{\"client\":[[],[],[],[],[],[]],\"review\":[[],[],[],[],[],[]],\"admin\":[[],[],[],[],[],[]]}','申請進入','','".date('Y-m-d H:i:s')."',NULL,'','',1) ".
+	                                                 "0,'0000-00-00',0,0,0,'{\"client\":[[],[],[],[],[],[]],\"review\":[[],[],[],[],[],[]],\"admin\":[[],[],[],[],[],[]]}','申請進入','','".date('Y-m-d H:i:s')."',NULL,:source,'',1) ".
 													 "ON DUPLICATE KEY UPDATE applicant_name=:applicant_name,applicant_mail=:applicant_mail,applicant_id=:applicant_id,applicant_info=:applicant_info".";";
 	  return $SQL_String;
 	}

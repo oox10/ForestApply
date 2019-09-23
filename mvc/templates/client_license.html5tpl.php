@@ -37,7 +37,7 @@
 	
 	$apply_progress_info = array('遞交申請','初始階段','抽籤階段','審查階段','等待階段','最終階段','結案階段');
 	
-	$area_contect = isset($this->vars['server']['data']['area']['contect']) ? $this->vars['server']['data']['area']['contect'] : array(); 
+	$area_contact = isset($this->vars['server']['data']['area']['contact']) ? $this->vars['server']['data']['area']['contact'] : array(); 
 	
 	
 	?>
@@ -148,9 +148,9 @@
 		  </ul>
 		  <h1> 相關連結與下載 </h1>
 		  <ul>  
-		    <li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAllIf.aspx?PCode=M0040036' target='_blank'>自然保留區法規</a></li>
-		    <li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAllIf.aspx?PCode=M0040032' target='_blank'>自然保護區法規</a></li>
-			<li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAllIf.aspx?PCode=M0120001' target='_blank'>野生動物保護區法規</a></li>
+		    <li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAll.aspx?PCode=M0040036' target='_blank'>自然保留區法規</a></li>
+		    <li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAll.aspx?PCode=M0040032' target='_blank'>自然保護區法規</a></li>
+			<li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAll.aspx?PCode=M0120001' target='_blank'>野生動物保護區法規</a></li>
 		  </ul>
 		</aside>
 		

@@ -41,7 +41,7 @@
 	
 	//[ STEP 02 ]: 建立抽籤盒子
 	
-	$lotto_date = date('Y-m-d');  // 抽籤當日
+	$lotto_date = date('Y-m-d',strtotime('2018-11-21'));  // 抽籤當日
 	
 	// 查詢抽籤列表(尚未抽籤)
 	$DB_OBJ = $db->DBLink->prepare( SQL_AdLotto::GET_LOTTO_QUEUE());

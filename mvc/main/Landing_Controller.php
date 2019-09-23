@@ -62,8 +62,16 @@ class Landing_Controller extends Admin_Controller{
 	  }
 	  
 	  self::data_output('session','APPLYTOKEN',$this->Model->ModelResult);
-	  self::redirectTo('index.php?act=Landing/license/'.$result['code']);
-	  
+	  self::redirectTo('index.php?act=Landing/license/'.$result['code']); 
+	}
+	
+	// AJAX : 重新寄發申請信件
+	public function resend($UserSubmit){
+	  $result = $this->Model->Landing_Applied_Mail_Resent($UserSubmit);  
+	  if($result['action']){
+		$this->Model->Landing_Regist_Mail($result['data']);  
+	  }
+	  self::data_output('json','',$this->Model->ModelResult);
 	}
 	
 	// PAGE: client link to license page
@@ -169,6 +177,7 @@ class Landing_Controller extends Admin_Controller{
 	  }
 	  self::data_output('json','',$this->Model->ModelResult);
 	}
+ 
 	
 	//== PAGE : apply status width license
 	public function license($ApplyNo,$ShowType='preview'){
@@ -183,6 +192,7 @@ class Landing_Controller extends Admin_Controller{
 	  $this->Model->Apply_Feform_Application_Page($ApplyNo,$ShowType); 
 	  self::data_output('html','client_license',$this->Model->ModelResult);  
 	} 
+	
 	
 	
 	// AJAX : 讀取申請資料
@@ -223,16 +233,12 @@ class Landing_Controller extends Admin_Controller{
 	}
 	
 	
-	
-	
 	/***--- POST ACTION SET ---***/
 	// PAGE: get client announcement
 	public function getann($DataNo){   
 	  $this->Model->Get_Client_Post_Target($DataNo);
 	  self::data_output('json','',$this->Model->ModelResult);
 	}
-	
-	
 	
 	
 	

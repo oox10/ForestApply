@@ -36,7 +36,7 @@
 	
 	$area_list = isset($this->vars['server']['data']['area']['list']) ? $this->vars['server']['data']['area']['list'] : array(); 
 	$area_type = isset($this->vars['server']['data']['area']['type']) ? $this->vars['server']['data']['area']['type'] : array(); 
-	$area_contect = isset($this->vars['server']['data']['area']['contect']) ? $this->vars['server']['data']['area']['contect'] : array();
+	$area_contact = isset($this->vars['server']['data']['area']['contact']) ? $this->vars['server']['data']['area']['contact'] : array();
 	
 	$apply_area = isset($this->vars['server']['data']['info']['area']) ? $this->vars['server']['data']['info']['area'] : array(); 
 	$start_date = isset($this->vars['server']['data']['info']['start']) ? $this->vars['server']['data']['info']['start'] : date('Y-m-d');  // 最近的申請日期
@@ -182,9 +182,9 @@
 		  </ul>
 		  <h1> 相關連結與下載 </h1>
 		  <ul>  
-		    <li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAllIf.aspx?PCode=M0040036' target='_blank'>自然保留區法規</a></li>
-		    <li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAllIf.aspx?PCode=M0040032' target='_blank'>自然保護區法規</a></li>
-			<li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAllIf.aspx?PCode=M0120001' target='_blank'>野生動物保護區法規</a></li>
+		    <li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAll.aspx?PCode=M0040036' target='_blank'>自然保留區法規</a></li>
+		    <li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAll.aspx?PCode=M0040032' target='_blank'>自然保護區法規</a></li>
+			<li>&#187;<a href='http://law.moj.gov.tw/LawClass/LawAll.aspx?PCode=M0120001' target='_blank'>野生動物保護區法規</a></li>
 		  </ul>
 		</aside>
 		
@@ -392,9 +392,9 @@
 					         class='apply_data apply_reason' 
 							 name='apply_reason' 
 							 value='<?php echo $input['name']; ?>' 
-							 attach='<?php echo strstr($input['conf'],'attach') ? (isset($input['test']['attach']) ? intval($input['test']['attach']):1) : 0; ?>'    
+							 attach='<?php echo strstr($input['conf'],'attach') ? (isset($input['test']['attach'])&&intval($input['test']['attach']) ? intval($input['test']['attach']):1) : 0; ?>'    
 					         crossday='<?php echo strstr($input['conf'],'crossday') ? 1:0; ?>' 
-                             limit='<?php echo strstr($input['conf'],'limit') ? (isset($input['test']['limit']) ? intval($input['test']['limit']):3) : 0; ?>'
+                             limit='<?php echo strstr($input['conf'],'limit') ? (isset($input['test']['limit'])&&intval($input['test']['limit']) ? intval($input['test']['limit']):3) : 0; ?>'
 					  />  
 					  <span><?php echo $input['name']; ?></span>
 					  <?php if(isset($input['note']) && $input['note']): ?>

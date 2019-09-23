@@ -22,8 +22,8 @@
 	<script type="text/javascript" src="tool/jquery-date-range-picker/moment.min.js"></script>
 	
 	<script type="text/javascript" src="js_library.js"></script>
-	<script type="text/javascript" src="js_client.js"></script>
-	<script type="text/javascript" src="js_landing.js"></script>
+	<script type="text/javascript" src="js_client.js?<?php echo time();?>"></script>
+	<script type="text/javascript" src="js_landing.js?<?php echo time();?>"></script>
 	
 	<!-- PHP DATA -->
 	
@@ -33,7 +33,7 @@
 	$post_list = isset($this->vars['server']['data']['post']) ? $this->vars['server']['data']['post'] : ''; 
 	$area_list = isset($this->vars['server']['data']['area']['list']) ? $this->vars['server']['data']['area']['list'] : array(); 
 	$area_type = isset($this->vars['server']['data']['area']['type']) ? $this->vars['server']['data']['area']['type'] : array(); 
-	$area_contect = isset($this->vars['server']['data']['area']['contect']) ? $this->vars['server']['data']['area']['contect'] : array(); 
+	$area_contact = isset($this->vars['server']['data']['area']['contact']) ? $this->vars['server']['data']['area']['contact'] : array(); 
 	
 	$area_group_flag = '';
 	
@@ -81,7 +81,7 @@
 		    <img  id='system_mark' src='theme/image/mark_forest_area.png' style='height:100px;'/>
 		    <span>
 			  <?php if($this->vars['server']['data']['area']['alone']): ?> 
-			  <?php echo $area_contect[$this->vars['server']['data']['area']['alone']]['organ']?><br/>保護區域進入申請
+			  <?php echo $area_contact[$this->vars['server']['data']['area']['alone']]['organ']?><br/>保護區域進入申請
 			  <?php else: ?>
 			  自然保護區域進入<br/>
 			  申請系統
@@ -152,23 +152,23 @@
 			</div>
 			<div id='recover_form' >
 			  <h1>重新寄發申請編號</h1>		
-              <div class='form_raw' data-field='booking_code' >
+              <div class='form_raw' data-field='applicant_id' >
 			    <label>申請人身分證號 / 護照號碼</label>
-				<input type='text'  placeholder="英數字母"   />
+				<input type='text' id='applicant_id' placeholder="英數字母"   />
 			  </div>	
-			  <div class='form_raw' data-field='booking_check'>
+			  <div class='form_raw' data-field='applicant_mail'>
 			    <label>申請人信箱</label>
-				<input type='email' placeholder="電子郵件信箱" />
+				<input type='email' id='applicant_mail' placeholder="電子郵件信箱" />
 			  </div>
-			  <div class='form_raw' data-field='booking_check'>
+			  <div class='form_raw' data-field='date_enter'>
 			    <label>申請進入日期</label>
-				<input type='text' placeholder="西元年月日共10碼" />
+				<input type='text' id='date_enter'  placeholder="西元年-月-日共10碼，範例：2019-01-01" />
 			  </div>
 			  <div class='form_func'>
 			    <a class='option return' id='act_gohome' > 回到首頁 </a>
 				<span>
 				  <button class='cancel' from='forgot' >取消</button>
-				  <button class='submit blue'>查詢</button>
+				  <button class='submit blue' id='user_recover' >查詢</button>
 				</span>
 			  </div>
 			</div>

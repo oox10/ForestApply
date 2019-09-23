@@ -230,7 +230,7 @@
 		  }
 		  
 		  .area_refer_container > li{
-			height:200px;
+			min-height:200px;
 			max-width:25%; 
             display:block;
 			position:relative;

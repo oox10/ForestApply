@@ -105,7 +105,7 @@
 		  $DB_USER->execute();
 		  $contect[$tmp['ug_code']]['organ'] = $tmp['ug_name'];
 		  $contect[$tmp['ug_code']]['areas'] = array();
-		  $contect[$tmp['ug_code']]['contect'] = $DB_USER->fetchAll(PDO::FETCH_ASSOC);
+		  $contect[$tmp['ug_code']]['contact'] = $DB_USER->fetchAll(PDO::FETCH_ASSOC);
 		}
 		
 		// 查詢資料庫
@@ -132,7 +132,7 @@
 		$result['data']['alone']   = $GroupCode ? $GroupCode : false;
 		$result['data']['type']    = array_unique($area_type);
 		$result['data']['list']    = $area_list ;
-		$result['data']['contect'] = $contect;
+		$result['data']['contact'] = $contect;
 		
 		$result['action'] = true;		
 	
@@ -141,6 +141,225 @@
       } 
 	  return $result;   
 	}
+	
+	
+	
+	//-- Get Client Area Apply Information
+	// [input] : AreaCode 
+	public function Access_Get_Select_Area_Meta($AreaCode){
+	  $result_key = parent::Initial_Result('meta');
+	  $result  = &$this->ModelResult[$result_key];
+	  
+	  try{    
+	    
+		
+		// 確認區域代號
+		if(!preg_match('/^[\w\d]{8}$/',$AreaCode)){
+		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');  	
+		}
+		
+		// 查詢基本資料
+		$area = false;
+		$DB_OBJ = $this->DBLink->prepare(SQL_Client::GET_TARGET_AREA_DATA());
+		if(!$DB_OBJ->execute(array('area_code'=>$AreaCode))  || !$area = $DB_OBJ->fetch(PDO::FETCH_ASSOC)){
+		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
+		}
+		
+		// 查詢子區域
+		$area['sub_block'] = array();	
+		$DB_OBJ = $this->DBLink->prepare(SQL_Client::GET_TARGET_AREA_BLOCK());
+		if(!$DB_OBJ->execute(array('amid'=>$area['ano']))){
+		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
+		}
+		while($block = $DB_OBJ->fetch(PDO::FETCH_ASSOC)){
+		  $area['sub_block'][$block['ab_id']] = [
+		    'name' => $block['block_name'],
+		    'desc' => $block['block_descrip'],
+            'gate' => array_filter(explode(';',$block['block_gates'])),
+		    'load' => $block['area_load']
+		  ];
+		}
+		
+		// 查詢停用時間
+		$DB_OBJ = $this->DBLink->prepare(SQL_Client::GET_TARGET_AREA_STOP());
+		if(!$DB_OBJ->execute(array('date_now'=>date('Y-m-d'),'amid'=>$area['ano']))){
+		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
+		}
+		$stops = $DB_OBJ->fetchAll(PDO::FETCH_ASSOC);
+		
+		// 查詢可申請範圍內已申請人數
+		$applied = array();
+		$DB_OBJ = $this->DBLink->prepare(SQL_Client::GET_TARGET_AREA_APPLIED());
+		$DB_OBJ->bindValue(':apply_d_start',date('Y-m-d',strtotime('+'.$area['accept_min_day'].' day')));
+		$DB_OBJ->bindValue(':apply_d_end',date('Y-m-d',strtotime('+'.$area['accept_max_day'].' day')));
+		$DB_OBJ->bindValue(':amid',$area['ano']);
+		if(!$DB_OBJ->execute()){
+		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
+		}
+		while($tmp = $DB_OBJ->fetch(PDO::FETCH_ASSOC)){
+		  $ads = $tmp['date_enter'];
+		  $ade = $tmp['date_exit'];
+		  do{
+			$applied_index = preg_replace('/\//','-',$ads);	
+		    if(!isset($applied[$applied_index])) $applied[$applied_index] = 0;   	
+		    $applied[$applied_index] += $tmp['member_count'];
+            $ads = date('Ymd',strtotime('+1 day',strtotime($ads)));
+		  }while(strtotime($ads.' 00:00:00') <= strtotime($ade.' 23:59:59'));
+		}
+		
+		
+		
+		// search area concat
+		$area['master_group']   = '';
+		$area['master_contect'] = '';
+		$area['master_email']   = '';
+		$DB_ADM = $this->DBLink->prepare(SQL_Client::GET_AREA_OWNER_GROUP_AND_CONCATER());
+		$DB_ADM->bindValue(':owner',$area['owner']);
+		if(!$DB_ADM->execute()){
+		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
+		}
+		while($tmp = $DB_ADM->fetch(PDO::FETCH_ASSOC)){
+		  $area['master_group'] = $tmp['ug_name'];
+		  $role_set = json_decode($tmp['role_conf'],true);
+		  if(intval($role_set['R01'])){
+			$area['master_contect'] = $tmp['user_tel'];
+		    $area['master_email']   = $tmp['user_mail'];  
+		  }
+		}
+		
+		
+		$applyforms = array();
+		
+		$applyforms['application_area'] = [
+		   'code'=>[
+		       'input'=>'select',
+			   'class'=>'申請進入區域',
+			   'label'=>'申請區域',
+			   'value'=>$AreaCode,
+			   'notes'=>'',
+		   ],
+		   'inter'=>[
+		       'input'=>'text',
+			   'class'=>'申請進入區域',
+			   'label'=>'進入範圍',
+			   'value'=>'',
+			   'notes'=>'',
+		   ],
+		   'gate'=>[
+		       'entr'=>[
+				   'input'=>'text',
+				   'class'=>'申請進入區域',
+				   'label'=>'入口',
+				   'value'=>'',
+				   'notes'=>'',
+				],
+				'entr_time'=>[
+				   'input'=>'time',
+				   'class'=>'申請進入區域',
+				   'label'=>'抵達入口時間',
+				   'value'=>'',
+				   'notes'=>'',
+				],
+				"exit"=>[
+				   'input'=>'text',
+				   'class'=>'申請進入區域',
+				   'label'=>'出口',
+				   'value'=>'',
+				   'notes'=>'',
+				],
+				"exit_time"=>[
+				   'input'=>'time',
+				   'class'=>'申請進入區域',
+				   'label'=>'抵達出口時間',
+				   'value'=>'',
+				   'notes'=>'',
+				],
+		   ],		   
+		];
+		
+		$applyforms['application_dates'] = [
+		    'dates'=>[
+		       'input'=>'date',
+			   'class'=>'申請進入時間',
+			   'label'=>'申請進入日期',
+			   'value'=>'',
+			   'notes'=>'',
+		   ]
+		];
+		
+		// 申請理由與申請欄位
+		$applyforms['application_reason']=[];
+		$applyforms['application_forms']=[];
+		$area_form_config = json_decode($area['form_json'],true);
+		foreach($area_form_config as $field_name => $field_config){
+		  if($field_name=='application_reason'){
+			$applyforms['application_reason'] = $field_config; 
+		  }else{
+			if(!isset($area['forms'][$field_config['config']['class']])){
+			  $applyforms['application_forms'][$field_name] = array();	
+			}
+			$applyforms['application_forms'][$field_name] = $field_config['config'];
+		  }
+		}
+		
+		
+		/*
+		{
+		"area": {
+			"code": "c6261eb8",
+			"inter": [
+				"巴福越嶺古道福巴段至檜木駐住所"
+			],
+			"gate": {
+				"entr": "北107線17.6K處原路來回",
+				"entr_time": "06:50",
+				"exit": "",
+				"exit_time": "00:00:00"
+			}
+		},
+		"reason": {
+			"item": "相關團體為環境教育之需要",
+			"limit": 1
+		},
+		"dates": [
+			[
+				"2014-07-05",
+				"2014-07-05"
+			]
+		],
+		"fields": {
+			"application_field_1": {
+				"field": "一、每日行程路線：(請簡易填寫行進路線，包含預計日期及時間、抵達地點、及從事之行為種類)：",
+				"value": "2014-07-05福山-巴福古道-檜山-山車廣山-福山○型07:00到達古道口10:30 8.5km檜山駐在所10:50 進往檜山11:30 檜山三角點(午餐休息)12:20出發山車廣山13:30 1288峰14:30 山車廣山16:30 接產業路道17:00福山停車處(北107線17.6K處如巴福越嶺古道不通改為2014-07-05福山--山車廣山-檜山--山車廣山--福山原路回07:00 北107線17.6K09:30 山車廣山10:30 1288峰12:00檜山12:40原路回檜山出發13:501288峰14:50 山車廣山16:50接產道17:10北107線17.6K處(停車處"
+			},
+			"application_field_2": {
+				"field": "二、環境維護措施(垃圾、廢棄物處理方式)及環境教育內容簡介：",
+				"value": "當天自備行動糧不煮食，若有垃圾皆由個人自行帶下山"
+			},
+			"application_field_3": {
+				"field": "三、緊急災難處理(應變相關裝備概述、辦理保險及撤退路線等說明)：",
+				"value": "1.參與人員皆有中級山登山經驗，基本登山裝備、頭燈、哨子、打火機、急救包等皆會攜帶齊全2.隊員皆會自行投保旅遊平安險3.領隊及押隊各配備無線對講機一支以便隨時掌握隊員行走進4.若遇路況不佳無法前行，將遵從領隊指示原路返回登山口，不強行登頂攜帶手機、地圖或GPS等裝備"
+			}
+		}
+	    }
+		*/
+		
+		$result['data']['area']    = $area ;
+		$result['data']['forms']   = $applyforms ;
+		$result['data']['stops']   = $stops ;
+		$result['data']['applied'] = $applied ;
+		$result['data']['start']   = date('Y-m-d',strtotime('+'.$area['accept_min_day'].' day'));
+		
+		
+		$result['action'] = true;		
+	    
+	  } catch (Exception $e) {
+        $result['message'][] = $e->getMessage();
+      } 
+	  return $result;   
+	}
+	
+	
 	
 	
 	//-- Get Client Page Area List
@@ -455,6 +674,61 @@
 	}
 	
 	
+	
+	//-- Check User Submit Data To Search Application // 檢驗使用者查詢資料
+	// [input] : SubmitString   = (String) js encode string [user 使用者ID mail date 進入日期]
+	
+	public function Landing_Applied_Mail_Resent($SubmitString=''){
+	  $result_key = parent::Initial_Result('');
+	  $result  = &$this->ModelResult[$result_key];
+	  
+	  $user_data = json_decode(base64_decode(str_replace('*','/',rawurldecode($SubmitString))),true); 
+	  
+	  try{    
+		
+		// 檢查申請序號
+		if( !isset($user_data['user']) ||  !strlen($user_data['user'])  ){
+	      throw new Exception('錯誤的使用者ID');
+	    }
+		
+		// check email
+		if(!isset($user_data['mail']) || !filter_var($user_data['mail'], FILTER_VALIDATE_EMAIL)){ 
+		  throw new Exception('_CLIENT_ERROR_APPLICANT_MAIL_FAIL');
+		}
+		
+		// check email
+		if(!isset($user_data['date']) || !strtotime($user_data['date']) || strtotime($user_data['date']) < strtotime('2014-01-01') ){ 
+		  throw new Exception('_CLIENT_ERROR_APPLICANT_MAIL_FAIL');
+		}
+		
+		$applier_uid  = strtoupper($user_data['user']);
+		$applier_mail = trim($user_data['mail']);
+		$applied_date = date('Y-m-d',strtotime($user_data['date']));
+		
+		
+		// 查詢資料庫
+		$DB_OBJ = $this->DBLink->prepare(SQL_Client::SEARCH_USER_BOOKING());
+		$DB_OBJ->bindValue(':applicant_id',$applier_uid );
+		$DB_OBJ->bindValue(':date_enter',$applied_date);
+		$DB_OBJ->bindValue(':applicant_mail',$applier_mail);
+		if(!$DB_OBJ->execute() || !$booking = $DB_OBJ->fetch(PDO::FETCH_ASSOC) ){
+		  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');  
+		}
+        
+		$result['data']   = $booking['apply_code'];
+		$result['action'] = true;
+		
+	  } catch (Exception $e) {
+        $result['message'][] = $e->getMessage();
+      } 
+	  
+	  
+	  
+	  return $result;   
+	}
+	
+	
+	
 	//-- Check User Submit Link(from mail) To Search Application // 檢驗使用者查詢資料
 	// [input] : ApplyCode   = (String) apply code
 	// [input] : LinkAccessKey   = (String) apply access key  sha1(n+)
@@ -732,6 +1006,7 @@
 		$DB_NEW->bindValue(':applicant_id'	, isset($user_data['applicant_userid'] ) ? $user_data['applicant_userid'] : '');
 		$DB_NEW->bindValue(':applicant_info', $application );
 		$DB_NEW->bindValue(':member_list'	, json_encode($member,JSON_UNESCAPED_UNICODE ) );
+		$DB_NEW->bindValue(':source'		, '' );
 		
 		if( !$DB_NEW->execute() ){
 		  throw new Exception('_APPLY_INITIAL_FAIL');  
@@ -755,6 +1030,133 @@
 	}
 	
 	
+	//-- User Apply Record Sign Up  // 新申請註冊/登入
+	// [input] : Applicant STR base64M hash string
+	// [input] : ApplyCode code
+	public function Apply_Record_SignOn($Applicant='',$ApplyCode=''){
+	  
+	  $result_key = parent::Initial_Result();
+	  $result  = &$this->ModelResult[$result_key];
+	  
+	  try{
+		
+		$user_data = json_decode(base64_decode(str_replace('*','/',rawurldecode($Applicant))),true); 
+		$apply_code = false;
+		// check User Name
+		if(!isset($user_data['applicant_name']) || strlen($user_data['applicant_name']) < 4 ){ 
+		  $result['data']['applicant_name']='';
+		  throw new Exception('_APPLY_APPLICANT_NAME_FAIL');
+		}
+		
+		// check email
+		if(!isset($user_data['applicant_mail']) || !filter_var($user_data['applicant_mail'], FILTER_VALIDATE_EMAIL)){ 
+		  $result['data']['applicant_mail']='';
+		  throw new Exception('_APPLY_APPLICANT_EMAIL_FAIL');
+		}
+		
+		// check id 
+		if(!isset($user_data['applicant_userid']) ){
+		   $result['data']['applicant_userid']='';
+		   throw new Exception('_APPLY_APPLICANT_ID_FAIL');
+		}else if( preg_match('/^\w[12ABCD]{1}\d{8}$/',$user_data['applicant_userid']) && !System_Helper::check_twid($user_data['applicant_userid'])){
+		   $result['data']['applicant_userid']='';
+		   throw new Exception('_APPLY_APPLICANT_ID_FAIL');
+		}else if( strlen($user_data['applicant_userid']) < 9 || strlen($user_data['applicant_userid']) > 10  ){
+		   $result['data']['applicant_userid']='';
+		   throw new Exception('_APPLY_APPLICANT_ID_FAIL');	
+		}
+		
+		// 檢查申請序號
+		if($ApplyCode && preg_match('/^[\w\d]{8,10}$/',$ApplyCode) ){
+		  // 取得申請資料
+		  $booking = array();
+		  $DB_OBJ = $this->DBLink->prepare(SQL_Client::GET_APPLICATION_DATA());
+		  if($DB_OBJ->execute(array('apply_code'=>$ApplyCode)) &&  $booking=$DB_OBJ->fetch(PDO::FETCH_ASSOC) ){
+		    
+		    if($booking['applicant_name'] == $user_data['applicant_name'] &&
+			   $booking['applicant_mail'] == $user_data['applicant_mail'] &&
+			   $booking['applicant_id'] == $user_data['applicant_userid']
+			){
+			  // 確認申請人為同一個人
+              $apply_code = $ApplyCode;
+			}	
+		  }
+		}
+		
+		// prepare new application value
+        $apply_code  = $apply_code ? $apply_code : strtoupper(hash('crc32',$user_data['applicant_name'].$user_data['applicant_mail'].time()._SYSTEM_NAME_SHORT));
+		
+		$application = json_encode(array_filter($user_data),JSON_UNESCAPED_UNICODE );
+		
+		$member = array();
+		$member[0] = [
+		  'member_role'		=> '領隊' , 
+		  'member_name'		=> $user_data['applicant_name'],
+          'member_id'		=> $user_data['applicant_userid'],
+          'member_birth'	=> isset($user_data['applicant_birthday']) ? $user_data['applicant_birthday'] :'' ,
+          'member_sex'		=> ''	,
+          'member_org'		=> isset($user_data['applicant_serviceto']) ? $user_data['applicant_serviceto'] :'' ,
+          'member_addr'		=> isset($user_data['applicant_mailaddress']) ? $user_data['applicant_mailaddress'] :'' ,
+          'member_tel'		=> isset($user_data['applicant_phonenumber']) ? $user_data['applicant_phonenumber'] :'' ,
+          'member_cell'		=> isset($user_data['applicant_cellphone']) ? $user_data['applicant_cellphone'] :'' ,
+          'member_contacter'=> '' ,
+          'member_contactto'=> '' ,
+		];
+		
+		/*
+		$chief[1] = isset($applicant['applicant_name']) ? $applicant['applicant_name'] : ( isset($mbr['member_name'])&&$mbr['member_name'] ? $mbr['member_name'] : ''); 
+		    $chief[2] = isset($applicant['applicant_userid']) ? $applicant['applicant_userid'] : ( isset($mbr['member_id'])&&$mbr['member_id'] ? $mbr['member_id'] : ''); 
+		    $chief[3] = isset($mbr['member_birth'])&&$mbr['member_birth'] ? $mbr['member_birth'] : ( isset($applicant['applicant_birthday'])&&$applicant['applicant_birthday'] ? $applicant['applicant_birthday'] : ''); 
+		    $chief[4] = isset($mbr['member_sex'])&&$mbr['member_sex'] ? $mbr['member_sex'] : '';
+		    $chief[5] = isset($mbr['member_org'])&&$mbr['member_org'] ? $mbr['member_org'] : ( isset($applicant['applicant_serviceto'])&&$applicant['applicant_serviceto'] ? $applicant['applicant_serviceto'] : '');
+		    $chief[6] = isset($mbr['member_addr'])&&$mbr['member_addr'] ? $mbr['member_addr'] : ( isset($applicant['applicant_mailaddress'])&&$applicant['applicant_mailaddress'] ? $applicant['applicant_mailaddress'] : '');
+		    $chief[7] = isset($mbr['member_tel'])&&$mbr['member_tel'] ? $mbr['member_tel'] : ( isset($applicant['applicant_phonenumber'])&&$applicant['applicant_phonenumber'] ? $applicant['applicant_phonenumber'] : '');;
+		    $chief[8] = isset($mbr['member_cell'])&&$mbr['member_cell'] ? $mbr['member_cell'] : ( isset($applicant['applicant_cellphone'])&&$applicant['applicant_cellphone'] ? $applicant['applicant_cellphone'] : '');;
+		    $chief[9] = isset($mbr['member_contacter'])&&$mbr['member_contacter'] ? $mbr['member_contacter'] : '';
+		    $chief[10] = isset($mbr['member_contactto'])&&$mbr['member_contactto'] ? $mbr['member_contactto'] : '';
+		*/
+		
+		$DB_NEW = $this->DBLink->prepare(SQL_Client::INITIAL_APPLY_ACCOUNT()); 
+	    $DB_NEW->bindValue(':am_id','');
+		$DB_NEW->bindValue(':apply_code'	, $apply_code);
+		$DB_NEW->bindValue(':apply_date'	, date('Y-m-d'));
+		$DB_NEW->bindValue(':applicant_name', $user_data['applicant_name'] );
+		$DB_NEW->bindValue(':applicant_mail', $user_data['applicant_mail'] );
+		$DB_NEW->bindValue(':applicant_id'	, isset($user_data['applicant_userid'] ) ? $user_data['applicant_userid'] : '');
+		$DB_NEW->bindValue(':applicant_info', $application );
+		$DB_NEW->bindValue(':member_list'	, json_encode($member,JSON_UNESCAPED_UNICODE ) );
+		$DB_NEW->bindValue(':source'		, 'MTAPI' );
+		
+		if( !$DB_NEW->execute() ){
+		  throw new Exception('_APPLY_INITIAL_FAIL');  
+		}
+
+		// 帳號資料夾
+        if(!is_dir(_SYSTEM_CLIENT_PATH.$apply_code)){
+		  mkdir(_SYSTEM_CLIENT_PATH.$apply_code, 0777, true);	  
+	    }
+        
+		$login_key = sha1($user_data['applicant_mail']._SYSTEM_NAME_SHORT.':'.strtotime('now'));
+		
+		$result['session']['APPLYTOKEN'] = ['CODE'=>$apply_code,'KEY'=>_SYSTEM_NAME_SHORT.':'.strtotime('now')];
+		$result['session']['APPLICANT']  = $user_data;
+		
+		if(!isset($_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'])) $_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'] = [];
+		$_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'][$login_key] = [
+		  'APPLYTOKEN'=>$result['session']['APPLYTOKEN'],
+		  'APPLICANT'=> $result['session']['APPLICANT']
+		];
+		
+		$result['data']['login_key']     = $login_key;
+		$result['data']['apply_code']    = $apply_code;
+		$result['action'] = true;
+	    
+	  }catch(Exception $e){
+		$result['message'][] = $e->getMessage();    
+	  }
+	  
+	  return $result;  
+	}
 	
 	
 	//-- Upload Apply Attachment Files  
@@ -916,7 +1318,7 @@
 		}
 		
 		//查驗附件
-		if($apply_attach && !count($apply_data['attach'])){
+		if($apply_attach && (!isset($apply_data['attach']) || !count($apply_data['attach']))){
 		  throw new Exception('_APPLY_SUBMIT_ATTACHMENT_EMPTY');     	
 		}
 		
@@ -1845,6 +2247,7 @@
 		$DB_NEW->bindValue(':applicant_id'	, $booking['applicant_id'] );
 		$DB_NEW->bindValue(':applicant_info', $booking['applicant_info'] );
 		$DB_NEW->bindValue(':member_list'	, $booking['member'] );
+		$DB_NEW->bindValue(':source'		, '' );
 		
 		if( !$DB_NEW->execute() ){
 		  throw new Exception('_APPLY_INITIAL_FAIL');  
@@ -1899,10 +2302,65 @@
 	}
 	
 	
-	// prepare new application value
-        
-	
-	
+	 
+	//-- Client Apply Status Progres
+	// [input] : ApplyCodeSubmit  : from submit;
+	// [input] : ApplyToken   : array(CODE KEY )from session ;
+	public function Apply_License_Status_Rawdata( $ApplyCodeSubmit='' ,$ApplyToken=array()){
+	  $result_key = parent::Initial_Result('');
+	  $result  = &$this->ModelResult[$result_key];
+	  try{
+		
+		// 檢查申請序號
+		if(!preg_match('/^[\w\d]{8,10}$/',$ApplyCodeSubmit)){
+		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
+		}
+		
+		// 檢查讀取序號是否有權限
+		if(!isset($ApplyToken['CODE']) || $ApplyToken['CODE']!=$ApplyCodeSubmit){
+		  throw new Exception('_APPLY_RECOVER_DENIAL');
+		}
+		
+		// 取得申請資料
+		$booking = array();
+		$DB_OBJ = $this->DBLink->prepare(SQL_Client::GET_APPLICATION_META());
+		if(!$DB_OBJ->execute(array('apply_code'=>$ApplyCodeSubmit))  ||  !$booking=$DB_OBJ->fetch(PDO::FETCH_ASSOC) ){
+		  throw new Exception('_APPLY_RECORD_NOT_FOUND');  
+		}
+		
+		$applicant = json_decode($booking['applicant_info'],true);
+		$joinmember= json_decode($booking['member'],true);
+		$application = json_decode($booking['apply_form'],true);
+		$progressview = ['stage'=>[ 0=>"", 1=>"初始階段", 2=>"抽籤階段", 3=>"審查階段", 4=>"等待階段", 5=>"最終階段" ]];
+		$progressview    = $progressview+json_decode($booking['_progres'],true);
+		unset($progressview['admin']);
+		
+		
+		$result['data']['apply_code']	= $booking['apply_code'];
+		$result['data']['applicant']	= $applicant;
+		$result['data']['joinmember'] 	= $joinmember;
+		$result['data']['application'] 	= $application;
+		$result['data']['_ballot'] 		= $booking['_ballot'];
+		$result['data']['_ballot_date'] = $booking['_ballot_date'];
+		$result['data']['_stage']   	= $booking['_stage'];
+		$result['data']['_progres'] 	= $progressview;
+		$result['data']['_final']   	= $booking['_final'];
+		$result['data']['_status']  	= $booking['_status'];
+		
+		// check applied is freeze
+		$cancel_deline = strtotime('-'.$booking['cancel_day'].' day',strtotime($booking['date_enter'].' 23:59:59'));
+		 
+		$result['data']['_isdone']  = strtotime('now') > $cancel_deline || ($booking['_final']=='取消申請') ? true : false;
+		
+		
+		$result['action'] = true;
+	    
+	  }catch(Exception $e){
+		$result['message'][] = $e->getMessage();    
+	  }
+	  
+	  return $result;  
+	}
 	
 	
 	
@@ -2093,14 +2551,14 @@
 		$license[3] .= "  <hr class='break' style='visibility:hidden;'></hr>";
 		
 		// 由系統帶出聯繫資訊
-		if(isset($this->ModelResult['area']['data']['contect'])){
-		  $area_contect = $this->ModelResult['area']['data']['contect'];	
+		if(isset($this->ModelResult['area']['data']['contact'])){
+		  $area_contect = $this->ModelResult['area']['data']['contact'];	
 		  $license[3] .= "  <h2>各管理機關(構)聯繫電話：</h2> ";
 		  $license[3] .= "  <table class='contect' >";
 		  $license[3] .= "    <tr ><th>管理單位</th><th>聯絡電話</th><th>轄管自然保留區名稱</th></tr>";	
 		  foreach($area_contect as $gcode=>$ginfo){
-			if(count($ginfo['areas']) && isset($ginfo['contect']) && count($ginfo['contect']) ){
-			   $license[3] .= "    <tr ><td>".$ginfo['organ']." - ".$ginfo['contect'][0]['user_organ']."</td><td>".$ginfo['contect'][0]['user_tel']."</td><td>".join('<br/>',$ginfo['areas'])."</td></tr>";
+			if(count($ginfo['areas']) && isset($ginfo['contact']) && count($ginfo['contact']) ){
+			   $license[3] .= "    <tr ><td>".$ginfo['organ']." - ".$ginfo['contact'][0]['user_organ']."</td><td>".$ginfo['contact'][0]['user_tel']."</td><td>".join('<br/>',$ginfo['areas'])."</td></tr>";
 			}   
 		  }
 		  $license[3] .= "    <tr ><td></td><td></td><td></td></tr>";

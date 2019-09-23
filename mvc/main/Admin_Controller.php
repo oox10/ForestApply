@@ -91,7 +91,7 @@
 	  }
 	  
 	  $model_data = array('action'=>$action, 'data'=>$result);
-	  $model_data['version'] = 'forest - collect v1.1 / 2017-06-30'; 
+	  $model_data['version'] = 'forest - apply v2.0 / 2019-09-30'; 
 	  $model_data['mode']    = $usrmode;
 	  
 	  switch( strtolower($IOType) ){
@@ -110,6 +110,13 @@
 		  $view->render('server');
 	      break;  
         
+		case 'jsonv':  
+		  $view = new Result_JSONV;
+		  $view->setVar('server',$model_data);
+		  if(!$action){ $view->addVar('server','info',$this->Model->Get_Action_Message($message));   }
+		  $view->render('server');
+	      break;  
+		
 		case 'upload':  
 		  $view = new Result_JSON;
 		  $view->setVar('server',$model_data);
