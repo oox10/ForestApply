@@ -149,7 +149,7 @@ class ApplyApi_Controller extends Admin_Controller{
 	// JSON: 取得申請狀態 
 	public function OpenAPI(){
 	  $this->Model->OpenAPI_Config_Json();
-	  self::data_output('json','',$this->Model->ModelResult);
+	  self::data_output('json-oai','',$this->Model->ModelResult);
 	}
 	
 	

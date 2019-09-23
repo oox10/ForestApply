@@ -117,6 +117,13 @@
 		  $view->render('server');
 	      break;  
 		
+		case 'json-oai':
+		  $view = new Result_JSONOAI;
+		  $view->setVar('server',$model_data);
+		  if(!$action){ $view->addVar('server','info',$this->Model->Get_Action_Message($message));   }
+		  $view->render('server');
+	      break;  
+		
 		case 'upload':  
 		  $view = new Result_JSON;
 		  $view->setVar('server',$model_data);
