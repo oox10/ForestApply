@@ -128,7 +128,7 @@ class ApplyApi_Controller extends Admin_Controller{
 	
 	
 	// AJAX: Download Apply License // 下載許可證 
-	public function download($ApplyCode='',$LoginKey=''){
+	public function license($ApplyCode='',$LoginKey=''){
 	  
 	  if($LoginKey&&isset($_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'][$LoginKey])){
 		$apply_token = $_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'][$LoginKey]['APPLYTOKEN'];
@@ -145,6 +145,13 @@ class ApplyApi_Controller extends Admin_Controller{
 	  $this->Model->Apply_Feform_Application_Page($ApplyCode,'license');
 	  self::data_output('pdf','print_user_license',$this->Model->ModelResult);   
 	}
+	
+	// JSON: 取得申請狀態 
+	public function OpenAPI(){
+	  $this->Model->OpenAPI_Config_Json();
+	  self::data_output('json','',$this->Model->ModelResult);
+	}
+	
 	
 	
 	

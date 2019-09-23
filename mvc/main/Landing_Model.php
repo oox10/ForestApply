@@ -232,7 +232,7 @@
 		
 		$applyforms['application_area'] = [
 		   'code'=>[
-		       'input'=>'select',
+		       'input'=>'text',
 			   'class'=>'申請進入區域',
 			   'label'=>'申請區域',
 			   'value'=>$AreaCode,
@@ -1079,7 +1079,11 @@
 			){
 			  // 確認申請人為同一個人
               $apply_code = $ApplyCode;
-			}	
+			}else{
+			  throw new Exception('資料驗證失敗'); 
+			}
+		  }else{
+			throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');   
 		  }
 		}
 		
@@ -1125,7 +1129,7 @@
 		$DB_NEW->bindValue(':applicant_id'	, isset($user_data['applicant_userid'] ) ? $user_data['applicant_userid'] : '');
 		$DB_NEW->bindValue(':applicant_info', $application );
 		$DB_NEW->bindValue(':member_list'	, json_encode($member,JSON_UNESCAPED_UNICODE ) );
-		$DB_NEW->bindValue(':source'		, 'MTAPI' );
+		$DB_NEW->bindValue(':source'		, isset($user_data['agent']) ? $user_data['agent']:'MTAPI' );
 		
 		if( !$DB_NEW->execute() ){
 		  throw new Exception('_APPLY_INITIAL_FAIL');  
@@ -2942,6 +2946,747 @@
       } 
 	  return $result;
 	}
+	
+	
+	
+	
+	/*[ OpenAPI Function Set ]*/ 
+	
+	//-- Get Client Post List
+	// [input] : DataNo = system_post.pno
+	public function  OpenAPI_Config_Json(){
+	  
+      $result_key = parent::Initial_Result('');
+	  $result  = &$this->ModelResult[$result_key];
+	  
+	  try{    
+		
+		$open_api = [
+			"openapi"=>"3.0.2",
+			"info"=>[
+				"title"	=>"Forest Pa Apply API",
+				"description"=>"林務局自然保護區域進入申請系統申請介接API.",
+				"version"=>"1.0.190924"
+			],
+			"servers"=>[
+				["url"=>"https://forestapply.oo10.co/ApplyApi/",'description'=>"測試伺服器"],
+				["url"=>"https://pa.forest.gov.tw/ApplyApi/",'description'=>"正式伺服器"]
+			],
+			"paths"=>[
+				"/paareas"=>[  //取得列表
+					"get"=>[
+						"description"=>"取得自然保護區域可申請進入區域清單與聯繫資訊",
+						"responses"=>[
+							"200"=>[
+								"description"=>"可申請區域清單",
+								"content"=>[
+									"application/json"=>[
+										"schema"=>[
+											"type"=>"object",
+											"properties"=>[
+												"type"=>[
+													"type"=>"array",
+													"items"=>["type"=>"string"]
+												],
+												"list"=>[
+													"type"=>"array",
+													"items"=>['$ref'=>'#/components/schemas/AreaData']
+												],
+												"contact"=>[
+													"type"=>"array",
+													"items"=>['$ref'=>'#/components/schemas/AreaObject']
+												]
+											]
+											
+										]
+									]
+								]
+							]
+						],
+					]
+				],
+				"/areainfo/{AreaCode}"=>[  //取得目標區域資料
+					"parameters"=>[
+						"name"=>"AreaCode",
+						"in"=>"path",
+						"required"=>true,
+						"description"=>"區域代碼",
+						"schema"=>["type"=>'string']
+					],				
+					"get"=>[
+						"description"=>"取得目標申請區域資訊",
+						"responses"=>[
+							"200"=>[
+								"description"=>"目標區域基本資料與申請欄位設定",
+								"content"=>[
+									"application/json"=>[
+										"schema"=>[
+											"type"=>"object",
+											"properties"=>[
+												"meta"=>[
+													"type"=>"object",
+													"properties"=>[
+														"area"=>[
+															"type"=>"object",
+															"properties"=>[
+																"area_code"=>["type"=>'string'],
+																"area_type"=>["type"=>'string'],
+																"area_name"=>["type"=>'string'],
+																"area_link"=>["type"=>'string'],
+																"area_gates"=>["type"=>'string',"description"=>"以;分隔多值"],																
+																"area_load"=>["type"=>'integer'],
+																"accept_max_day"=>["type"=>'integer'],
+																"accept_min_day"=>["type"=>'integer'],
+																"revise_day"=>["type"=>'integer'],
+																"cancel_day"=>["type"=>'integer'],
+																"filled_day"=>["type"=>'integer'],
+																"wait_list"=>["type"=>'integer'],
+																"member_max"=>["type"=>'integer'],
+																"time_open"=>["type"=>'integer'],
+																"time_close"=>["type"=>'integer'],
+																"owner"=>["type"=>'integer'],
+																"sub_block"=>[
+																	"type"=>'object',
+																	"additionalProperties"=>[
+																		'$ref'=>"#/components/schemas/AreaBlock"
+																	]
+																],
+																"master_group"=>["type"=>'string'],
+																"master_contect"=>["type"=>'string'],
+																"master_email"=>["type"=>'string'],
+															]
+														],
+														"forms"=>[
+															
+														],
+														"start"=>["type"=>'string'],
+														"stops"=>[
+															"type"=>'array',
+															"items"=>[
+																'$ref'=>"#/components/schemas/AreaStop"
+															]
+														],
+														"applied"=>[
+															"type"=>'object',
+															"description"=>"日期為KEY存放每日申請人數",
+															"additionalProperties"=>[
+																"type"=>"integer"
+															]
+														]
+													]
+												]
+											]
+										]
+									]
+								]
+							]
+						],
+					]
+				],
+				"/signon/{ApplyCode}"=>[  //登入/註冊申請資料
+					"parameters"=>[
+						[
+							"name"=>"ApplyCode",
+							"in"=>"path",
+							"required"=>false,
+							"description"=>"申請代碼",
+							"schema"=>["type"=>'string']
+						]
+					],
+					"post"=>[
+						"summary"=>"建立/登入申請資料",
+						"requestBody"=>[
+							"required"=>true,
+							"content"=>[
+								"application/x-www-form-urlencoded"=>[
+									"schema"=>[
+										"type"=>"object",
+										"properties"=>[
+											"applicant"=>[
+												"type"=>"object",
+												"properties"=>[
+													"applicant_name"=>["type"=>'string',"description"=>"申請人姓名"],
+													"applicant_userid"=>["type"=>'string',"description"=>"申請人證件ID(身分證號/居留證號/護照號碼)"],
+													"applicant_mail"=>["type"=>'string',"description"=>"申請人email"],
+													"agent"=>["type"=>'string',"description"=>"來源系統代號"]
+												]
+											]
+										]
+									],
+									"encoding"=>[
+										"applicant"=>[
+											"contentType"=>"application/json"
+										]
+					
+									]
+								]
+							]
+						],
+						"responses"=>[
+							"200"=>[
+								"description"=>"成功註冊/登入申請資料",
+								"content"=>[
+									"application/json"=>[
+										"schema"=>[
+											"type"=>"object",
+											"properties"=>[
+												"login_key"=>["type"=>'string',"description"=>"登入認證KEY，確認登入狀態"],
+												"apply_code"=>["type"=>'string',"description"=>"申請單代號"]
+											]
+										]
+									]
+								]
+							]
+						]
+					]
+				],
+				"/applyform/{ApplyCode}/{LoginKey}"=>[  //遞交申請資料
+					"parameters"=>[
+						[
+							"name"=>"ApplyCode",
+							"in"=>"path",
+							"required"=>true,
+							"description"=>"申請代碼",
+							"schema"=>["type"=>'string']
+						],
+						[
+							"name"=>"LoginKey",
+							"in"=>"path",
+							"required"=>true,
+							"description"=>"登入代碼",
+							"schema"=>["type"=>'string']
+						]
+					],
+					"post"=>[
+						"summary"=>"遞交申請資料",
+						"requestBody"=>[
+							"required"=>true,
+							"content"=>[
+								"application/x-www-form-urlencoded"=>[
+									"schema"=>[
+										"type"=>"object",
+										"properties"=>[
+											'application'=>[
+												'$ref'=>'#/components/schemas/Application'
+											]
+										]
+									],
+									"encoding"=>[
+										"application"=>[
+											"contentType"=>"application/json"
+										]
+									]
+								]
+							]
+						],
+						"responses"=>[
+							"200"=>[
+								"description"=>"成功遞交申請資料",
+								"content"=>[
+									"application/json"=>[
+										"schema"=>[
+											"type"=>"object",
+											"properties"=>[
+												"submit"=>["type"=>'string',"description"=>"申請單代號"],
+												"members"=>[
+													"type"=>"object",
+													"properties"=>[
+														"applycode"=>["type"=>'string',"description"=>"申請單代號"],
+														"applicant"=>[
+															"type"=>'object',
+															"properties"=>[
+																"applicant_name"=>["type"=>'string',"description"=>"申請人姓名"],
+																"applicant_userid"=>["type"=>'string',"description"=>"申請人ID"],
+																"applicant_mail"=>["type"=>'string',"description"=>"申請人email"],
+															]
+														],
+														"memberlist"=>[
+															"type"=>'array',
+															"items"=>['$ref'=>'#/components/schemas/ApplyMember']
+														]
+													]
+												]
+											]
+										]
+									]
+								]
+							]
+						]
+					]
+				],
+				"/savembr/{ApplyCode}/{LoginKey}"=>[  //遞交成員名單
+					"parameters"=>[
+						[
+							"name"=>"ApplyCode",
+							"in"=>"path",
+							"required"=>false,
+							"description"=>"申請代碼",
+							"schema"=>["type"=>'string']
+						]
+					],
+					"post"=>[
+						"summary"=>"建立/登入申請資料",
+						"requestBody"=>[
+							"required"=>true,
+							"content"=>[
+								"application/x-www-form-urlencoded"=>[
+									"schema"=>[
+										"type"=>"object",
+										"properties"=>[
+											"applicant"=>[
+												"type"=>"object",
+												"properties"=>[
+													"applicant_name"=>["type"=>'string',"description"=>"申請人姓名"],
+													"applicant_userid"=>["type"=>'string',"description"=>"申請人證件ID(身分證號/居留證號/護照號碼)"],
+													"applicant_mail"=>["type"=>'string',"description"=>"申請人email"],
+													"agent"=>["type"=>'string',"description"=>"來源系統代號"]
+												]
+											]
+										]
+									],
+									"encoding"=>[
+										"applicant"=>[
+											"contentType"=>"application/json"
+										]
+					
+									]
+								]
+							]
+						],
+						"responses"=>[
+							"200"=>[
+								"description"=>"成功註冊/登入申請資料",
+								"content"=>[
+									"application/json"=>[
+										"schema"=>[
+											"type"=>"object",
+											"properties"=>[
+												"login_key"=>["type"=>'string',"description"=>"登入認證KEY，確認登入狀態"],
+												"apply_code"=>["type"=>'string',"description"=>"申請單代號"]
+											]
+										]
+									]
+								]
+							]
+						]
+					]
+				],
+				"/applyform/{ApplyCode}/{LoginKey}"=>[  //遞交申請資料
+					"parameters"=>[
+						[
+							"name"=>"ApplyCode",
+							"in"=>"path",
+							"required"=>true,
+							"description"=>"申請代碼",
+							"schema"=>["type"=>'string']
+						],
+						[
+							"name"=>"LoginKey",
+							"in"=>"path",
+							"required"=>true,
+							"description"=>"登入代碼",
+							"schema"=>["type"=>'string']
+						]
+					],
+					"post"=>[
+						"summary"=>"遞交成員名單",
+						"requestBody"=>[
+							"required"=>true,
+							"content"=>[
+								"application/x-www-form-urlencoded"=>[
+									"schema"=>[
+										"type"=>"object",
+										"properties"=>[
+											"member"=>[
+												"type"=>"array",
+												"items"=>[
+													'$ref'=>'#/components/schemas/ApplyMember'
+												]
+											]
+										]
+									],
+									"encoding"=>[
+										"member"=>[
+											"contentType"=>"application/json"
+										]
+					
+									]
+								]
+							]
+						],
+						"responses"=>[
+							"200"=>[
+								"description"=>"成功遞交申請資料",
+								"content"=>[
+									"application/json"=>[
+										"schema"=>[
+											"type"=>"object",
+											"properties"=>[
+												"data"=>["type"=>'integer',"description"=>"成員數量"],
+											]
+										]
+									]
+								]
+							]
+						]
+					]
+				],
+				"/submit/{ApplyCode}/{LoginKey}"=>[  //確定申請資料送出
+					"parameters"=>[
+						[
+							"name"=>"ApplyCode",
+							"in"=>"path",
+							"required"=>true,
+							"description"=>"申請代碼",
+							"schema"=>["type"=>'string']
+						],
+						[
+							"name"=>"LoginKey",
+							"in"=>"path",
+							"required"=>true,
+							"description"=>"登入代碼",
+							"schema"=>["type"=>'string']
+						]
+					],	
+					"post"=>[
+						"summary"=>"遞交並完成申請",
+						"responses"=>[
+							"200"=>[
+								"description"=>"成功遞交申請資料",
+								"content"=>[
+									"application/json"=>[
+										"schema"=>[
+											"type"=>"object",
+											"properties"=>[
+												"check"=>["type"=>'string'],
+											]
+										]
+									]
+								]
+							]
+						]
+					]
+				],
+				"/cancel/{ApplyCode}/{LoginKey}"=>[  //取消申請資料
+					"parameters"=>[
+						[
+							"name"=>"ApplyCode",
+							"in"=>"path",
+							"required"=>true,
+							"description"=>"申請代碼",
+							"schema"=>["type"=>'string']
+						],
+						[
+							"name"=>"LoginKey",
+							"in"=>"path",
+							"required"=>true,
+							"description"=>"登入代碼",
+							"schema"=>["type"=>'string']
+						]
+					],	
+					"post"=>[
+						"summary"=>"取消申請",
+						"responses"=>[
+							"200"=>[
+								"description"=>"成功取消申請資料",
+								"content"=>[
+									"application/json"=>[
+										"schema"=>[
+											"type"=>"object",
+											"properties"=>[
+												"data"=>["type"=>'string'],
+											]
+										]
+									]
+								]
+							]
+						]
+					]
+				],
+				"/status/{ApplyCode}/{LoginKey}"=>[  //取得申請狀態
+					"parameters"=>[
+						[
+							"name"=>"ApplyCode",
+							"in"=>"path",
+							"required"=>true,
+							"description"=>"申請代碼",
+							"schema"=>["type"=>'string']
+						],
+						[
+							"name"=>"LoginKey",
+							"in"=>"path",
+							"required"=>true,
+							"description"=>"登入代碼",
+							"schema"=>["type"=>'string']
+						]
+					],
+					"get"=>[
+						"description"=>"取得申請狀態",
+						"responses"=>[
+							"200"=>[
+								"description"=>"申請單號查詢成功",
+								"content"=>[
+									"application/json"=>[
+										"schema"=>[
+											"type"=>"object",
+											"properties"=>[
+												"apply_code"=>["type"=>'string'],
+												"applicant"=>[
+													'$ref'=>'#/components/schemas/Applicant'
+												],
+												"joinmember"=>[
+													"type"=>"array",
+													"items"=>[
+														'$ref'=>'#/components/schemas/ApplyMember'
+													]
+												],
+												"application"=>[
+												  '$ref'=>'#/components/schemas/Application'
+												],
+												"_ballot"=>["type"=>'integer',"enum"=>[0,1],"description"=>"是否需要抽籤"],
+												"_ballot_date"=>["type"=>'string',"description"=>"抽籤日期，格式YYYY-MM-DD"],
+												"_stage"=>["type"=>'integer',"enum"=>[0,1,2,3,4,5],"description"=>"當前申請階段"],
+												"_progres"=>[
+													"type"=>'object',
+													"description"=>"申請進度資訊",
+													"properties"=>[
+														"stage"=>[
+															"type"=>"array",
+															"items"=>[
+																"type"=>"string",
+															],
+														],
+														"client"=>[
+															"type"=>"array",
+															"items"=>[
+																"type"=>"array",
+																"items"=>[
+																	'$ref'=>'#/components/schemas/ApplyLogs'
+																]
+															],
+														],
+														"review"=>[
+															"type"=>"array",
+															"items"=>[
+																"type"=>"array",
+																"items"=>[
+																	'$ref'=>'#/components/schemas/ApplyLogs'
+																]
+															],
+														],
+													]
+												],
+												"_status"=>["type"=>'string'],
+												"_final"=>["type"=>'string'],
+												"_isdone"=>["type"=>'boolean'],
+											]
+										]
+									]
+								]
+							]
+						],
+					]
+					
+				],
+				"/license/{ApplyCode}/{LoginKey}"=>[  //下載進入許可
+					"parameters"=>[
+						[
+							"name"=>"ApplyCode",
+							"in"=>"path",
+							"required"=>true,
+							"description"=>"申請代碼",
+							"schema"=>["type"=>'string']
+						],
+						[
+							"name"=>"LoginKey",
+							"in"=>"path",
+							"required"=>true,
+							"description"=>"登入代碼",
+							"schema"=>["type"=>'string']
+						]
+					],	
+					"get"=>[
+						"summary"=>"下載進入許可證",
+						"responses"=>[
+							"200"=>[
+								"description"=>"申請核准進入，下載許可證",
+								"content"=>[
+									"application/octet-stream"=>[
+										"schema"=>[
+											"type"=>"string",
+											"format"=>"binary"
+										]
+									]
+								]
+							]
+						]
+					]
+				]
+			],
+			"components"=>[
+				"schemas"=>[  // meta object
+					"AreaData"=>[
+						"type"=>"object",
+						"properties"=>[
+							"area_code"=>[ "type"=>"string"],
+							"area_type"=>[ "type"=>"string"],
+							"area_name"=>[ "type"=>"string"],
+							"owner"=>[ "type"=>"string"]
+						],
+					],
+					"AreaObject"=>[
+						"type"=>"object",
+						"properties"=>[
+							"organ"=>[ "type"=>"string"],
+							"areas"=>[ "type"=>"array","items"=>["type"=>"string"]],
+							"contact"=>[ 
+								"type"=>"object",
+								"properties"=>[
+									"user_mail"=>[ "type"=>"string"],
+									"user_tel"=>[ "type"=>"string"],
+									"user_organ"=>[ "type"=>"string"],
+								]
+							],
+						],
+					],
+					"AreaBlock"=>[
+						"type"=>"object",
+						"properties"=>[
+							"name"=>[ "type"=>"string"],
+							"desc"=>[ "type"=>"string","description"=>"以;分隔多值"],
+							"gate"=>[ "type"=>"string"],
+							"load"=>[ "type"=>"integer"],
+						],
+					],
+					"AreaStop"=>[
+						"type"=>"object",
+						"properties"=>[
+							"date_start"=>[ "type"=>"string","description"=>"YYYY-MM-DD"],
+							"date_end"	=>[ "type"=>"string","description"=>"YYYY-MM-DD"],
+							"effect"	=>[ "type"=>"string"],
+							"reason"	=>[ "type"=>"string"],
+						],
+					],
+					"ApplyField"=>[
+						"type"=>"object",
+						"properties"=>[
+							"input"=>[ 
+								"type"=>"string",
+								"enum"=>[
+								  "text",
+								  "textarea",
+								  "radio",
+								  "checkbox",
+								]
+							],
+							"class"=>[ "type"=>"string"],
+							"label"=>[ "type"=>"string"],
+							"option"=>[ "type"=>"string"],
+							"value"=>[ "type"=>"string"],
+							"notes"=>[ "type"=>"string"],
+						],
+					],
+					"ApplyLogs"=>[
+						"type"=>"object",
+						"properties"=>[
+							"time"=>[ "type"=>"string","description"=>"紀錄時間"],
+							"label"=>[ "type"=>"string","description"=>"紀錄標題"],
+							"note"=>[ "type"=>"string","description"=>"紀錄說明"],
+							"logs"=>[ "type"=>"string","description"=>"紀錄備註"],
+						],
+					],
+					"ApplyMember"=>[
+						"type"=>"object",
+						"properties"=>[
+							"member_role"=>[ "type"=>"string","description"=>"角色","enum"=>["領隊","成員"]], 
+							"member_name"=>[ "type"=>"string","description"=>"姓名"],
+							"member_id"=>[ "type"=>"string","description"=>"身分ID號碼"],
+							"member_birth"=>[ "type"=>"string","description"=>"生日 YYYY-MM-DD"],
+							"member_sex"=>[ "type"=>"string","description"=>"性別"],
+							"member_tel"=>[ "type"=>"string","description"=>"電話"],
+							"member_cell"=>[ "type"=>"string","description"=>"手機"],
+							"member_addr"=>[ "type"=>"string","description"=>"聯繫地址"],
+							"member_org"=>[ "type"=>"string","description"=>"所屬單位"],
+							"member_contacter"=>[ "type"=>"string","description"=>"緊急聯絡人"],
+							"member_contactto"=>[ "type"=>"string","description"=>"緊急連絡人電話"],
+						],
+					],
+					"Applicant"=>[
+						"type"=>"object",
+						"properties"=>[
+							"applicant_name"=>["type"=>'string',"description"=>"申請人姓名"],
+							"applicant_userid"=>["type"=>'string',"description"=>"申請人ID"],
+							"applicant_mail"=>["type"=>'string',"description"=>"申請人email"],
+						]
+					],
+					
+					"Application"=>[
+						"type"=>"object",
+						"properties"=>[
+							"area"=>[
+								"type"=>"object",
+								"properties"=>[
+									"code"=>["type"=>'string'],
+									"inter"=>["type"=>'array',"items"=>["type"=>"string"]],
+									"gate"=>[
+										"type"=>"object",
+										"properties"=>[
+											"entr"=>["type"=>'string'],
+											"entr_time"=>["type"=>'string',"description"=>"時間格式 HH:MM"],
+											"exit"=>["type"=>'string'],
+											"exit_time"=>["type"=>'string',"description"=>"時間格式 HH:MM"],
+										]
+									]
+								
+								]
+							],
+							"reason"=>[
+								"type"=>"array",
+								"items"=>[
+									"type"=>"object",
+									"properties"=>[
+										"item"=>["type"=>'string'],
+									]
+								]
+							],
+							"dates"=>[
+								"type"=>"array",
+								"items"=>[
+									"type"=>"array",
+									"items"=>[
+										"type"=>"string",
+										"description"=>"日期格式 YYYY-MM-DD"
+									]
+								]
+							],
+							"fields"=>[
+								"type"=>"object",
+								"additionalProperties"=>[
+									"type"=>"object",
+									"properties"=>[
+										"field"=>["type"=>'string',"description"=>"申請資料欄位名稱"],
+										"value"=>["type"=>'string',"description"=>"申請資料欄位內容"]
+									]
+								]
+							]
+							 
+						]
+					]	
+				]
+			],
+			"security"=>[]
+		];
+		
+		$result['data'] 	= $open_api;
+		$result['action'] 	= true;		
+	  } catch (Exception $e) {
+        $result['message'][] = $e->getMessage();
+      } 
+	  return $result;
+	}
+	
+	
+	
 	
 	
   
