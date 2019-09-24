@@ -312,7 +312,7 @@
 	  $DB_OBJ->bindValue(':session',	isset($_SESSION) ? serialize($_SESSION):'');
 	  $DB_OBJ->bindValue(':request',	isset($_REQUEST) ? serialize($_REQUEST) : '');
 	  $DB_OBJ->bindValue(':acc_from',	isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER']:'' );
-	  $DB_OBJ->bindValue(':result',		isset($this->ModelResult['action']) ? serialize($this->ModelResult['action']) : '');
+	  $DB_OBJ->bindValue(':result',		isset($this->ModelResult) ? json_encode($this->ModelResult) : '');
 	  $DB_OBJ->bindValue(':agent',	    isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT']:'');
 	  $DB_OBJ->execute();
 	}

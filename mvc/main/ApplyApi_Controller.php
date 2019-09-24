@@ -11,15 +11,75 @@ class ApplyApi_Controller extends Admin_Controller{
 	//-- 共用物件
 	public  $IPSaveZoon;
 	
+	public  $ClientArgv;
+	
+	
 	//初始化要執行的動作以及物件
 	public function __construct(){
 	  parent::__construct();	
       
-	  $this->Model = new Landing_Model;		
+	  // 處理遮蔽IP
 	  //$this->IPSaveZoon = json_decode(_USER_IP_SAVE_ZOON,true);
 	  //header('HTTP/1.0 400 Bad Request', true, 400);
 	  //exit(1);
+	  
+	  // 處理model
+	  
+	  $this->Model = new Landing_Model;		
+	  
+	  $this->ClientArgv = [];
+	  if(isset($_SERVER["CONTENT_TYPE"])){
+		  // 處理content body參數
+		  switch($_SERVER["CONTENT_TYPE"]){
+			case 'application/json':
+			case 'text/json':
+				
+				$contentbody = file_get_contents('php://input');
+				if(isset($this->ActiveAction)){
+					switch($this->ActiveAction){
+						case 'signon': $this->ClientArgv['applicant'] = $contentbody; break;
+						case 'applyform': $this->ClientArgv['application'] = $contentbody; break;
+						case 'savembr':  $this->ClientArgv['member'] = $contentbody; break;
+					}
+				}
+				break;
+			case 'application/x-www-form-urlencoded':
+				$this->ClientArgv = $_REQUEST;
+				break;     
+		  }  
+	  } 
 	}
+	
+	
+	// 處理SESSION
+	protected function session_restore($ApplyCode,$SessionKey){
+		 
+	  $session_path = _SYSTEM_CLIENT_PATH.$ApplyCode.'/session_'.$SessionKey;
+	  
+	  try{
+		
+		if(!file_exists($session_path)){
+		  throw new Exception('_SYSTEM_ERROR_SESSION_EXPIRED');  
+	    }
+	    if(!$session_cache = json_decode(file_get_contents($session_path),true)){
+		  throw new Exception('_SYSTEM_ERROR_SESSION_EXPIRED');  
+	    }
+		
+		if(  !isset($session_cache['APPLYTOKEN']['KEY']) || 
+		     (strtotime('now') - intval(str_replace(_SYSTEM_NAME_SHORT.':','',$session_cache['APPLYTOKEN']['KEY']))) > 86400 ){
+	  	  throw new Exception('_SYSTEM_ERROR_SESSION_EXPIRED');		
+        }
+		
+		return $session_cache;
+	  
+	  }catch(Exception $e){
+		$this->Model->ModelResult[] = ['action'=>0,'message'=>[$e->getMessage()]];   
+		self::data_output('json-oai','',$this->Model->ModelResult);
+		exit(1);
+	  }
+	}
+	
+	
 	
 	// JSON: 申請區域清單 
 	public function index(){   
@@ -46,25 +106,25 @@ class ApplyApi_Controller extends Admin_Controller{
 	
 	// AJAX : 初始化申請
 	public function signon($ApplyCode=''){
-	  $agentpost = isset($_REQUEST['applicant']) ? $_REQUEST['applicant'] : "[]";
+	  
+	  $agentpost = isset($this->ClientArgv['applicant']) ? $this->ClientArgv['applicant'] : "[]";  
 	  $ApplicantData = rawurlencode(str_replace('/','*',base64_encode($agentpost)));
+	  
 	  $this->Model->Apply_Record_SignOn($ApplicantData,$ApplyCode);
 	  self::data_output('json-oai','',$this->Model->ModelResult);
+	
 	}
 	
 	
 	// AJAX : 更新申請資料
 	public function applyform($ApplyCode='',$LoginKey=''){     
-	  $agentpost = isset($_REQUEST['application']) ? $_REQUEST['application'] : "[]";
+	  
+	  $agentpost = isset($this->ClientArgv['application']) ? $this->ClientArgv['application'] : "[]";
 	  $ApplicationData = rawurlencode(str_replace('/','*',base64_encode($agentpost)));
 	  
-	  if($LoginKey&&isset($_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'][$LoginKey])){
-		$apply_token = $_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'][$LoginKey]['APPLYTOKEN'];
-	  }else{
-		$apply_token = isset($_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN']) ? $_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN'] : false;  
-	  }
+	  $session_config = $this->session_restore($ApplyCode,$LoginKey);
 	  
-	  $this->Model->Apply_Input_ApplyForm($ApplyCode,$ApplicationData,$apply_token);
+	  $this->Model->Apply_Input_ApplyForm($ApplyCode,$ApplicationData,$session_config['APPLYTOKEN']);
 	  $this->Model->Apply_Get_Member_Record($ApplyCode,$apply_token);
 	  self::data_output('json-oai','',$this->Model->ModelResult);
 	}
@@ -73,33 +133,22 @@ class ApplyApi_Controller extends Admin_Controller{
 	// AJAX: 儲存成員名單
 	public function savembr($ApplyCode='',$LoginKey=''){
 		
-	  $agentpost = isset($_REQUEST['member']) ? $_REQUEST['member'] : "[]";
+	  $agentpost = isset($this->ClientArgv['member']) ? $this->ClientArgv['member'] : "[]";
 	  $MemberString = rawurlencode(str_replace('/','*',base64_encode($agentpost)));	
 		
-	  if($LoginKey&&isset($_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'][$LoginKey])){
-		$apply_token = $_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'][$LoginKey]['APPLYTOKEN'];
-		$applicant   = $_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'][$LoginKey]['APPLICANT'];
-	  }else{
-		$apply_token = isset($_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN']) ? $_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN'] : false;	
-	    $applicant   = isset($_SESSION[_SYSTEM_NAME_SHORT]['APPLICANT']) ? $_SESSION[_SYSTEM_NAME_SHORT]['APPLICANT'] : array();
-	  }	
+	  $session_config =  $this->session_restore($ApplyCode,$LoginKey);
 	  
-	  $this->Model->Apply_Save_MbrEdit($ApplyCode,$MemberString,$apply_token,$applicant);
+	  $this->Model->Apply_Save_MbrEdit($ApplyCode,$MemberString,$session_config['APPLYTOKEN'],$session_config['APPLICANT']);
       self::data_output('json-oai','',$this->Model->ModelResult); 
 	}
 	
 	
 	// AJAX : 遞交申請資料
 	public function submit($ApplyCode='',$LoginKey=''){
-	  //提取資料必須先登入或先前有註冊
 	  
-	  if($LoginKey&&isset($_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'][$LoginKey])){
-		$apply_token = $_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'][$LoginKey]['APPLYTOKEN'];
-	  }else{
-		$apply_token = isset($_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN']) ? $_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN'] : false;  
-	  }
+	  $session_config = session_restore($ApplyCode,$LoginKey);
 	  
-	  $result = $this->Model->Apply_Record_Check($ApplyCode,$apply_token);
+	  $result = $this->Model->Apply_Record_Check($ApplyCode,$session_config['APPLYTOKEN']);
       self::data_output('json-oai','',$this->Model->ModelResult);
 	}
 	
@@ -107,26 +156,19 @@ class ApplyApi_Controller extends Admin_Controller{
 	// AJAX : 取消申請資料
 	public function cancel($ApplyCode,$LoginKey=''){   
 	  
-	  if($LoginKey&&isset($_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'][$LoginKey])){
-		$apply_token = $_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'][$LoginKey]['APPLYTOKEN'];
-	  }else{
-		$apply_token = isset($_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN']) ? $_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN'] : false;  
-	  }
+	  $session_config =  $this->session_restore($ApplyCode,$LoginKey);
 	  
-	  $this->Model->Apply_Record_Cancel($ApplyCode,$apply_token);
+	  $this->Model->Apply_Record_Cancel($ApplyCode,$session_config['APPLYTOKEN']);
 	  self::data_output('json-oai','',$this->Model->ModelResult);
 	}
 	
 	
 	// JSON: 取得申請狀態 
 	public function status($ApplyCode='',$LoginKey=''){
-	  if($LoginKey&&isset($_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'][$LoginKey])){
-		$apply_token = $_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'][$LoginKey]['APPLYTOKEN'];
-	  }else{
-		$apply_token = isset($_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN']) ? $_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN'] : false;  
-	  }
 	  
-	  $this->Model->Apply_License_Status_Rawdata($ApplyCode,$apply_token);	
+	  $session_config =  $this->session_restore($ApplyCode,$LoginKey);
+	  
+	  $this->Model->Apply_License_Status_Rawdata($ApplyCode,$session_config['APPLYTOKEN']);	
 	  self::data_output('json-oai','',$this->Model->ModelResult);
 	}
 	
@@ -134,13 +176,9 @@ class ApplyApi_Controller extends Admin_Controller{
 	// AJAX: Download Apply License // 下載許可證 
 	public function license($ApplyCode='',$LoginKey=''){
 	  
-	  if($LoginKey&&isset($_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'][$LoginKey])){
-		$apply_token = $_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'][$LoginKey]['APPLYTOKEN'];
-	  }else{
-		$apply_token = isset($_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN']) ? $_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN'] : false;  
-	  }
+	  $session_config =  $this->session_restore($ApplyCode,$LoginKey);
 	  
-	  $result = $this->Model->Apply_Record_Read( $ApplyCode, $apply_token );
+	  $result = $this->Model->Apply_Record_Read( $ApplyCode, $session_config['APPLYTOKEN'] );
 	  $active = $this->Model->Apply_Download_Check();
 	  if(!$result['action'] || !$active['action']){
 		self::data_output('json-oai','',$this->Model->ModelResult);    
@@ -150,31 +188,28 @@ class ApplyApi_Controller extends Admin_Controller{
 	  self::data_output('pdf','print_user_license',$this->Model->ModelResult);   
 	}
 	
-	// JSON: 取得申請狀態 
+	// JSON: OAS 規格 
 	public function OpenAPI(){
 	  $this->Model->OpenAPI_Config_Json();
 	  self::data_output('json-oai','',$this->Model->ModelResult);
 	}
 	
-	
-	
-	
+    
 	// 測試
-	public function TestAPI($API){
+	public function TestAPI($API,$Code='',$Key=''){
 		//登入
 		$applicant = '{"applicant_name":"HSIAO","applicant_userid":"T122806987","applicant_mail":"hsiaoiling@ntu.edu.tw","source":"MTAPI"}';
 		$application = '{"area":{"code":"c6261eb8","inter":["測試進入範圍"],"gate":{"entr":"塔曼山","entr_time":"05:00:00","exit":"小烏來","exit_time":"18:00:00"}},"reason":[{"item":"民眾為環境教育之需要","limit":1}],"attach":[{"code":"C2E1B82C.pdf","time":"2019-09-24 11:24:17","file":"行政院及所屬各機關資訊安全管理要點"}],"dates":[["2019-10-09","2019-10-09"]],"fields":{"application_field_1":{"field":"一、請完整填寫申請當日行進路線【包含預計抵達時間及地點、並說明抵達後從事之行為種類】：","value":"1、08:00由滿月圓進入→10:30水源地→10:40木屋遺址→12:20插天山→13:30木屋遺址→13:40水源地→15:50由滿月圓離開。"},"application_field_2":{"field":"二、環境維護措施(垃圾、廢棄物處理方式)及環境教育內容簡介：","value":"1、全體隊員遵守進入管制規定及無痕山林規範。\n2、不隨意離開已開放供使用之步道及區域。"},"application_field_3":{"field":"三、緊急災難處理(應變相關裝備概述、辦理保險及撤退路線等說明)：","value":"1.裝備：無線電*4隻 (無線電頻率153.300)，地圖、指北針、高度計、手機、山刀、繩索、小急救包、登山\n定位GPS-550T、通訊裝備：手機數支等。\n2.保險:200萬意外,20萬意外醫療,保險期間:2月8日05:00時至2月9日05:00時。\n3.留守人員姓名：OOO、聯絡電話：OOOOOOOOO。\n4.撤退方式：如身體不適或天氣變化或路線受阻，立即原路撤退下山、選擇OOO路線撤退。"}}}';
 		$member = '[{"member_role":"領隊","member_name":"HSIAO","member_id":"T122806987","member_birth":"1980-01-01","member_sex":"男","member_tel":"0999999999","member_cell":"0999999999","member_addr":"台北市","member_org":"單位1","member_contacter":"陳OO","member_contactto":"0911111111"},{"member_role":"成員","member_name":"陳XX","member_id":"A220133129","member_birth":"1981-01-01","member_sex":"女","member_tel":"0922222222","member_cell":"0922222222","member_addr":"台中市","member_org":"單位2","member_contacter":"陳OO","member_contactto":"0911111111"},{"member_role":"成員","member_name":"林ZZ","member_id":"A104698418","member_birth":"1982-01-01","member_sex":"男","member_tel":"0933333333","member_cell":"0933333333","member_addr":"台南市","member_org":"單位3","member_contacter":"陳OO","member_contactto":"0911111111"}]';
 		
+		$url = "http://localhost/ForestApply/webroot-client/ApplyApi/";
 		
-		$url = "https://forestapply.oo10.co/ApplyApi/";
-		
-		$ch 	= curl_init();
-		$options = array(CURLOPT_URL => $url.$API,
+		$ch 	 = curl_init();
+		$options = array(CURLOPT_URL => $url.$API.($Code?'/'.$Code:'').($Key?'/'.$Key:''),
                    CURLOPT_HEADER => 1,
                    CURLOPT_RETURNTRANSFER => true,
                    CURLOPT_USERAGENT => "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:10.0.2) Gecko/20100101 Firefox/10.0.2",
-				   CURLOPT_REFERER   => "https://forestapply.oo10.co/",
+				   CURLOPT_REFERER   => "http://140.112.114.183",
 				   CURLOPT_COOKIEFILE => 'D:\webroot\O_O\cookie2.txt',
                    CURLOPT_COOKIEJAR => 'D:\webroot\O_O\cookie2.txt',
                    CURLOPT_FOLLOWLOCATION => true ,
@@ -185,14 +220,14 @@ class ApplyApi_Controller extends Admin_Controller{
                    CURLOPT_POSTFIELDS => "applicant=".$applicant
                   );
 		curl_setopt_array($ch, $options);
-		
-		print_r(curl_exec($ch),true);
-		
 		$output = curl_exec($ch);
 		curl_close($ch);
 		
+		
 		echo "<pre>";
-		print_r(json_decode($output,true),true);
+		var_dump($output);
+		
+		var_dump($_POST);
 		
 		 
 		

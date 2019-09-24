@@ -1140,16 +1140,12 @@
 		  mkdir(_SYSTEM_CLIENT_PATH.$apply_code, 0777, true);	  
 	    }
         
-		$login_key = sha1($user_data['applicant_mail']._SYSTEM_NAME_SHORT.':'.strtotime('now'));
+		$login_key = sha1($user_data['applicant_mail']._SYSTEM_NAME_SHORT.':'.microtime(true));
 		
 		$result['session']['APPLYTOKEN'] = ['CODE'=>$apply_code,'KEY'=>_SYSTEM_NAME_SHORT.':'.strtotime('now')];
 		$result['session']['APPLICANT']  = $user_data;
 		
-		if(!isset($_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'])) $_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'] = [];
-		$_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'][$login_key] = [
-		  'APPLYTOKEN'=>$result['session']['APPLYTOKEN'],
-		  'APPLICANT'=> $result['session']['APPLICANT']
-		];
+		file_put_contents(_SYSTEM_CLIENT_PATH.$apply_code.'/session_'.$login_key,print_r(json_encode($result['session']),true));
 		
 		$result['data']['login_key']     = $login_key;
 		$result['data']['apply_code']    = $apply_code;
@@ -1265,10 +1261,6 @@
 		  throw new Exception('_SYSTEM_ERROR_PERMISSION_CHECK_FAIL');		
 		}
 		
-		// 確認申請SESSION未過期
-		if(!isset($ApplyToken['KEY']) || (strtotime('now') - intval(str_replace(_SYSTEM_NAME_SHORT.':','',$ApplyToken['KEY']))) > 600 ){
-		  throw new Exception('_SYSTEM_ERROR_SESSION_EXPIRED');		
-		}
 		
 		// 取得申請資料
 		$booking = array();
@@ -3131,6 +3123,17 @@
 						"requestBody"=>[
 							"required"=>true,
 							"content"=>[
+								"application/json"=>[
+									"schema"=>[
+										"type"=>"object",
+										"properties"=>[
+											"applicant_name"=>["type"=>'string',"description"=>"申請人姓名"],
+											"applicant_userid"=>["type"=>'string',"description"=>"申請人證件ID(身分證號/居留證號/護照號碼)"],
+											"applicant_mail"=>["type"=>'string',"description"=>"申請人email"],
+											"agent"=>["type"=>'string',"description"=>"來源系統代號"]
+										]
+									],
+								],
 								"application/x-www-form-urlencoded"=>[
 									"schema"=>[
 										"type"=>"object",
@@ -3212,6 +3215,11 @@
 						"requestBody"=>[
 							"required"=>true,
 							"content"=>[
+								"application/json"=>[
+									"schema"=>[
+										'$ref'=>'#/components/schemas/Application'
+									],
+								],
 								"application/x-www-form-urlencoded"=>[
 									"schema"=>[
 										"type"=>"object",
@@ -3304,6 +3312,14 @@
 						"requestBody"=>[
 							"required"=>true,
 							"content"=>[
+								"application/json"=>[
+									"schema"=>[
+										"type"=>"array",
+										"items"=>[
+											'$ref'=>'#/components/schemas/ApplyMember'
+										]
+									],
+								],
 								"application/x-www-form-urlencoded"=>[
 									"schema"=>[
 										"type"=>"object",
