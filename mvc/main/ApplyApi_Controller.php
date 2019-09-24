@@ -25,14 +25,14 @@ class ApplyApi_Controller extends Admin_Controller{
 	// JSON: 申請區域清單 
 	public function paareas($Group=''){   
 	  $this->Model->Access_Get_Active_Area_List($Group);
-	  self::data_output('json','',$this->Model->ModelResult);
+	  self::data_output('json-oai','',$this->Model->ModelResult);
 	}
 	
 	
 	// JSON: 申請目標區域資訊 
 	public function areainfo($AreaCode='',$CalendarStart='_now'){
 	  $this->Model->Access_Get_Select_Area_Meta($AreaCode);
-	  self::data_output('json','',$this->Model->ModelResult);
+	  self::data_output('json-oai','',$this->Model->ModelResult);
 	}
 	
 	
@@ -45,7 +45,7 @@ class ApplyApi_Controller extends Admin_Controller{
 	  $agentpost = isset($_REQUEST['applicant']) ? $_REQUEST['applicant'] : "[]";
 	  $ApplicantData = rawurlencode(str_replace('/','*',base64_encode($agentpost)));
 	  $this->Model->Apply_Record_SignOn($ApplicantData,$ApplyCode);
-	  self::data_output('json','',$this->Model->ModelResult);
+	  self::data_output('json-oai','',$this->Model->ModelResult);
 	}
 	
 	
@@ -62,7 +62,7 @@ class ApplyApi_Controller extends Admin_Controller{
 	  
 	  $this->Model->Apply_Input_ApplyForm($ApplyCode,$ApplicationData,$apply_token);
 	  $this->Model->Apply_Get_Member_Record($ApplyCode,$apply_token);
-	  self::data_output('json','',$this->Model->ModelResult);
+	  self::data_output('json-oai','',$this->Model->ModelResult);
 	}
 	
 	
@@ -81,7 +81,7 @@ class ApplyApi_Controller extends Admin_Controller{
 	  }	
 	  
 	  $this->Model->Apply_Save_MbrEdit($ApplyCode,$MemberString,$apply_token,$applicant);
-      self::data_output('json','',$this->Model->ModelResult); 
+      self::data_output('json-oai','',$this->Model->ModelResult); 
 	}
 	
 	
@@ -96,7 +96,7 @@ class ApplyApi_Controller extends Admin_Controller{
 	  }
 	  
 	  $result = $this->Model->Apply_Record_Check($ApplyCode,$apply_token);
-      self::data_output('json','',$this->Model->ModelResult);
+      self::data_output('json-oai','',$this->Model->ModelResult);
 	}
 	
 	
@@ -110,7 +110,7 @@ class ApplyApi_Controller extends Admin_Controller{
 	  }
 	  
 	  $this->Model->Apply_Record_Cancel($ApplyCode,$apply_token);
-	  self::data_output('json','',$this->Model->ModelResult);
+	  self::data_output('json-oai','',$this->Model->ModelResult);
 	}
 	
 	
@@ -123,7 +123,7 @@ class ApplyApi_Controller extends Admin_Controller{
 	  }
 	  
 	  $this->Model->Apply_License_Status_Rawdata($ApplyCode,$apply_token);	
-	  self::data_output('json','',$this->Model->ModelResult);
+	  self::data_output('json-oai','',$this->Model->ModelResult);
 	}
 	
 	
@@ -139,7 +139,7 @@ class ApplyApi_Controller extends Admin_Controller{
 	  $result = $this->Model->Apply_Record_Read( $ApplyCode, $apply_token );
 	  $active = $this->Model->Apply_Download_Check();
 	  if(!$result['action'] || !$active['action']){
-		self::data_output('json','',$this->Model->ModelResult);    
+		self::data_output('json-oai','',$this->Model->ModelResult);    
 	    exit(1);
 	  }
 	  $this->Model->Apply_Feform_Application_Page($ApplyCode,'license');
