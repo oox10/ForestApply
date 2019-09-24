@@ -11,7 +11,7 @@
 	public function render(){
 	  $args = func_get_args();
 	  //exit($args[0]);
-	  http_response_code((!$this->vars[$args[0]]['action'] ? 200 :405));
+	  http_response_code(($this->vars[$args[0]]['action'] ? 200 :405));
 	  header("Content-type: application/json");
 	  $JsonCode = isset($this->vars[$args[0]]['data']['openapi']) ? $this->vars[$args[0]]['data'] : $this->vars[$args[0]];
 	  echo json_encode($JsonCode);
