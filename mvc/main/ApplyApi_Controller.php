@@ -125,7 +125,7 @@ class ApplyApi_Controller extends Admin_Controller{
 	  $session_config = $this->session_restore($ApplyCode,$LoginKey);
 	  
 	  $this->Model->Apply_Input_ApplyForm($ApplyCode,$ApplicationData,$session_config['APPLYTOKEN']);
-	  $this->Model->Apply_Get_Member_Record($ApplyCode,$apply_token);
+	  $this->Model->Apply_Get_Member_Record($ApplyCode,$session_config['APPLYTOKEN']);
 	  self::data_output('json-oai','',$this->Model->ModelResult);
 	}
 	
