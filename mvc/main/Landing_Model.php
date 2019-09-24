@@ -1813,7 +1813,7 @@
 		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');
 		}
 		$apply_code = $ApplyCode;
-		
+		 
 		// 檢查使用者是否為本人
 		if( !is_array($ApplyToken) || !isset($ApplyToken['CODE']) || $ApplyToken['CODE']!=$ApplyCode  ){
 		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');	
@@ -2603,7 +2603,7 @@
 		// 取得資料
 		$booking = NULL;
 		$DB_GET	= $this->DBLink->prepare( SQL_AdBook::GET_BOOKING_RECORD() );
-		$DB_GET->bindParam(':abno'   , $DataCode , PDO::PARAM_INT);	
+		$DB_GET->bindParam(':abno'   , $DataCode , PDO::PARAM_STR);	
 		if( !$DB_GET->execute() || !$booking = $DB_GET->fetch(PDO::FETCH_ASSOC)){
 		  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
 		}
@@ -3726,6 +3726,17 @@
 									"type"=>"object",
 									"properties"=>[
 										"item"=>["type"=>'string'],
+									]
+								]
+							],
+							"attach"=>[
+								"type"=>"array",
+								"items"=>[
+									"type"=>"object",
+									"properties"=>[
+										"code"=>["type"=>'string',"description"=>"檔案下載路徑"],
+										"time"=>["type"=>'string',"description"=>"檔案上傳時間"],
+										"file"=>["type"=>'string',"description"=>"檔案名稱"],
 									]
 								]
 							],
