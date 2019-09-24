@@ -54,7 +54,7 @@ class ApplyApi_Controller extends Admin_Controller{
 	  $agentpost = isset($_REQUEST['application']) ? $_REQUEST['application'] : "[]";
 	  $ApplicationData = rawurlencode(str_replace('/','*',base64_encode($agentpost)));
 	  
-	  if($loginkey&&isset($_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'][$LoginKey])){
+	  if($LoginKey&&isset($_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'][$LoginKey])){
 		$apply_token = $_SESSION[_SYSTEM_NAME_SHORT]['LOGINCACHE'][$LoginKey]['APPLYTOKEN'];
 	  }else{
 		$apply_token = isset($_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN']) ? $_SESSION[_SYSTEM_NAME_SHORT]['APPLYTOKEN'] : false;  
