@@ -2984,22 +2984,38 @@
 										"schema"=>[
 											"type"=>"object",
 											"properties"=>[
-												"type"=>[
-													"type"=>"array",
-													"items"=>["type"=>"string"]
-												],
-												"list"=>[
-													"type"=>"array",
-													"items"=>['$ref'=>'#/components/schemas/AreaData']
-												],
-												"contact"=>[
-													"type"=>"array",
-													"items"=>['$ref'=>'#/components/schemas/AreaObject']
+												"action"=>["type"=>"integer","enum"=>[1]],
+												"info"	=>["type"=>"string"],
+												"data"	=>[
+													"type"=>"object",
+													"properties"=>[
+														"type"=>[
+															"type"=>"array",
+															"items"=>["type"=>"string"]
+														],
+														"list"=>[
+															"type"=>"array",
+															"items"=>['$ref'=>'#/components/schemas/AreaData']
+														],
+														"contact"=>[
+															"type"=>"array",
+															"items"=>['$ref'=>'#/components/schemas/AreaObject']
+														]
+													]
 												]
 											]
-											
 										]
 									]
+								]
+							],
+							"405"=>[
+								"description"=>"作業執行失敗",
+								"content"=>[
+								   "application/json"=>[
+										"schema"=>[
+											'$ref'=>'#/components/responses/ActionFail'
+										]
+								   ]
 								]
 							]
 						],
@@ -3023,54 +3039,61 @@
 										"schema"=>[
 											"type"=>"object",
 											"properties"=>[
-												"meta"=>[
+												"action"=>["type"=>"integer","enum"=>[1]],
+												"info"	=>["type"=>"string"],
+												"data"	=>[
 													"type"=>"object",
 													"properties"=>[
-														"area"=>[
+														"meta"=>[
 															"type"=>"object",
 															"properties"=>[
-																"area_code"=>["type"=>'string'],
-																"area_type"=>["type"=>'string'],
-																"area_name"=>["type"=>'string'],
-																"area_link"=>["type"=>'string'],
-																"area_gates"=>["type"=>'string',"description"=>"以;分隔多值"],																
-																"area_load"=>["type"=>'integer'],
-																"accept_max_day"=>["type"=>'integer'],
-																"accept_min_day"=>["type"=>'integer'],
-																"revise_day"=>["type"=>'integer'],
-																"cancel_day"=>["type"=>'integer'],
-																"filled_day"=>["type"=>'integer'],
-																"wait_list"=>["type"=>'integer'],
-																"member_max"=>["type"=>'integer'],
-																"time_open"=>["type"=>'integer'],
-																"time_close"=>["type"=>'integer'],
-																"owner"=>["type"=>'integer'],
-																"sub_block"=>[
-																	"type"=>'object',
-																	"additionalProperties"=>[
-																		'$ref'=>"#/components/schemas/AreaBlock"
+																"area"=>[
+																	"type"=>"object",
+																	"properties"=>[
+																		"area_code"=>["type"=>'string'],
+																		"area_type"=>["type"=>'string'],
+																		"area_name"=>["type"=>'string'],
+																		"area_link"=>["type"=>'string'],
+																		"area_gates"=>["type"=>'string',"description"=>"以;分隔多值"],																
+																		"area_load"=>["type"=>'integer'],
+																		"accept_max_day"=>["type"=>'integer'],
+																		"accept_min_day"=>["type"=>'integer'],
+																		"revise_day"=>["type"=>'integer'],
+																		"cancel_day"=>["type"=>'integer'],
+																		"filled_day"=>["type"=>'integer'],
+																		"wait_list"=>["type"=>'integer'],
+																		"member_max"=>["type"=>'integer'],
+																		"time_open"=>["type"=>'integer'],
+																		"time_close"=>["type"=>'integer'],
+																		"owner"=>["type"=>'integer'],
+																		"sub_block"=>[
+																			"type"=>'object',
+																			"additionalProperties"=>[
+																				'$ref'=>"#/components/schemas/AreaBlock"
+																			]
+																		],
+																		"master_group"=>["type"=>'string'],
+																		"master_contect"=>["type"=>'string'],
+																		"master_email"=>["type"=>'string'],
 																	]
 																],
-																"master_group"=>["type"=>'string'],
-																"master_contect"=>["type"=>'string'],
-																"master_email"=>["type"=>'string'],
-															]
-														],
-														"forms"=>[
-															
-														],
-														"start"=>["type"=>'string'],
-														"stops"=>[
-															"type"=>'array',
-															"items"=>[
-																'$ref'=>"#/components/schemas/AreaStop"
-															]
-														],
-														"applied"=>[
-															"type"=>'object',
-															"description"=>"日期為KEY存放每日申請人數",
-															"additionalProperties"=>[
-																"type"=>"integer"
+																"forms"=>[
+																	
+																],
+																"start"=>["type"=>'string'],
+																"stops"=>[
+																	"type"=>'array',
+																	"items"=>[
+																		'$ref'=>"#/components/schemas/AreaStop"
+																	]
+																],
+																"applied"=>[
+																	"type"=>'object',
+																	"description"=>"日期為KEY存放每日申請人數",
+																	"additionalProperties"=>[
+																		"type"=>"integer"
+																	]
+																]
 															]
 														]
 													]
@@ -3078,6 +3101,16 @@
 											]
 										]
 									]
+								]
+							],
+							"405"=>[
+								"description"=>"作業執行失敗",
+								"content"=>[
+								   "application/json"=>[
+										"schema"=>[
+											'$ref'=>'#/components/responses/ActionFail'
+										]
+								   ]
 								]
 							]
 						],
@@ -3130,11 +3163,28 @@
 										"schema"=>[
 											"type"=>"object",
 											"properties"=>[
-												"login_key"=>["type"=>'string',"description"=>"登入認證KEY，確認登入狀態"],
-												"apply_code"=>["type"=>'string',"description"=>"申請單代號"]
+												"action"=>["type"=>"integer","enum"=>[1]],
+												"info"	=>["type"=>"string"],
+												"data"	=>[
+													"type"=>"object",
+													"properties"=>[
+														"login_key"=>["type"=>'string',"description"=>"登入認證KEY，確認登入狀態"],
+														"apply_code"=>["type"=>'string',"description"=>"申請單代號"]
+													]
+												]
 											]
 										]
 									]
+								]
+							],
+							"405"=>[
+								"description"=>"作業執行失敗",
+								"content"=>[
+								   "application/json"=>[
+										"schema"=>[
+											'$ref'=>'#/components/responses/ActionFail'
+										]
+								   ]
 								]
 							]
 						]
@@ -3187,22 +3237,30 @@
 										"schema"=>[
 											"type"=>"object",
 											"properties"=>[
-												"submit"=>["type"=>'string',"description"=>"申請單代號"],
-												"members"=>[
+												"action"=>["type"=>"integer","enum"=>[1]],
+												"info"	=>["type"=>"string"],
+												"data"	=>[
 													"type"=>"object",
 													"properties"=>[
-														"applycode"=>["type"=>'string',"description"=>"申請單代號"],
-														"applicant"=>[
-															"type"=>'object',
+														"submit"=>["type"=>'string',"description"=>"申請單代號"],
+														"members"=>[
+															"type"=>"object",
 															"properties"=>[
-																"applicant_name"=>["type"=>'string',"description"=>"申請人姓名"],
-																"applicant_userid"=>["type"=>'string',"description"=>"申請人ID"],
-																"applicant_mail"=>["type"=>'string',"description"=>"申請人email"],
+																"applycode"=>["type"=>'string',"description"=>"申請單代號"],
+																"applicant"=>[
+																	"type"=>'object',
+																	"properties"=>[
+																		"applicant_name"=>["type"=>'string',"description"=>"申請人姓名"],
+																		"applicant_userid"=>["type"=>'string',"description"=>"申請人ID"],
+																		"applicant_mail"=>["type"=>'string',"description"=>"申請人email"],
+																	]
+																],
+																"memberlist"=>[
+																    "type"=>'array',
+																	"description"=>"目前成員名單，預設申請人為領隊",
+																	"items"=>['$ref'=>'#/components/schemas/ApplyMember']
+																]
 															]
-														],
-														"memberlist"=>[
-															"type"=>'array',
-															"items"=>['$ref'=>'#/components/schemas/ApplyMember']
 														]
 													]
 												]
@@ -3210,68 +3268,21 @@
 										]
 									]
 								]
+							],
+							"405"=>[
+								"description"=>"作業執行失敗",
+								"content"=>[
+								   "application/json"=>[
+										"schema"=>[
+											'$ref'=>'#/components/responses/ActionFail'
+										]
+								   ]
+								]
 							]
 						]
 					]
 				],
 				"/savembr/{ApplyCode}/{LoginKey}"=>[  //遞交成員名單
-					"parameters"=>[
-						[
-							"name"=>"ApplyCode",
-							"in"=>"path",
-							"required"=>false,
-							"description"=>"申請代碼",
-							"schema"=>["type"=>'string']
-						]
-					],
-					"post"=>[
-						"summary"=>"建立/登入申請資料",
-						"requestBody"=>[
-							"required"=>true,
-							"content"=>[
-								"application/x-www-form-urlencoded"=>[
-									"schema"=>[
-										"type"=>"object",
-										"properties"=>[
-											"applicant"=>[
-												"type"=>"object",
-												"properties"=>[
-													"applicant_name"=>["type"=>'string',"description"=>"申請人姓名"],
-													"applicant_userid"=>["type"=>'string',"description"=>"申請人證件ID(身分證號/居留證號/護照號碼)"],
-													"applicant_mail"=>["type"=>'string',"description"=>"申請人email"],
-													"agent"=>["type"=>'string',"description"=>"來源系統代號"]
-												]
-											]
-										]
-									],
-									"encoding"=>[
-										"applicant"=>[
-											"contentType"=>"application/json"
-										]
-					
-									]
-								]
-							]
-						],
-						"responses"=>[
-							"200"=>[
-								"description"=>"成功註冊/登入申請資料",
-								"content"=>[
-									"application/json"=>[
-										"schema"=>[
-											"type"=>"object",
-											"properties"=>[
-												"login_key"=>["type"=>'string',"description"=>"登入認證KEY，確認登入狀態"],
-												"apply_code"=>["type"=>'string',"description"=>"申請單代號"]
-											]
-										]
-									]
-								]
-							]
-						]
-					]
-				],
-				"/applyform/{ApplyCode}/{LoginKey}"=>[  //遞交申請資料
 					"parameters"=>[
 						[
 							"name"=>"ApplyCode",
@@ -3322,10 +3333,22 @@
 										"schema"=>[
 											"type"=>"object",
 											"properties"=>[
-												"data"=>["type"=>'integer',"description"=>"成員數量"],
+												"action"=>["type"=>"integer","enum"=>[1]],
+												"info"	=>["type"=>"string"],
+												"data"	=>["type"=>'integer',"description"=>"成員數量"],
 											]
 										]
 									]
+								]
+							],
+							"405"=>[
+								"description"=>"作業執行失敗",
+								"content"=>[
+								   "application/json"=>[
+										"schema"=>[
+											'$ref'=>'#/components/responses/ActionFail'
+										]
+								   ]
 								]
 							]
 						]
@@ -3358,10 +3381,27 @@
 										"schema"=>[
 											"type"=>"object",
 											"properties"=>[
-												"check"=>["type"=>'string'],
+												"action"=>["type"=>"integer","enum"=>[1]],
+												"info"	=>["type"=>"string"],
+												"data"	=>[
+													"type"=>"object",
+													"properties"=>[
+														"check"=>["type"=>'string'],
+													]
+												]	
 											]
 										]
 									]
+								]
+							],
+							"405"=>[
+								"description"=>"作業執行失敗",
+								"content"=>[
+								   "application/json"=>[
+										"schema"=>[
+											'$ref'=>'#/components/responses/ActionFail'
+										]
+								   ]
 								]
 							]
 						]
@@ -3394,10 +3434,22 @@
 										"schema"=>[
 											"type"=>"object",
 											"properties"=>[
-												"data"=>["type"=>'string'],
+												"action"=>["type"=>"integer","enum"=>[1]],
+												"info"	=>["type"=>"string"],
+												"data"	=>["type"=>'string'],
 											]
 										]
 									]
+								]
+							],
+							"405"=>[
+								"description"=>"作業執行失敗",
+								"content"=>[
+								   "application/json"=>[
+										"schema"=>[
+											'$ref'=>'#/components/responses/ActionFail'
+										]
+								   ]
 								]
 							]
 						]
@@ -3430,58 +3482,76 @@
 										"schema"=>[
 											"type"=>"object",
 											"properties"=>[
-												"apply_code"=>["type"=>'string'],
-												"applicant"=>[
-													'$ref'=>'#/components/schemas/Applicant'
-												],
-												"joinmember"=>[
-													"type"=>"array",
-													"items"=>[
-														'$ref'=>'#/components/schemas/ApplyMember'
-													]
-												],
-												"application"=>[
-												  '$ref'=>'#/components/schemas/Application'
-												],
-												"_ballot"=>["type"=>'integer',"enum"=>[0,1],"description"=>"是否需要抽籤"],
-												"_ballot_date"=>["type"=>'string',"description"=>"抽籤日期，格式YYYY-MM-DD"],
-												"_stage"=>["type"=>'integer',"enum"=>[0,1,2,3,4,5],"description"=>"當前申請階段"],
-												"_progres"=>[
-													"type"=>'object',
-													"description"=>"申請進度資訊",
+												
+												"action"=>["type"=>"integer","enum"=>[1]],
+												"info"	=>["type"=>"string"],
+												"data"	=>[
+													"type"=>"object",
 													"properties"=>[
-														"stage"=>[
+														"apply_code"=>["type"=>'string'],
+														"applicant"=>[
+															'$ref'=>'#/components/schemas/Applicant'
+														],
+														"joinmember"=>[
 															"type"=>"array",
 															"items"=>[
-																"type"=>"string",
-															],
+																'$ref'=>'#/components/schemas/ApplyMember'
+															]
 														],
-														"client"=>[
-															"type"=>"array",
-															"items"=>[
-																"type"=>"array",
-																"items"=>[
-																	'$ref'=>'#/components/schemas/ApplyLogs'
-																]
-															],
+														"application"=>[
+														  '$ref'=>'#/components/schemas/Application'
 														],
-														"review"=>[
-															"type"=>"array",
-															"items"=>[
-																"type"=>"array",
-																"items"=>[
-																	'$ref'=>'#/components/schemas/ApplyLogs'
-																]
-															],
+														"_ballot"=>["type"=>'integer',"enum"=>[0,1],"description"=>"是否需要抽籤"],
+														"_ballot_date"=>["type"=>'string',"description"=>"抽籤日期，格式YYYY-MM-DD"],
+														"_stage"=>["type"=>'integer',"enum"=>[0,1,2,3,4,5],"description"=>"當前申請階段"],
+														"_progres"=>[
+															"type"=>'object',
+															"description"=>"申請進度資訊",
+															"properties"=>[
+																"stage"=>[
+																	"type"=>"array",
+																	"items"=>[
+																		"type"=>"string",
+																	],
+																],
+																"client"=>[
+																	"type"=>"array",
+																	"items"=>[
+																		"type"=>"array",
+																		"items"=>[
+																			'$ref'=>'#/components/schemas/ApplyLogs'
+																		]
+																	],
+																],
+																"review"=>[
+																	"type"=>"array",
+																	"items"=>[
+																		"type"=>"array",
+																		"items"=>[
+																			'$ref'=>'#/components/schemas/ApplyLogs'
+																		]
+																	],
+																],
+															]
 														],
+														"_status"=>["type"=>'string'],
+														"_final"=>["type"=>'string'],
+														"_isdone"=>["type"=>'boolean'],
 													]
-												],
-												"_status"=>["type"=>'string'],
-												"_final"=>["type"=>'string'],
-												"_isdone"=>["type"=>'boolean'],
+												]	
 											]
 										]
 									]
+								]
+							],
+							"405"=>[
+								"description"=>"作業執行失敗",
+								"content"=>[
+								   "application/json"=>[
+										"schema"=>[
+											'$ref'=>'#/components/responses/ActionFail'
+										]
+								   ]
 								]
 							]
 						],
@@ -3517,6 +3587,16 @@
 											"format"=>"binary"
 										]
 									]
+								]
+							],
+							"405"=>[
+								"description"=>"作業執行失敗",
+								"content"=>[
+								   "application/json"=>[
+										"schema"=>[
+											'$ref'=>'#/components/responses/ActionFail'
+										]
+								   ]
 								]
 							]
 						]
@@ -3672,8 +3752,25 @@
 							 
 						]
 					]	
+				],
+				"responses"=>[
+					"ActionFail"=>[
+						"description"=>"執行失敗",
+						"content"=>[
+							"application/json"=>[
+								"schema"=>[
+									"type"=>"object",
+									"properties"=>[	
+										"action"=>["type"=>"integer","enum"=>[0]],
+										"info"	=>["type"=>"string","description"=>"錯誤訊息"],
+									]	
+								]
+							]
+						]
+					]
 				]
 			],
+			
 			"security"=>[]
 		];
 		
