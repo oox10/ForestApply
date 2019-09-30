@@ -438,7 +438,8 @@
 				  </tr>
 				  <tr><td>隸屬項目：</td><td><input    class='input_form' name='field_class' type='text' value='' placeholder='' /></td></tr>
 				  <tr><td>欄位標題：</td><td><input    class='input_form' name='field_label' type='text' value='' placeholder='' /></td></tr>
-				  <tr><td>欄位內容：</td><td><input    class='input_form' name='field_value' type='text' value='' placeholder='預設欄位內容；若模式為選項則將選項設定於此並用分號隔開' /></td></tr>
+				  <tr><td>欄位內容：</td><td><input    class='input_form' name='field_value' type='text' value='' placeholder='預設欄位內容' /></td></tr>
+				  <tr><td>選項設定：</td><td><input    class='input_form' name='field_option' type='text' value='' placeholder='將選項設定於此並用分號隔開' /></td></tr>
 				  <tr><td>欄位備註：</td><td><textarea class='input_note' name='field_notes' placeholder='項目備註'></textarea></td></tr>
 				</table>
 				

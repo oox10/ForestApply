@@ -268,7 +268,24 @@ $(window).load(function () {   //  || $(document).ready(function() {
 	  var position   = $(this).position();  
 	  var location_top = position.top+45;
 	  if( $('#area_gates_assist').length){
+		
+		if($('input[name="inter_area"]:checked').length){
+			
+			let area_focus = $('input[name="inter_area"]:checked').map(function(){return $(this).val();}).get()
+			$('li.get_selecter').each(function(){
+				if(area_focus.indexOf($(this).attr('block')) != -1){
+				  $(this).show();	
+				}else{
+				  $(this).hide();	
+				}
+				
+			})
+		}else{
+			$('li.get_selecter').show();
+		}
+		
 		$('#area_gates_assist').attr('bind',$(this).attr('id')).css('top',location_top).show();
+		
 	  }
 	});
 	

@@ -25,6 +25,10 @@
 	<script type="text/javascript" src="js_client.js?<?php echo time();?>"></script>
 	<script type="text/javascript" src="js_landing.js?<?php echo time();?>"></script>
 	
+	
+	
+	
+	
 	<!-- PHP DATA -->
 	
 	<?php
@@ -89,7 +93,7 @@
 			</span>
 		  </h1>
 	      <p>
-		    本系統提供農委會主管法規所公告（含林務局或各地方政府管理）之自然保留區、自然保護區、野生動物保護區進入申請服務，申請前請先參照申請須知與流程，並確認該區域公告與目前之承載量管制人數」
+		    本系統提供農委會主管法規所公告（含林務局或各地方政府管理）之自然保留區、自然保護區、野生動物保護區進入申請服務，申請前請先參照申請須知與流程，並確認該區域公告與目前之承載量管制人數
 		  </p>
 		</div>
 		

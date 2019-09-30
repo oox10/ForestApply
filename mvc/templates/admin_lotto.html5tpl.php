@@ -180,7 +180,7 @@
 			  </table>
 			  <div class='record_control'>
 			    <span class='record_result'>  
-			      顯示 <span> 1 </span> - <span> 10 </span> /  共 <span> <?php echo count($data_count); ?></span>  筆
+			      顯示 <span> 1 </span> - <span> 10 </span> /  共 <span> <?php echo $data_count; ?></span>  筆
 			    </span>
 				<span class='record_pages'>
 				  <a class='page_tap page_to' page='prev' > &#171; </a>

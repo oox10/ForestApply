@@ -7,7 +7,7 @@
 		    <li> <a href='docs/林務局自然保護區域進入申請系統申請流程圖2018.pdf' target=_blank >申請流程</a>  </li>
 		    <li> 申請規則說明</a></li>
 		    <li> 申請須知 </li>
-		    <li>  </li>
+		    <li>          </li>
 		  </ul>
 		  <?php if(!$this->vars['server']['data']['area']['alone']): ?> 
 		  <h2> 相關連結 </h2>
@@ -18,6 +18,16 @@
 		    
 		  </ul>
 		  <?php endif; ?>
+		  
+		  <h2> 語言設定 </h2>
+		  <div id="google_translate_element"></div>
+		  <script type="text/javascript">
+				function googleTranslateElementInit() {
+					new google.translate.TranslateElement({pageLanguage: 'zh-TW', includedLanguages: 'en,ja,zh-TW', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+				}
+		  </script>
+		  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script> 
+		
 		
 		</div>
 	    

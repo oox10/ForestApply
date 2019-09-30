@@ -823,8 +823,14 @@
 			'date' 		=>$apply_date_index
 	      ];
 		  
-		  // 確認日期是否超過申請日
-		  if($apply_date_time <= $min_apply_time || $apply_date_time > $max_apply_time ){
+		  
+		  // 申請規則更新，處理過渡期  2019-10-01 - 2019-10-15
+		  $already_finish_date = '2019-10-14';
+		  if($apply_date_time < strtotime($already_finish_date.' 23:59:59')){
+			$d_config['type']  = 'over';
+			$d_config['apply'] = 0;
+			$d_config['info']  = ''; 
+		  }else if($apply_date_time <= $min_apply_time || $apply_date_time > $max_apply_time ){ // 確認日期是否超過申請日
 			$d_config['type']  = 'over';
 			$d_config['apply'] = 0;
 			$d_config['info']  = '';		
@@ -1365,9 +1371,16 @@
 				throw new Exception('_APPLY_SUBMIT_DATES_FAILS');    
 			  }
 			  
+			  
 			  // 檢查申請日期是否超過申請範圍
 			  $inter_date_time = strtotime($apply_dates[0].' 12:00:00');
 			  if( $min_apply_time >= $inter_date_time || $inter_date_time >= $max_apply_time ){
+				throw new Exception('_APPLY_SUBMIT_DATES_OVERFLOW');  
+			  }
+			  
+			  // 檢查申請日期是否再不提供申請前
+			  $already_finish_date= '2019-10-14';
+		      if( strtotime($already_finish_date.' 23:59:59') >= $inter_date_time ){
 				throw new Exception('_APPLY_SUBMIT_DATES_OVERFLOW');  
 			  }
 			  

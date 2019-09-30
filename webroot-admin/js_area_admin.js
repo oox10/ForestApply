@@ -340,6 +340,7 @@
           form_dom.find("input[name='field_class']").val(meta.config.class);
 		  form_dom.find("input[name='field_label']").val(meta.config.label);
 		  form_dom.find("input[name='field_value']").val(meta.config.value);
+		  form_dom.find("input[name='field_option']").val(meta.config.option);
 		  form_dom.find("textarea[name='field_notes']").val(meta.config.notes);
 		  form_dom.find(".feno").text(field_count++);
 		  form_dom.appendTo('.apply_form');
@@ -973,6 +974,7 @@
 		  form_config[field_id]['config']['class'] = config_dom.find("input[name='field_class']").val();
 		  form_config[field_id]['config']['label'] = config_dom.find("input[name='field_label']").val();
 		  form_config[field_id]['config']['value'] = config_dom.find("input[name='field_value']").val();
+		  form_config[field_id]['config']['option'] = config_dom.find("input[name='field_option']").val();
 		  form_config[field_id]['config']['notes'] = config_dom.find("textarea[name='field_notes']").val();
 		}
 		

@@ -243,7 +243,7 @@
 					  </div>
 					</div>
 					<div  class='form_element _nessary'>
-					  <label>身分證字號 (外國人請填寫護照號碼 )</label>
+					  <label>身分證字號（外國人請填寫護照號碼或居留證號）</label>
 					  <div>
 						<input type='text' class='apply_data chief' id='applicant_userid' placeholder="身分證字號或護照號碼">
 						<i class='warning'></i>
@@ -263,7 +263,7 @@
 				</div>
 			  </div>	
 				
-			  <?php if($apply_area['area_type']=='自然保護區'):?>
+			  <?php if($apply_area['area_type']=='自然保護區x'): //20191001已移除 ?>
 			  <h2> 申請進入自然保護區需提供以下資訊：</h2>
 			  <div  class='form_element'>
 				  <label>出生年月日</label>
@@ -459,9 +459,9 @@
 				    <?php elseif(isset($fconf['input']) && $fconf['input']=='text'): ?> 
 				    <input type="text" class='apply_data' name='<?php echo $fid; ?>' value='<?php echo $fconf['value']; ?>' />
 					<?php elseif(isset($fconf['input']) && ($fconf['input']=='radio' || $fconf['input']=='checkbox')): ?> 
-					<?php   $options = explode(';',$fconf['value']); ?>
+					<?php   $options = explode(';',$fconf['option']); ?>
 					<?php   foreach($options as $o=>$opt): ?>   
-					<input type="<?php echo $fconf['input'];?>" class='apply_data' name='<?php echo $fid; ?>' value='<?php echo $opt; ?>' /> <?php echo $opt; ?>       
+					<input type="<?php echo $fconf['input'];?>" class='apply_data' name='<?php echo $fid; ?>' value='<?php echo $opt; ?>'   <?php echo $fconf['value']==$fid ? 'checked':''; ?>    /> <?php echo $opt; ?>       
 					<?php   endforeach;?>
 					<?php else: ?>
 					<input type="text" class='apply_data' name='<?php echo $fid; ?>' value='<?php echo $fconf['value']; ?>' />

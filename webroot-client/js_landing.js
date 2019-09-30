@@ -222,7 +222,7 @@
 			  
 			  if(response.data.info.area.refer.image){
 			    $.each(response.data.info.area.refer.image,function(imgindex,imgmeta){
-				  $('.descrip > .photo_container').append("<img src='photo.php?src="+areaid+'/'+imgindex+"' />");  
+				  $('.descrip > .photo_container').append("<a href='photo.php?src="+areaid+'/'+imgindex+"' target=_blank ><img src='photo.php?src="+areaid+'/'+imgindex+"' /></a>");  
 				  return false;
 			    });
 			  }	

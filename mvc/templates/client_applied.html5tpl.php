@@ -34,10 +34,10 @@
 	
 	$area_list = isset($this->vars['server']['data']['area']['list']) ? $this->vars['server']['data']['area']['list'] : array(); 
 	$area_type = isset($this->vars['server']['data']['area']['type']) ? $this->vars['server']['data']['area']['type'] : array(); 
-	$area_contact = isset($this->vars['server']['data']['area']['contact']) ? $this->vars['server']['data']['area']['contect'] : array();
+	$area_contact = isset($this->vars['server']['data']['area']['contact']) ? $this->vars['server']['data']['area']['contact'] : array();
 	
 	$area_group_flag = '';
-	
+	 
 	
 	?>
 	<style>
