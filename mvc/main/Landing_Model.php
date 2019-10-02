@@ -825,7 +825,7 @@
 		  
 		  
 		  // 申請規則更新，處理過渡期  2019-10-01 - 2019-10-15
-		  $already_finish_date = '2019-10-14';
+		  $already_finish_date = '2019-10-15';
 		  if($apply_date_time < strtotime($already_finish_date.' 23:59:59')){
 			$d_config['type']  = 'over';
 			$d_config['apply'] = 0;
@@ -1379,7 +1379,7 @@
 			  }
 			  
 			  // 檢查申請日期是否再不提供申請前
-			  $already_finish_date= '2019-10-14';
+			  $already_finish_date= '2019-10-15';
 		      if( strtotime($already_finish_date.' 23:59:59') >= $inter_date_time ){
 				throw new Exception('_APPLY_SUBMIT_DATES_OVERFLOW');  
 			  }

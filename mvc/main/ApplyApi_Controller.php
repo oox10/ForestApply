@@ -146,7 +146,7 @@ class ApplyApi_Controller extends Admin_Controller{
 	// AJAX : 遞交申請資料
 	public function submit($ApplyCode='',$LoginKey=''){
 	  
-	  $session_config = session_restore($ApplyCode,$LoginKey);
+	  $session_config = $this->session_restore($ApplyCode,$LoginKey);
 	  
 	  $result = $this->Model->Apply_Record_Check($ApplyCode,$session_config['APPLYTOKEN']);
       self::data_output('json-oai','',$this->Model->ModelResult);

@@ -147,7 +147,7 @@ body{
 	.post > h2{ flex-wrap:wrap; }
 	.post_summary{width:100%; order:10;}
 	
-	.area-block > div:nth-child(2){display:none;}
+	.area-block{flex-direction:column;}
 	.area_type_selecter{ display:none; } 
 	div.date_option{ display:none; } 
 	
@@ -184,7 +184,9 @@ body{
 	.post > h2{ flex-wrap:wrap; }
 	.post_summary{width:100%; order:10;}
 	
-	.area-block > div:nth-child(2){display:none;}	
+	.area-block{flex-direction:column;}
+    
+    	
     div#navbar-header{width:100%;}
     div.registration{
 		  padding:0;	

@@ -22,10 +22,22 @@
     require_once $className . '.php';  
   });
   
+  
+  if(isset($_REQUEST['lang'])){
+	switch(strtolower($_REQUEST['lang'])){
+		case 'english': case 'eng': case 'en': $language = 'en'; break;
+		default:$language = 'zh-TW'; break;
+	}	
+    if(!isset($_COOKIE['googtrans']) || $_COOKIE['googtrans'] != $language){
+	    setcookie("googtrans", "/zh-CN/".$language,0,'/');
+    }
+  }
+  
+  
+  
   try{
 	$router = new Router();
 	$router->route(new Request_url('Landing/index'));
-    
   }catch(Exception $e){
 	$controller = new Error_Controller();
 	$controller->error($e->getMessage());
