@@ -1847,6 +1847,20 @@
 		  throw new Exception('_APPLY_MEMBER_OVER_UPBOUND');
 		}
 		
+		// 檢查申請項目是否需要最低人數
+		$area_form_config = json_decode($booking['form_json'],true);
+		if(isset($area_form_config['application_reason']['elements']) && count($area_form_config['application_reason']['elements'])){
+		    foreach($area_form_config['application_reason']['elements'] as $reason_conf){
+			    if($booking['apply_reason']==$reason_conf['name']){
+					if(isset($reason_conf['test']['limit']) && intval($reason_conf['test']['limit']) ){
+						if(count($apply_members) < intval($reason_conf['test']['limit'])){
+							throw new Exception('成員人數低於規定人數：至少'.intval($reason_conf['test']['limit']).'人');
+						}
+					}
+				}
+		    }	
+		}
+		
 		
 		// get area applied member list  目前已申請之使用者清單，以確保無重複申請
 		$member_checker = array();

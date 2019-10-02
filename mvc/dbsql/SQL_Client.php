@@ -139,7 +139,7 @@
 	
 	//-- Client Area :  get applicant data // 取得要輸出的資料，前台用
 	public static function GET_APPLICATION_META(){
-	  $SQL_String = "SELECT area_booking.*,area_code,area_type,area_name,cancel_day,member_max FROM area_booking LEFT JOIN area_main ON ano=am_id WHERE apply_code=:apply_code AND area_booking._keep=1;";
+	  $SQL_String = "SELECT area_booking.*,area_code,area_type,area_name,cancel_day,member_max,form_json FROM area_booking LEFT JOIN area_main ON ano=am_id WHERE apply_code=:apply_code AND area_booking._keep=1;";
 	  return $SQL_String;
 	}
 	
