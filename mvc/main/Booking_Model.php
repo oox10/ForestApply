@@ -515,6 +515,9 @@
 		$apply_data = json_decode($record['apply_form'],true);
 		
 		
+		// for area
+		$result['data']['area']  = $area_meta;
+		
 		// for field
 		$result['data']['apply'] = $apply_read;
 		
@@ -1144,7 +1147,15 @@
 	  $result  = &$this->ModelResult[$result_key];
 	  try{ 	  
        
-	    // 取得申請資料
+	    $area_meta = [];
+		$area_form = [];
+		if(isset($this->ModelResult['read']['data']['area'])){
+			$area_meta = $this->ModelResult['read']['data']['area'];
+			$area_form = json_decode($area_meta['form_json'],true);
+		}
+		
+		
+		// 取得申請資料
 		//SELECT area_booking.*,area_code,area_type,area_name FROM area_booking LEFT JOIN area_main ON ano=am_id WHERE apply_code=:apply_code AND area_booking._keep=1;
 		$booking = array();
 		$DB_OBJ = $this->DBLink->prepare(SQL_Client::GET_APPLICATION_META());
@@ -1162,7 +1173,11 @@
 		
 		
 		// apply license part 1 // 投遞聯
-		
+		$application['area']['gate']['entr']		= isset($application['area']['gate']['entr']) ? $application['area']['gate']['entr'] : '未填寫';
+		$application['area']['gate']['entr_time']	= isset($application['area']['gate']['entr_time']) ? $application['area']['gate']['entr_time'] : '未填寫';
+		$application['area']['gate']['exit']		= isset($application['area']['gate']['exit']) ? $application['area']['gate']['exit'] : '未填寫';
+		$application['area']['gate']['exit_time']	= isset($application['area']['gate']['exit_time']) ? $application['area']['gate']['exit_time'] : '未填寫';
+		 
 		$license  = array();
         
 		$license[0]  = "  <h1>".$booking['area_type']."進入許可證</h1>"; 
@@ -1198,14 +1213,28 @@
 		  $license[1] .= "    <tbody class='additional_fields'>";	
 		  $license[1] .= "    <tr ><th colspan=4 class='field_set'> ".$field_group." </th></tr>";
 		  foreach($application['fields'] as $field_id => $fcontent){
-            /*
+            
+			if(is_array($fcontent)){
+				$license[1] .= "    <tr ><th colspan=4> ".$fcontent['field']." </th></tr>";	
+				$license[1] .= "    <tr ><td colspan=4> ".nl2br($fcontent['value'])." </th></tr>";	
+				
+			}else{
+				if(isset($area_form[$field_id])){
+					$license[1] .= "    <tr ><th colspan=4> ".$area_form[$field_id]['config']['label']." </th></tr>";	
+					$license[1] .= "    <tr ><td colspan=4> ".nl2br($fcontent)." </th></tr>";	
+				}else{
+					$license[1] .= "    <tr ><th colspan=4> ".$field_id." </th></tr>";	
+					$license[1] .= "    <tr ><th colspan=4> ".nl2br($fcontent)." </th></tr>";
+				}
+			}
+			/*
 			if($field_group != $fcontent['group']){
 			  $license .= "    <tr ><th colspan=6> ".$field_group." </th></tr>";	
 			  $field_group == $fcontent['group'];
 			} 
 			*/
-			$license[1] .= "    <tr ><th colspan=4> ".$fcontent['field']." </th></tr>";	
-			$license[1] .= "    <tr ><td colspan=4> ".nl2br($fcontent['value'])." </th></tr>";	
+			 
+			
 		  }
 		  $license[1] .= "    </tbody>";	
 		}
