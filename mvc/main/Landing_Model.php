@@ -203,7 +203,7 @@
 			$applied_index = preg_replace('/\//','-',$ads);	
 		    if(!isset($applied[$applied_index])) $applied[$applied_index] = 0;   	
 		    $applied[$applied_index] += $tmp['member_count'];
-            $ads = date('Ymd',strtotime('+1 day',strtotime($ads)));
+            $ads = date('Y-m-d',strtotime('+1 day',strtotime($ads)));
 		  }while(strtotime($ads.' 00:00:00') <= strtotime($ade.' 23:59:59'));
 		}
 		
