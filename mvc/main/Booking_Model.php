@@ -1028,6 +1028,13 @@
 		$progress = json_decode($booking['_progres'],true);
 		$application = json_decode($booking['apply_form'],true);
 		
+		// apply license part 1 // 投遞聯
+		$application['area']['gate']['entr']		= isset($application['area']['gate']['entr']) ? $application['area']['gate']['entr'] : '未填寫';
+		$application['area']['gate']['entr_time']	= isset($application['area']['gate']['entr_time']) ? $application['area']['gate']['entr_time'] : '未填寫';
+		$application['area']['gate']['exit']		= isset($application['area']['gate']['exit']) ? $application['area']['gate']['exit'] : '未填寫';
+		$application['area']['gate']['exit_time']	= isset($application['area']['gate']['exit_time']) ? $application['area']['gate']['exit_time'] : '未填寫';
+		 
+		 
 		// 設定通知信種類
 		$mail_title_type  = '';
 		$mail_status_type = '';
