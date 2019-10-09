@@ -2461,10 +2461,24 @@
 		  throw new Exception('_APPLY_RECORD_NOT_FOUND');  
 		}
 		
+		$area_meta = array();
+		$DB_AREA= $this->DBLink->prepare( SQL_AdBook::GET_AREA_META() );
+		$DB_AREA->bindParam(':ano'   , $booking['am_id'] );	
+		if( !$DB_AREA->execute()){
+		  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');
+		}
+		$area_meta = $DB_AREA->fetch(PDO::FETCH_ASSOC);
+		$area_form = json_decode($area_meta['form_json'],true);
+		
 		$applicant 	 = json_decode($booking['applicant_info'],true);
 		$joinmember	 = json_decode($booking['member'],true);
 		$application = json_decode($booking['apply_form'],true);
 		
+		$application['area']['gate']['entr']		= isset($application['area']['gate']['entr']) ? $application['area']['gate']['entr'] : '未填寫';
+		$application['area']['gate']['entr_time']	= isset($application['area']['gate']['entr_time']) ? $application['area']['gate']['entr_time'] : '未填寫';
+		$application['area']['gate']['exit']		= isset($application['area']['gate']['exit']) ? $application['area']['gate']['exit'] : '未填寫';
+		$application['area']['gate']['exit_time']	= isset($application['area']['gate']['exit_time']) ? $application['area']['gate']['exit_time'] : '未填寫';
+		 
 		$enter_dates = ($booking['date_exit'] == $booking['date_enter']) ? 1 : intval(abs(strtotime($booking['date_exit']) - strtotime($booking['date_enter']))/86400);
 		
 		// apply license part 1 // 投遞聯
@@ -2511,14 +2525,19 @@
 		  $license[1] .= "    <tbody class='additional_fields'>";	
 		  $license[1] .= "    <tr ><th colspan=4 class='field_set'> ".$field_group." </th></tr>";
 		  foreach($application['fields'] as $field_id => $fcontent){
-            /*
-			if($field_group != $fcontent['group']){
-			  $license .= "    <tr ><th colspan=6> ".$field_group." </th></tr>";	
-			  $field_group == $fcontent['group'];
-			} 
-			*/
-			$license[1] .= "    <tr ><th colspan=4> ".$fcontent['field']." </th></tr>";	
-			$license[1] .= "    <tr ><td colspan=4> ".nl2br($fcontent['value'])." </th></tr>";	
+            if(is_array($fcontent)){
+				$license[1] .= "    <tr ><th colspan=4> ".$fcontent['field']." </th></tr>";	
+				$license[1] .= "    <tr ><td colspan=4> ".nl2br($fcontent['value'])." </th></tr>";	
+				
+			}else{
+				if(isset($area_form[$field_id])){
+					$license[1] .= "    <tr ><th colspan=4> ".$area_form[$field_id]['config']['label']." </th></tr>";	
+					$license[1] .= "    <tr ><td colspan=4> ".nl2br($fcontent)." </th></tr>";	
+				}else{
+					$license[1] .= "    <tr ><th colspan=4> ".$field_id." </th></tr>";	
+					$license[1] .= "    <tr ><th colspan=4> ".nl2br($fcontent)." </th></tr>";
+				}
+			}
 		  }
 		  $license[1] .= "    </tbody>";	
 		}
