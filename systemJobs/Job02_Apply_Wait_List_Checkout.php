@@ -21,26 +21,31 @@
   file_put_contents($logs_file,$logs_message,FILE_APPEND);
   echo $logs_message;
   
+  $logs_message = '2019-10-16 以後不再使用備取遞補程序，改候補抽籤作業，遞補確認將止於  2019-10-20 以前的申請單'.PHP_EOL;
+  file_put_contents($logs_file,$logs_message,FILE_APPEND);
+  echo $logs_message;
+  
+  
   try{
 	
 	$db = new DBModule;
     $db->db_connect('PDO'); 
 	
 	
-	//掃描所有區域，取出遞補日
+	//掃描所有區域，取出遞補日 , 固定進入前兩天
 	$DB_GET	= $db->DBLink->prepare( "SELECT ano,area_code,area_name,area_load,filled_day FROM area_main WHERE _keep=1 ORDER BY ano ASC;" );
 	if( !$DB_GET->execute() ){
 	  throw new Exception('_DB_ERROR_GET_AREA_SQL_FAIL');
     }
 	
 	while( $tmp = $DB_GET->fetch(PDO::FETCH_ASSOC)){
-	  
-		for($fd=$tmp['filled_day']; $fd >= $tmp['filled_day'] ; $fd--){
+	    
+		for($fd=2; $fd >= 2 ; $fd--){
 		  
 		  //各區域應處理之進入日期
 		  $date_enter = date('Y-m-d',strtotime('+'.$fd.' day'));
 		  
-		  $DB_LOTTO = $db->DBLink->prepare( "SELECT * FROM booking_lotto WHERE aid=:aid AND date_enter=:date_enter;" );
+		  $DB_LOTTO = $db->DBLink->prepare( "SELECT * FROM booking_lotto WHERE aid=:aid AND date_enter=:date_enter AND date_enter <= '2019-10-20';" );
 		  $DB_LOTTO->bindValue(':aid',$tmp['ano']);
 		  $DB_LOTTO->bindValue(':date_enter',$date_enter);
 		  if( !$DB_LOTTO->execute()){

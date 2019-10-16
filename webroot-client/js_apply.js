@@ -1353,10 +1353,16 @@ $(window).load(function () {   //  || $(document).ready(function() {
 		  var _type  = '';
 		  var info = '<i class="fa fa-ban" aria-hidden="true"></i>';
 		  var hint = '本日不可申請';
+		  
 		  if(typeof date_config[date_index]!='undefined' && parseInt(date_config[date_index]['apply'])){
-			
-			info = date_config[date_index]['booked']+'人';	  
+			info = date_config[date_index]['booked'];	  
 		    hint = parseInt(info) ? '本日已申請 '+info+' 人' : '本日尚未有人提出申請';
+			
+			if(parseInt(date_config[date_index]['wait'])){
+				hint = hint+', 已抽籤須等待候補';	
+				info = info+'<div style="color:red;">候補中</div>';
+			}
+			
 		  }
 		    
 			return '<div style="min-width:50px;padding:0 5px;" title="'+hint+'">\

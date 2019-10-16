@@ -566,7 +566,7 @@
 		// 取得資料
 		$booking = NULL;
 		$DB_GET	= $this->DBLink->prepare( SQL_AdBook::GET_BOOKING_RECORD() );
-		$DB_GET->bindParam(':abno'   , $DataCode , PDO::PARAM_INT);	
+		$DB_GET->bindParam(':abno'   , $DataCode , PDO::PARAM_STR);	
 		if( !$DB_GET->execute() || !$booking = $DB_GET->fetch(PDO::FETCH_ASSOC)){
 		  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
 		}
@@ -809,7 +809,7 @@
 		// 取得資料
 		$booking = NULL;
 		$DB_GET	= $this->DBLink->prepare( SQL_AdBook::GET_BOOKING_RECORD() );
-		$DB_GET->bindParam(':abno'   , $DataCode , PDO::PARAM_INT);	
+		$DB_GET->bindParam(':abno'   , $DataCode , PDO::PARAM_STR);	
 		if( !$DB_GET->execute() || !$booking = $DB_GET->fetch(PDO::FETCH_ASSOC)){
 		  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
 		}
@@ -888,7 +888,7 @@
 		// 取得資料
 		$booking = NULL;
 		$DB_GET	= $this->DBLink->prepare( SQL_AdBook::GET_BOOKING_RECORD() );
-		$DB_GET->bindParam(':abno'   , $DataCode , PDO::PARAM_INT);	
+		$DB_GET->bindParam(':abno'   , $DataCode , PDO::PARAM_STR);	
 		if( !$DB_GET->execute() || !$booking = $DB_GET->fetch(PDO::FETCH_ASSOC)){
 		  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
 		}
@@ -1010,7 +1010,7 @@
 		// 取得資料
 		$booking = NULL;
 		$DB_GET	= $this->DBLink->prepare( SQL_AdBook::GET_BOOKING_RECORD() );
-		$DB_GET->bindParam(':abno'   , $DataCode , PDO::PARAM_INT);	
+		$DB_GET->bindParam(':abno'   , $DataCode , PDO::PARAM_STR);	
 		if( !$DB_GET->execute() || !$booking = $DB_GET->fetch(PDO::FETCH_ASSOC)){
 		  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
 		}
@@ -1583,7 +1583,7 @@
 		// 取得資料
 		$booking = NULL;
 		$DB_GET	= $this->DBLink->prepare( SQL_AdBook::GET_BOOKING_RECORD() );
-		$DB_GET->bindParam(':abno'   , $DataCode , PDO::PARAM_INT);	
+		$DB_GET->bindParam(':abno'   , $DataCode , PDO::PARAM_STR);	
 		if( !$DB_GET->execute() || !$booking = $DB_GET->fetch(PDO::FETCH_ASSOC)){
 		  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
 		}
@@ -1689,7 +1689,7 @@
 			// 取得資料
 			$booking = NULL;
 			$DB_GET	= $this->DBLink->prepare( SQL_AdBook::GET_BOOKING_RECORD() );
-			$DB_GET->bindParam(':abno'   , $apply_code , PDO::PARAM_INT);	
+			$DB_GET->bindParam(':abno'   , $apply_code , PDO::PARAM_STR);	
 			if( !$DB_GET->execute() || !$booking = $DB_GET->fetch(PDO::FETCH_ASSOC)){
 			  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
 			}

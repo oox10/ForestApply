@@ -802,6 +802,8 @@
 		
 		$min_apply_time = strtotime('+'.$areainfo['area']['accept_min_day'].' day',$todaytime);
 		$max_apply_time = strtotime('+'.$areainfo['area']['accept_max_day'].' day',$todaytime);
+		$start_fill_time = strtotime('+'.($areainfo['area']['filled_day']+1).' day',$todaytime);
+		
 		
 		$picker_first_time = strtotime(date('Y-m-01 12:00:01 ',$min_apply_time));
 		$picker_last_time  = strtotime(date('Y-m-t 23:59:59' ,$max_apply_time));
@@ -820,7 +822,9 @@
 			'quota'		=>$areainfo['area']['area_load'],
 			'booked'	=>0,  // 已申請人次
 			'info' 		=>'',
-			'date' 		=>$apply_date_index
+			'date' 		=>$apply_date_index,
+			'wait'		=>$start_fill_time > $apply_date_time ? 1 : 0,
+			
 	      ];
 		  
 		  
@@ -852,6 +856,13 @@
 	      if(isset($areainfo['applied'][$apply_date_index])){
 			$d_config['booked']=$areainfo['applied'][$apply_date_index];
 		  }
+		  
+		  // 計算是否要候補
+		  if($start_fill_time > $apply_date_time && $d_config['booked']+3 > $areainfo['area']['area_load']){
+			$d_config['wait']=1;  
+		  }
+		  
+		  
 		  $picker_config[$apply_date_index] = $d_config;
 		  
 		  $apply_date_time = strtotime('+1 day',$apply_date_time);
@@ -1421,12 +1432,12 @@
 			}
 			
 			// 確認是否抽籤
-			$bollet_date = $apply_bollet ? date('Y-m-d',strtotime('-'.($areainfo['area']['accept_min_day']-1).' day',strtotime($apply_date['enter']))) : '0000-00-00';
+			$bollet_date = $apply_bollet ? date('Y-m-d',strtotime('-'.($areainfo['area']['filled_day']).' day',strtotime($apply_date['enter']))) : '0000-00-00';
 			
 			// 重新設定抽籤資訊
 			$apply_process['review'][2]   = [];
 			if( $apply_bollet ){
-			  $apply_process['review'][2][] = array('time'=>$bollet_date,'status'=>'系統抽籤','note'=>'','logs'=>'');
+			    $apply_process['review'][2][] = array('time'=>$bollet_date,'status'=>'系統抽籤','note'=>'','logs'=>'');
 			}
 			
 		}
@@ -1455,6 +1466,7 @@
 		if( !$DB_UPD->execute() ){
 		  throw new Exception('_APPLY_SUBMIT_FAIL');  
 		}
+		 
 		
 		$result['data'] = $ApplyCode;
 		$result['action'] = true;
@@ -2016,9 +2028,14 @@
 		$result['data']['applicant']	= $applicant;
 		$result['data']['joinmember']	= $joinmember;
 		$result['data']['application']	= $application;
-		$result['data']['status'] = $booking['_status'];
-		$result['data']['stage']  = $booking['_stage'];
-		$result['data']['final']  = $booking['_final'];
+		$result['data']['status'] 		= $booking['_status'];
+		$result['data']['stage'] 		= $booking['_stage'];
+		$result['data']['final']  		= $booking['_final'];
+		
+		$result['data']['ballot']  		= $booking['_ballot'];
+		$result['data']['date_enter']  	= $booking['date_enter'];
+		
+		
 		
 		$result['action'] = true;
 	    
@@ -2049,7 +2066,11 @@
 		
 		// 檢查申請狀態是否符合
 		if( $booking_final_status!='核准進入' && $booking_final_status!='申請核准' && $booking_final_status!='備取成功'){
-		  throw new Exception('_APPLY_DOWNLOAD_DENIA');
+		    throw new Exception('_APPLY_DOWNLOAD_DENIA');
+		}
+		
+		if($this->ModelResult['applied']['data']['ballot'] && strtotime('now') < strtotime('-4 day',strtotime($this->ModelResult['applied']['data']['date_enter'].' 03:00:00'))){
+			throw new Exception('尚未開放！！進入許可證將於申請進入日前4天（'.date('Y-m-d',strtotime('-4 day',strtotime($this->ModelResult['applied']['data']['date_enter'].' 03:00:00'))).'）開放下載');
 		}
 		
 		$result['action'] = true;
@@ -2137,8 +2158,15 @@
 		    $apply_status= '正取送審';
 		  
 		  }else{
-		    $apply_process['client'][2] = [];
+		    
+			$apply_process['client'][2] = [];
 		    $apply_stage = $apply_stage==0 ?  1 : $apply_stage;
+			
+			// 抽籤日已過則設定為候補
+			if($booking['_ballot_date'] != '0000-00-00' && strtotime('now') > strtotime($booking['_ballot_date'].' 02:00:00')){
+			    $apply_process['client'][2][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'等待候補','note'=>'已過抽籤日等待候補','logs'=>'');		
+			}
+			
 		  }
 		
 		  $DB_UPD = $this->DBLink->prepare(SQL_Client::UPDATE_APPLY_STAGE()); 

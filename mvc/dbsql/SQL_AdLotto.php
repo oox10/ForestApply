@@ -16,7 +16,7 @@
 	
 	//-- Admin Lotto :  scan booking_lotto table
 	public static function GET_LOTTO_AREA_LIST(){
-	  $SQL_String = "SELECT booking_lotto.*,area_main.area_type,area_main.area_code,area_main.area_name,area_main.area_load,area_main.wait_list FROM booking_lotto LEFT JOIN area_main ON aid=ano WHERE booking_lotto._keep=1 ORDER BY date_tolot DESC , aid ASC";
+	  $SQL_String = "SELECT booking_lotto.*,area_main.area_type,area_main.area_code,area_main.area_name,area_main.area_load,area_main.wait_list FROM booking_lotto LEFT JOIN area_main ON aid=ano WHERE booking_lotto._keep=1 ORDER BY date_enter DESC ,date_tolot DESC , aid ASC";
 	  return $SQL_String;
 	}
 	
@@ -34,19 +34,19 @@
 	}
 	
 	public static function UPDATE_LOTTO_BOX(){
-	  $SQL_String = "UPDATE booking_lotto SET lotto_pool=:lotto_pool WHERE aid=:aid AND date_tolot=:date_tolot AND _keep=1 AND _loted=0;";
+	  $SQL_String = "UPDATE booking_lotto SET lotto_pool=:lotto_pool WHERE aid=:aid AND date_enter=:date_enter AND _keep=1 AND _loted<2;";
 	  return $SQL_String;
 	}
 	
 	//-- Admin Lotto :  scan booking_lotto table
 	public static function GET_LOTTO_QUEUE(){
-	  $SQL_String = "SELECT * FROM booking_lotto WHERE date_tolot=:date_tolot AND _keep=1 ORDER BY aid ASC,date_tolot ASC;";
+	  $SQL_String = "SELECT * FROM booking_lotto WHERE date_tolot <= :date_tolot AND _loted < 2  AND _filled=0 AND _keep=1 ORDER BY aid ASC,date_tolot ASC;";
 	  return $SQL_String;
 	}
 	
 	//-- Admin Lotto :  scan area_booking table that to lotto
 	public static function GET_LOTTO_BOOKING(){
-	  $SQL_String = "SELECT * FROM area_booking WHERE _ballot=1 AND _ballot_date=:lotto_date AND _ballot_result=0 AND _stage<=2 AND _keep=1 AND _status='收件待審' ORDER BY am_id ASC,apply_date ASC,abno ASC;";
+	  $SQL_String = "SELECT * FROM area_booking WHERE _ballot=1 AND _ballot_date<=:lotto_date AND _ballot_result=0 AND _stage<=2 AND _keep=1 AND _status='收件待審' ORDER BY am_id ASC,apply_date ASC,abno ASC;";
 	  return $SQL_String;
 	}
 	
@@ -108,6 +108,18 @@
 	  $SQL_String = "UPDATE area_booking SET ".join(',',$condition)." WHERE abno=:abno;";
 	  return $SQL_String;
 	}
+	
+	
+	/***-- 候補抽籤 --***/
+	
+	//-- Admin Lotto :  取得候補抽籤清單
+	public static function GET_LOTTO_WAIT(){
+	  $SQL_String = "SELECT * FROM booking_lotto WHERE date_tolot < :lottodate AND _loted=1 AND _filled=0 AND _keep=1  ORDER BY aid ASC , date_enter ASC;";
+	  return $SQL_String;
+	}
+	
+	
+	
 	
 	
 	

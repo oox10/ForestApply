@@ -212,7 +212,7 @@
 						<th>最小申請日數</th>
 						<th>補件天數</th>
 						<th>最後註銷日</th>
-						<th>統一遞補日</th>
+						<th>開始抽籤日</th>
 						<th>候補隊伍數</th>
 					  </tr>
 					  <tr>
@@ -234,7 +234,7 @@
 					  </tr>
 					  <tr>
 							<td><input type='number'   class='_variable _update' id='member_max'      <?php echo isset($field_conf['member_max']) ? 'data-default='.$field_conf['member_max']['default'] :'';  ?>  value=0  /> 人</td>
-							<td>前 <input type='number'   class='_variable _update' id='auto_pass'      <?php echo isset($field_conf['auto_pass']) ? 'data-default='.$field_conf['auto_pass']['default'] :'';  ?>  value=0  /> 天</td>
+							<td>通知後 <input type='number'   class='_variable _update' id='auto_pass'      <?php echo isset($field_conf['auto_pass']) ? 'data-default='.$field_conf['auto_pass']['default'] :'';  ?>  value=0  /> 天</td>
 						<td > </td>
 					    <td > </td>
 						<td >  </td>

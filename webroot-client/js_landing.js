@@ -299,16 +299,20 @@
 	
 	//-- area descrip function // 區域資訊 
 	if($('.area_type_selecter').length){
-      $('.area_type_selecter').each(function(){
+      
+	  $('.area_type_selecter').change(function(){
+	    
 		var area_type = $(this).val();  
-        var area_list_sel = $(this).next();
+		var area_list_sel = $(this).next();
+		
 		area_list_sel.find("optgroup[label='"+area_type+"']").children('option:nth-child(1)').prop('selected',true);
-		area_list_sel.trigger('change');
-	  }); 
-
-      $('.area_type_selecter').change(function(){
-	    $(this).next().val('').focus();	
+		area_list_sel.trigger('change').focus();
+		
+		//$(this).next().val('').focus();
 	  });
+	  
+	  $('.area_type_selecter').val('自然保留區').trigger('change');
+	
 	}
 	
 	/*===============================*/

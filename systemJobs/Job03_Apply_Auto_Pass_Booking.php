@@ -2,7 +2,7 @@
   /* 
   自動通過審查
   
-  時間：每日早上 1:30
+  時間：每日早上 2:30
   頻率：1次/天
   對象：當日所有審查中資料
   
@@ -55,11 +55,11 @@
 	  
 	  while($booking = $DB_BOOKING->fetch(PDO::FETCH_ASSOC)){
 		
-		$enter_date_time = strtotime($booking['date_enter'].' 00:00:00');    
+		$check_date_time = strtotime(substr($booking['_time_update'],0,10).' 00:00:00');
 	    $application     = json_decode($booking['apply_form'],true);
 		
 		
-		if( strtotime('now') < strtotime( '-'.$tmp['auto_pass'].' day',$enter_date_time) ){
+		if( strtotime('now') < strtotime( '+'.$tmp['auto_pass'].' day',$check_date_time)){
 		  continue;	
 		}
 		
@@ -79,7 +79,7 @@
 		    $progress['client'][3][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'審核通過','note'=>'','logs'=>date('Y-m-d H:i:s'));	
 			$progress['client'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'正取核准','note'=>'','logs'=>'');				
 			$progress['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'核准進入','note'=>'','logs'=>'');
-			$progress['admin'][4][]  = array('time'=>date('Y-m-d H:i:s'),'status'=>'自動通過','note'=>'區域設定：審查限期進入前 '.$tmp['auto_pass'].' 天前自動通過','logs'=>'');	
+			$progress['admin'][4][]  = array('time'=>date('Y-m-d H:i:s'),'status'=>'自動通過','note'=>'區域設定：審查限期通知後 '.$tmp['auto_pass'].' 天前自動通過','logs'=>'');	
 		    $apply_new_status='核准進入';
 			$apply_new_final ='核准進入'; 
 		    $apply_new_stage = 5;
@@ -87,9 +87,11 @@
 			
 		  case '備取送審':  // 進入等待階段 
 		    $progress['client'][3][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'審核通過','note'=>'','logs'=>date('Y-m-d H:i:s'));		
-			$progress['client'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'備取等待','note'=>'','logs'=>'');
-			$progress['admin'][4][]  = array('time'=>date('Y-m-d H:i:s'),'status'=>'自動通過','note'=>'區域設定：審查限期進入前 '.$tmp['auto_pass'].' 天前自動通過','logs'=>'');	
-		    $apply_new_status='備取等待';
+			$progress['client'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'備取核准','note'=>'','logs'=>'');
+			$progress['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'核准進入','note'=>'','logs'=>'');
+			$progress['admin'][4][]  = array('time'=>date('Y-m-d H:i:s'),'status'=>'自動通過','note'=>'區域設定：審查限期通知後 '.$tmp['auto_pass'].' 天前自動通過','logs'=>'');	
+		    $apply_new_status='核准進入';
+			$apply_new_final ='核准進入'; 
 		    $apply_new_stage = 4;
 		    break;
 			
@@ -102,30 +104,32 @@
 			    $progress['client'][3][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'審核通過','note'=>'','logs'=>date('Y-m-d H:i:s'));	
 				$progress['client'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'正取核准','note'=>'','logs'=>'');				
 				$progress['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'核准進入','note'=>'','logs'=>'');
-				$progress['admin'][4][]  = array('time'=>date('Y-m-d H:i:s'),'status'=>'自動通過','note'=>'區域設定：審查限期進入前 '.$tmp['auto_pass'].' 天前自動通過','logs'=>'');	
+				$progress['admin'][4][]  = array('time'=>date('Y-m-d H:i:s'),'status'=>'自動通過','note'=>'區域設定：審查限期通知後 '.$tmp['auto_pass'].' 天前自動通過','logs'=>'');	
 				$apply_new_status='核准進入';
 				$apply_new_final ='核准進入';
 				$apply_new_stage = 5;
 			    break;
 				
-			  case 2:  //備取送審
+			  /*	
+			  case 2:  //備取送審   20191016 以後僅有候補，沒有備取等待，2為候補 候補表示沒抽中
                 $progress['client'][3][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'審核通過','note'=>'','logs'=>date('Y-m-d H:i:s'));		
 			    $progress['client'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'備取等待','note'=>'','logs'=>'');
-			    $progress['admin'][4][]  = array('time'=>date('Y-m-d H:i:s'),'status'=>'自動通過','note'=>'區域設定：審查限期進入前 '.$tmp['auto_pass'].' 天前自動通過','logs'=>'');	
+			    $progress['admin'][4][]  = array('time'=>date('Y-m-d H:i:s'),'status'=>'自動通過','note'=>'區域設定：審查限期通知後 '.$tmp['auto_pass'].' 天前自動通過','logs'=>'');	
 		        $apply_new_status='備取等待';
 		        $apply_new_stage = 4;
 			    break;
-				
+			  */
+			  
 			  default:break; 			  	
 			}
-			
+			break; 
 			
 		  case '資料不全':
 		    
 			//補件期限
 			$additional_dateline = strtotime('+'.$tmp['revise_day'].' day',strtotime($booking['_time_update']));
 		    
-			if( strtotime('now') > $additional_dateline  ){  
+			//if( strtotime('now') > $additional_dateline  ){  
 			  $progress['client'][3][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'資格不符','note'=>'超過補件日期:'.date('Y-m-d',$additional_dateline),'logs'=>'');	
 			  $progress['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'審查未過','note'=>'','logs'=>'');
 			  $progress['admin'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'自動註銷','note'=>'排程系統註銷未補件申請','logs'=>'');	
@@ -134,7 +138,7 @@
 			  $apply_new_final ='申請註銷';
 			  $apply_new_stage = 5;	
 			  break; 
-			}
+			//}
 			// 如果在補件日期內：不管
 			   
 		    

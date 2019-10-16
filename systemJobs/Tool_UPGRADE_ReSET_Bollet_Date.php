@@ -43,7 +43,15 @@
 	$fix_counter = 0; 
 	
 	// 查詢目標資料
-	$DB_OBJ = $db->DBLink->prepare( "SELECT * FROM area_booking WHERE _status='收件待審' AND _ballot=1 AND _keep=1 ORDER BY am_id ASC,date_enter ASC,abno ASC;");
+	
+	// 修 1031後的資料  17 號抽
+	$DB_OBJ = $db->DBLink->prepare( "SELECT * FROM area_booking WHERE _status='收件待審' AND _ballot=1 AND date_enter < '2019-10-31' AND date_enter > '2019-10-19' AND _keep=1 ORDER BY am_id ASC,date_enter ASC,abno ASC;");
+	
+	// 修 1020號進入的資料
+	//$DB_OBJ = $db->DBLink->prepare( "SELECT * FROM area_booking WHERE _status='收件待審' AND _ballot=1 AND date_enter = '2019-10-20' AND _keep=1 ORDER BY am_id ASC,date_enter ASC,abno ASC;");
+	
+	
+	
 	if(!$DB_OBJ->execute()){
 	  throw new Exception('_SYSTEM_ERROR_DB_ACCESS_FAIL');  
 	}
@@ -61,7 +69,11 @@
 	  
 	  $area = $area_data[$dbraw['am_id']];
 	  $data_bollet_date = $dbraw['_ballot_date'];
-	  $real_bollet_date = date('Y-m-d',strtotime('-'.($area['accept_min_day']-1).' day',strtotime($dbraw['date_enter'])));
+	  $real_bollet_date = date('Y-m-d',strtotime('-'.($area['filled_day']).' day',strtotime($dbraw['date_enter'])));
+	  $real_bollet_date = "2019-10-16";
+	  
+	  
+	  
 	  $data_progress = json_decode($dbraw['_progres'],true);
 	  
 	  

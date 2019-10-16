@@ -144,6 +144,7 @@
 			  <table class='record_list'>
 		        <tr class='data_field'>
 			      <td title='編號'		>no.</td>
+				  <td title='進入日期'	>進入日期</td>
 				  <td title='抽籤日期'	>抽籤日期</td>
 				  <td title='申請區域'	>申請區域</td>
 			      <td title='每日容量'	>每日容量</td>
@@ -156,6 +157,7 @@
 			    <?php foreach($data_list as $i=> $data): ?>  
 			      <tr class='data_record _data_read' no='<?php echo intval($data['blno']);?>' page='' >
                     <td field='no'  	   	><?php echo $i+1; ?></td>
+					<td field='date_tolot' 	><?php echo $data['date_enter']; ?></td>
 			        <td field='date_tolot' 	><?php echo $data['date_tolot']; ?></td>
 				    <td field='area_name'	><?php echo $data['area_name']; ?></td>
 				    <td field='area_load'	><?php echo $data['area_load']; ?></td>
@@ -167,6 +169,7 @@
 			    <?php endforeach; ?>
 			      <tr class='data_field'>
 			        <td title='編號'		>no.</td>
+					<td title='進入日期'	>進入日期</td>
 				    <td title='抽籤日期'	>抽籤日期</td>
 				    <td title='申請區域'	>申請區域</td>
 			        <td title='每日容量'	>每日容量</td>
