@@ -1292,6 +1292,18 @@
 		if(!isset($apply_data['reason']) && count($apply_data['reason']))  throw new Exception('_APPLY_SUBMIT_REASON_EMPTY'); 
 		if(!isset($apply_data['dates']) )  throw new Exception('_APPLY_SUBMIT_DATES_EMPTY');
 		
+		// 確認區域基本資料
+		if(!isset($apply_data['area']['inter']) || !is_array($apply_data['area']['inter']) || !count($apply_data['area']['inter'])){
+			throw new Exception('申請進入區域設定錯誤或未填寫');
+		}
+		
+		if(!isset($apply_data['area']['gate']['entr']) || !trim($apply_data['area']['gate']['entr'])){
+			throw new Exception('未填寫預定抵達入口');
+		}
+		
+		if(!isset($apply_data['area']['gate']['exit']) || !trim($apply_data['area']['gate']['exit'])){
+			throw new Exception('未填寫預定離開出口');
+		}
 		
 		// 查詢區域基本資料
 		$area_code = isset($apply_data['area']['code']) ? $apply_data['area']['code'] : '';
@@ -2737,7 +2749,14 @@
 		$mail_content .= "<div> <br/> </div>";
 		$mail_content .= "<div>一、本案申請資料如下：</div>";
 		$mail_content .= "<table><tr><td>(一)進入期間</td><td>：".$booking['date_enter']." ~ ".$booking['date_exit']."</td></tr>";
-		$mail_content .= "<tr><td>(二)進入區域/入口/出口</td><td>：".join(';',$application['area']['inter']).' / '.$application['area']['gate']['entr'].' / '.$application['area']['gate']['exit']."</td></tr>";
+		
+		
+		$area_inter_descrip = isset($application['area']['inter']) && count($application['area']['inter']) ? join(';',$application['area']['inter']) : '未填寫';
+		$area_inter_gate    = isset($application['area']['gate']['entr']) && $application['area']['gate']['entr'] ? $application['area']['gate']['entr'] : '未填寫';
+		$area_exist_gate    = isset($application['area']['gate']['exit']) && $application['area']['gate']['exit'] ? $application['area']['gate']['exit'] : '未填寫';
+		
+		$mail_content .= "<tr><td>(二)進入區域/入口/出口</td><td>：".$area_inter_descrip.' / '.$area_inter_gate.' / '.$area_exist_gate."</td></tr>";
+		
 		$mail_content .= "<tr><td>(三)申請代表人或領隊</td><td>：".$booking['applicant_name']."</td></tr>";
 		$mail_content .= "<tr><td>(四)人數</td><td>：共 ".$booking['member_count']." 人</td></tr>";
 		$mail_content .= "<tr><td>(五)申請編號</td><td>：".$booking['apply_code']." </td></tr></table>";

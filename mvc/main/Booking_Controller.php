@@ -105,17 +105,21 @@
 	}
 	
 	// AJAX: Download Apply License // 下載許可證 
-	public function license($DataId){
+	public function chklicense($DataId){
+		$apply_token = ['CODE'=>$DataId,'KEY'=>_SYSTEM_NAME_SHORT.':'.strtotime('now')];
+	    $this->Model =  new Landing_Model;		 
+	    $result = $this->Model->Apply_Record_Read( $DataId, $apply_token );
+	    $active = $this->Model->Apply_Download_Check();
+	    $this->Model->Access_Get_Active_Area_List();
+	    self::data_output('json','',$this->Model->ModelResult);    
+	}
+	
+	public function getlicense($DataId){
 	  $apply_token = ['CODE'=>$DataId,'KEY'=>_SYSTEM_NAME_SHORT.':'.strtotime('now')];
 	  $this->Model =  new Landing_Model;		 
-	  
 	  $result = $this->Model->Apply_Record_Read( $DataId, $apply_token );
 	  $active = $this->Model->Apply_Download_Check();
 	  $this->Model->Access_Get_Active_Area_List();
-	  if(!$result['action'] || !$active['action']){
-		self::data_output('html','wrong',$this->Model->ModelResult);    
-	    exit(1);
-	  }
 	  $this->Model->Apply_Feform_Application_Page($DataId,'license');
 	  self::data_output('pdf','print_user_license',$this->Model->ModelResult);   
 	}

@@ -101,7 +101,7 @@
 	
 	//-- Client Area :  get target area apply person
 	public static function GET_TARGET_AREA_APPLIED(){
-	  $SQL_String = "SELECT date_enter,date_exit,member_count FROM area_booking WHERE am_id=:amid AND ( :apply_d_start <= date_exit  AND  :apply_d_end >= date_enter )  AND _status NOT IN('申請進入','取消申請','申請取消','申請註銷') AND apply_reason  LIKE '%民眾為環境教育之需要%';"; //'審查未過','申請註銷','備取失敗',
+	  $SQL_String = "SELECT date_enter,date_exit,member_count FROM area_booking WHERE am_id=:amid AND ( :apply_d_start <= date_exit  AND  :apply_d_end >= date_enter )  AND _status NOT IN('申請進入','取消申請','申請取消','申請註銷') AND (apply_reason  LIKE '%民眾為環境教育之需要%' OR apply_reason  LIKE '%人員入出%');"; //'審查未過','申請註銷','備取失敗',
 	  return $SQL_String;
 	}
 	

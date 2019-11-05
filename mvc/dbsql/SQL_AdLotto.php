@@ -114,7 +114,7 @@
 	
 	//-- Admin Lotto :  取得候補抽籤清單
 	public static function GET_LOTTO_WAIT(){
-	  $SQL_String = "SELECT * FROM booking_lotto WHERE date_tolot < :lottodate AND _loted=1 AND _filled=0 AND _keep=1  ORDER BY aid ASC , date_enter ASC;";
+	  $SQL_String = "SELECT * FROM booking_lotto WHERE date_tolot < :lottodate AND _loted<=1 AND _filled=0 AND _keep=1  ORDER BY aid ASC , date_enter ASC;";
 	  return $SQL_String;
 	}
 	

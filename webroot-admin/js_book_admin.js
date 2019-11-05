@@ -516,7 +516,9 @@
 	//-- 下載許可證
 	$('#act_apply_license').click(function(){
       
-	  // initial	  
+	  // initial	
+      var act_object = $(this);
+	  
 	  var data_no    =  $('._target').length? $('._target').attr('no') : '';  	
 	   // check process data
 	  if( !data_no.length ){
@@ -529,7 +531,25 @@
 	    return false;  
 	  }
 	  
-	  window.open('index.php?act=Booking/license/'+data_no)
+	  // active ajax
+      $.ajax({
+        url: 'index.php',
+	    type:'POST',
+	    dataType:'json',
+	    data: {act:'Booking/chklicense/'+data_no},
+		beforeSend: function(){  active_loading(act_object,'initial'); },
+        error: 		function(xhr, ajaxOptions, thrownError) {  console.log( ajaxOptions+" / "+thrownError);},
+	    success: 	function(response) {
+		  if(response.action){
+			window.open('index.php?act=Booking/getlicense/'+data_no)
+		  }else{
+			system_message_alert('',response.info);
+	      }
+	    },
+		complete:	function(){  }
+      }).done(function(r) {  active_loading(act_object , r.action );  });
+	  
+	  
 	})	
 	
 	//-- Input Meta Json To Edit Dom 

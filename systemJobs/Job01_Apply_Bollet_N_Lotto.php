@@ -40,7 +40,7 @@
 	
 	//[ STEP 02 ]: 建立抽籤盒子
 	$lotto_date = date('Y-m-d');  // 抽籤當日
-	$lotto_date = date('Y-m-d',strtotime('2019-10-17'));  // 抽籤當日
+	//$lotto_date = date('Y-m-d',strtotime('2019-10-17'));  // 抽籤當日
 	
 	
 	// 查詢尚未結束的抽籤表   date_tolot <= :date_tolot AND _loted < 2  AND _filled=0
@@ -628,10 +628,10 @@
 	$mail_content .= "<div>抽籤結果：<span style='font-weight:bold;color:blue;'>".$LottoResult."</span></div>";
 	$mail_content .= "<div><br/></div>";
 	$mail_content .= "<div>請詳閱下列注意事項：</div>";
-	$mail_content .= "<div>一、請注意抽籤結果如為「正取/備取送審」，僅表示取得優先審查之排序，並不代表申請已獲核准，完成抽籤後審核機關將開始審核您的申請案，如因申請資料不全將通知補件修正，逾3天未補正或資格未符者應予駁退，空出名額由候補隊伍抽籤遞補。</div>";
+	$mail_content .= "<div>一、請注意抽籤結果如為「正取/備取送審」，僅表示取得優先審查之排序，並不代表申請已獲核准，完成抽籤後審核機關將開始審核您的申請案，如因申請資料不全將通知補件修正，逾2天未補正或資格未符者應予駁退，空出名額由候補隊伍抽籤遞補。</div>";
 	$mail_content .= "<div>二、完成抽籤後即不可更改進入成員名冊，如欲更改，必須取消申請後再重新提出申請。</div>";
 	$mail_content .= "<div>三、正取或備取經候補成功者，通過審查後將收到核准進入通知，系統將於進入前4日開放下載許可證，於入園時必須隨身攜帶許可證及身份證件以備查驗。</div>";
-	$mail_content .= "<div>四、抽籤未中時，如尚有申請進入需求者，請改選擇其他日期重新申請。</div>";
+	$mail_content .= "<div>四、第一次抽籤未中時將等待候補，如有申請案件取消並釋出名額時，每天可再抽籤遞補，建議盡量利用非假日申請入園以避開人潮。</div>";
 	$mail_content .= "<div>五、詳細抽籤結果、最新審查進度及許可證下載，請利用申請編號登入申請系統查詢。</div>";
 	$mail_content .= "<div><br/></div>";
 	$mail_content .= "<div></div>";
