@@ -148,7 +148,7 @@ class ApplyApi_Controller extends Admin_Controller{
 	  $session_config = $this->session_restore($ApplyCode,$LoginKey); 
 	  $result = $this->Model->Apply_Record_Check($ApplyCode,$session_config['APPLYTOKEN']);
 	  if($result['action']){
-		$this->Model->Landing_Regist_Mail($ApplyNo);  
+		$this->Model->Landing_Regist_Mail($ApplyCode);  
 	  }
       self::data_output('json-oai','',$this->Model->ModelResult);
 	}
