@@ -1293,7 +1293,7 @@
 		if(!isset($apply_data['dates']) )  throw new Exception('_APPLY_SUBMIT_DATES_EMPTY');
 		
 		// 確認區域基本資料
-		if(!isset($apply_data['area']['inter']) || !is_array($apply_data['area']['inter']) || !count($apply_data['area']['inter'])){
+		if(!isset($apply_data['area']['inter']) || !is_array($apply_data['area']['inter']) || !count(array_filter($apply_data['area']['inter']))){
 			throw new Exception('申請進入區域設定錯誤或未填寫');
 		}
 		
