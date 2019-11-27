@@ -92,37 +92,30 @@
 			$progress['admin'][4][]  = array('time'=>date('Y-m-d H:i:s'),'status'=>'自動通過','note'=>'區域設定：審查限期通知後 '.$tmp['auto_pass'].' 天前自動通過','logs'=>'');	
 		    $apply_new_status='核准進入';
 			$apply_new_final ='核准進入'; 
-		    $apply_new_stage = 4;
+		    $apply_new_stage = 5;
 		    break;
 			
 		  case '申請補件':	
 		  case '資料補充':
 		  case '資料更新':
-		    
-			switch($booking['_ballot_result']){
-			  case 1:  //正取送審	
-			    $progress['client'][3][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'審核通過','note'=>'','logs'=>date('Y-m-d H:i:s'));	
-				$progress['client'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'正取核准','note'=>'','logs'=>'');				
-				$progress['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'核准進入','note'=>'','logs'=>'');
-				$progress['admin'][4][]  = array('time'=>date('Y-m-d H:i:s'),'status'=>'自動通過','note'=>'區域設定：審查限期通知後 '.$tmp['auto_pass'].' 天前自動通過','logs'=>'');	
-				$apply_new_status='核准進入';
-				$apply_new_final ='核准進入';
-				$apply_new_stage = 5;
-			    break;
-				
-			  /*	
+			$progress['client'][3][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'審核通過','note'=>'','logs'=>date('Y-m-d H:i:s'));	
+			$progress['client'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'正取核准','note'=>'','logs'=>'');				
+			$progress['client'][5][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'核准進入','note'=>'','logs'=>'');
+			$progress['admin'][4][]  = array('time'=>date('Y-m-d H:i:s'),'status'=>'自動通過','note'=>'區域設定：審查限期通知後 '.$tmp['auto_pass'].' 天前自動通過','logs'=>'');	
+			$apply_new_status='核准進入';
+			$apply_new_final ='核准進入';
+			$apply_new_stage = 5;
+			break;
+					
+			/*	
 			  case 2:  //備取送審   20191016 以後僅有候補，沒有備取等待，2為候補 候補表示沒抽中
-                $progress['client'][3][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'審核通過','note'=>'','logs'=>date('Y-m-d H:i:s'));		
-			    $progress['client'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'備取等待','note'=>'','logs'=>'');
-			    $progress['admin'][4][]  = array('time'=>date('Y-m-d H:i:s'),'status'=>'自動通過','note'=>'區域設定：審查限期通知後 '.$tmp['auto_pass'].' 天前自動通過','logs'=>'');	
-		        $apply_new_status='備取等待';
-		        $apply_new_stage = 4;
-			    break;
-			  */
-			  
-			  default:break; 			  	
-			}
-			break; 
+				$progress['client'][3][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'審核通過','note'=>'','logs'=>date('Y-m-d H:i:s'));		
+				$progress['client'][4][] = array('time'=>date('Y-m-d H:i:s'),'status'=>'備取等待','note'=>'','logs'=>'');
+				$progress['admin'][4][]  = array('time'=>date('Y-m-d H:i:s'),'status'=>'自動通過','note'=>'區域設定：審查限期通知後 '.$tmp['auto_pass'].' 天前自動通過','logs'=>'');	
+				$apply_new_status='備取等待';
+				$apply_new_stage = 4;
+				break;
+			*/			
 			
 		  case '資料不全':
 		    

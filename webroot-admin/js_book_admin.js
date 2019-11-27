@@ -154,9 +154,13 @@
 	  if( $('#filter_apply_status').val() ){
 		filter['apply_status'] = $('#filter_apply_status').val();
 	  }
+	  if( $('#filter_is_fromapi').prop('checked')){
+		filter['apply_fromapi'] = 1;  
+	  }
 	  if( $('#filter_is_review').prop('checked')){
 		filter['apply_review'] = 1;  
 	  }
+	  
 	  if( $('#filter_is_check').prop('checked')){
 		filter['apply_checked'] = 1;  
 	  }

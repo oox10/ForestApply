@@ -19,7 +19,7 @@
 	<!-- Self -->
 	<link rel="stylesheet" type="text/css" href="theme/css/css_default.css" />
 	<link rel="stylesheet" type="text/css" href="theme/css/css_main.css" />
-	<link rel="stylesheet" type="text/css" href="theme/css/css_book_admin.css" />
+	<link rel="stylesheet" type="text/css" href="theme/css/css_book_admin.css?<?php echo time();?>" />
 	
 	<script type="text/javascript" src="js_library.js"></script>
 	<script type="text/javascript" src="js_admin.js"></script>
@@ -170,12 +170,13 @@
 				    <option value='' > 不篩選狀態 </option>
 				  </optgroup>
 				</select>，
-				<input type='text' id='filter_search_terms'    value='<?php echo isset($data_filter['apply_search']) ? $data_filter['apply_search']:''; ?>' placeholder='搜尋關鍵字' />， 
+				<input type='text' id='filter_search_terms'    value='<?php echo isset($data_filter['apply_search']) ? $data_filter['apply_search']:''; ?>' placeholder='搜尋關鍵字' style='width:293px;' />， 
 				<label>其他狀態：</label>
-				<input type='checkbox' id='filter_is_review'   value='review'   <?php echo isset($data_filter['apply_review'])&&$data_filter['apply_review']? 'checked':'';?> >陳核，
-				<input type='checkbox' id='filter_is_check'    value='checked'  <?php echo isset($data_filter['apply_checked'])&&$data_filter['apply_checked']? 'checked':'';?> >審查，
-				<input type='checkbox' id='filter_is_unfinish' value='unfinish' <?php echo isset($data_filter['apply_unfinish'])&&$data_filter['apply_unfinish']? 'checked':'';?> >未結案
-				
+				<label><input type='checkbox' id='filter_is_fromapi'   value='review'   <?php echo isset($data_filter['apply_fromapi'])&&$data_filter['apply_fromapi']? 'checked':'';?> >平台申請</label>，
+				<label><input type='checkbox' id='filter_is_review'   value='review'   <?php echo isset($data_filter['apply_review'])&&$data_filter['apply_review']? 'checked':'';?> >陳核</label>，
+				<label><input type='checkbox' id='filter_is_check'    value='checked'  <?php echo isset($data_filter['apply_checked'])&&$data_filter['apply_checked']? 'checked':'';?> >審查</label>，
+				<label><input type='checkbox' id='filter_is_unfinish' value='unfinish' <?php echo isset($data_filter['apply_unfinish'])&&$data_filter['apply_unfinish']? 'checked':'';?> >未結案</label>
+
 			  </li>
 			  
 			</ul>

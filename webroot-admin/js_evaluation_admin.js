@@ -44,13 +44,33 @@
 	  }
 	});
 	
-	//-- 手動擴充內容
+	//-- 刪除擴充
 	$(document).on('click','.act_remove_element',function(){
 	  var main_dom = $(this).parents('.data_col');	
 	  var uldom    = main_dom.find('ul.increase_form'); 
 	  var record_dom = $(this).parents('li.listrecord');	
 	  record_dom.remove();
 	});
+	
+	
+	//-- 手動擴充內容
+	$('.act_add_tbrow').click(function(){
+	    var main_dom = $(this).parents('.data_col');	
+	    var tbdom    = main_dom.find('table.increase_table'); 
+	    var listrecordnum = tbdom.find('tbody.data_result > tr').length;
+        var newrecordid   = tbdom.attr('id')+'add'+(listrecordnum+1);
+	    var new_input     = tbdom.find('tfoot.data_format > tr').clone();
+        new_input.attr('id',newrecordid);
+		new_input.appendTo(tbdom.find('tbody.data_result'));
+	});
+	
+	//-- 刪除擴充
+	$(document).on('click','.act_remove_tbrow',function(){
+	  var record_dom = $(this).parents('tr');	
+	  record_dom.remove();
+	});
+	
+	
 	
 	
 	//-- 複製評論
@@ -488,8 +508,19 @@
 		}); 
 		record_data[field_name] = input_value;
 		
-	  }else{
-		  
+	  }else if(field_dom.prop("tagName")=='TABLE' && field_dom.hasClass('increase_table')){
+		// 結構資料儲存 
+		var field_name = field_dom.attr('id');
+		var input_value={};
+		field_dom.find('tbody.data_result').find('tr').each(function(){
+		  var value_set_id = $(this).attr('id');
+		  input_value[value_set_id] = {};
+		  $(this).find('._update').each(function(){  
+		    input_value[value_set_id][$(this).attr('name')] = $(this).val();
+		  });
+		}); 
+		record_data[field_name] = input_value;
+		 
 	  }
 	  
 	  
@@ -667,6 +698,25 @@
 					})
 				  });
 				  
+				}else if(form_set.prop('tagName')=='TABLE' && form_set.hasClass('increase_table') ){
+				   
+				  var recordgroup = JSON.parse(mv);
+				  
+				  $.each(recordgroup,function(recordid,valueset){
+					
+					let trdom = {};
+					
+					if($('#'+recordid).length){
+					    trdom = $('#'+recordid);
+					}else{
+						trdom = form_set.find('tfoot.data_format > tr').clone();
+						trdom.attr('id',recordid);
+						trdom.appendTo(form_set.find('tbody.data_result'));
+					}
+					$.each(valueset,function(fname,fvalue){
+						trdom.find('._update[name="'+fname+'"]').val(fvalue)
+					})
+				  });
 				  
 			    }else if(form_set.prop('tagName')=='INPUT' && form_set.attr('type')=='checkbox' ){
 				  form_set.prop('checked',(parseInt(mv) ? true: false));
@@ -805,9 +855,6 @@
 		})
 		
 		
-		
-		
-		
 		// 填入DOM資料
 		$('#record_id').attr('no',record_id).html(record_id)
 		
@@ -823,6 +870,157 @@
       });
 	  
 	};
+	
+	
+	
+	//-- upload import file  :  上傳附件檔案
+	$(document).on('change','.docupload',function(){
+	     
+		var area_dom 	= $(this).parents('.data_record_block');
+		var record_id 	= $('#record_id').attr('no');
+		var table_name 	= area_dom.data('table');
+		var ducrecord   = $(this).parents('tr');
+		var field_dom	= $(this);
+		if(!record_id){
+			system_message_alert("","資料尚未建立，請先完成訪談基本資料!!");  
+			return false;
+		}
+		  
+	    if(!field_dom.val()){
+		  system_message_alert('','請選擇上傳之檔案!');
+		  field_dom.focus(); 
+          return false;	
+	    }
+	    
+	    // 發送檔案
+	    var formData = new FormData();
+        formData.append("MTID"	, record_id);
+		formData.append("DUID"	, ducrecord.attr('id'));
+		
+		// HTML file input, chosen by user
+		formData.append("file", field_dom.prop('files')[0]);
+        
+		var request = new XMLHttpRequest();
+		request.onload = function(){
+		  
+		  var result = JSON.parse(this.responseText)
+		  
+		  if(!parseInt(result.action)){
+			system_message_alert('',result.info);  
+			return false;
+		  }
+		  
+		  var attachment = result.data.upload;
+		  
+		  console.log(attachment)
+		  
+		  /*
+		  attachment.file
+		  attachment.meta
+		  
+		  var attachdom = $('#import_attach_record_formate').find('tr').clone();
+		  attachdom.attr('fid',attachment.file);
+		  attachdom.find('td:nth-child(2)').html(attachment.meta.name);
+		  attachdom.find('td:nth-child(3)').html(attachment.meta.time);
+		  attachdom.appendTo('#COLLECT-MAIN-attachment');
+		  system_message_alert('alert',"已成功上傳檔案:"+attachment.meta.name);  
+		  */
+		};
+        request.open("POST", "index.php?act=Evaluation/imathadd");
+		request.send(formData);
+		 
+	    $(this).val('');
+	});
+	
+	
+	//-- download import attach file  下載附件檔案
+	$(document).on('click','.act_download_attachment',function(){
+		
+	  // initial	  
+	  const record_no    =  $('.import_record._target').length? $('.import_record._target').attr('no') : '';
+	  const record_dom   =  $(this).parents('tr');
+	  const file_no      =  record_dom.attr('fid');
+	  
+	  // check process data
+	  if( !record_no.length ){
+		system_message_alert('',"尚未選擇資料");
+		return false;
+	  }
+	  
+	  // check process data
+	  if( !file_no.length ){
+		system_message_alert('',"附件序號錯誤");
+		return false;
+	  }
+	  
+	  // active ajax
+	  $.ajax({
+		url: 'index.php',
+		type:'POST',
+		dataType:'json',
+		data: {act:'Collect/imathget/'+record_no+'/'+file_no},
+		beforeSend: function(){  system_loading(); }
+      }).done(function(response) {
+	    
+		if(!response.action){
+		  system_message_alert('',response.info);
+		  return true;
+		}
+		
+		window.open(response.data.download);
+		
+	  }).fail(function(xhr, ajaxOptions, thrownError) {
+        console.log( ajaxOptions+" / "+thrownError);
+	  }).always(function(r){
+        system_loading();
+      });
+	
+	});
+	
+	
+	//-- remove import attach file  刪除附件檔案
+	$(document).on('click','.act_delete_attachment',function(){
+		
+	  // initial	  
+	  const record_no    =  $('.import_record._target').length? $('.import_record._target').attr('no') : '';
+	  const record_dom   =  $(this).parents('tr');
+	  const file_no      =  record_dom.attr('fid');
+	  
+	  // check process data
+	  if( !record_no.length ){
+		system_message_alert('',"尚未選擇資料");
+		return false;
+	  }
+	  
+	  if(!confirm("確認要移除此"+record_dom.find('td:nth-child(2)').html()+'??')){
+		return false; 
+	  }
+	  
+	  // active ajax
+	  $.ajax({
+		url: 'index.php',
+		type:'POST',
+		dataType:'json',
+		data: {act:'Collect/imathdel/'+record_no+'/'+file_no},
+		beforeSend: function(){  system_loading(); }
+      }).done(function(response) {
+	    
+		if(!response.action){
+		  system_message_alert('',response.info);
+		  return true;
+		}
+		record_dom.remove();
+		system_message_alert('alert','附件已移除');
+	    
+	  }).fail(function(xhr, ajaxOptions, thrownError) {
+        console.log( ajaxOptions+" / "+thrownError);
+	  }).always(function(r){
+        system_loading();
+      });
+	
+	});
+	
+	
 	
 	 
     //帶資料之網址

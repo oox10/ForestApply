@@ -239,7 +239,7 @@
 	#questionnaire_information{}
 	
 	.record_body > .guide_area#mettrecords{ 
-	  flex:0 0 50%;
+	  flex:0 0 60%;
 	}
 	
 	#mettrecords > h1{
@@ -266,6 +266,19 @@
 	span.rarea{flex:1 1 200px; text-align:left;}
 	span.ractive{flex:0 0 70px; text-align:center;	}
 	
+	
+	.increase_table{ table-layout:fixed;}
+	.increase_table tr.data_field td:nth-child(1){width:40px; text-align:center;}
+	.increase_table tr.data_field td:nth-child(2){width:250px;}
+	.increase_table tr.data_field td:nth-child(3){width:100px;}
+	.increase_table tr.data_field td:nth-child(4){width:100px;}
+	.increase_table tr.data_field td:nth-child(5){width:150px;}
+	.increase_table tr.data_field td:nth-child(6){width:150px;}
+	.increase_table input{
+		width:100%;
+	}
+	
+	.increase_table tfoot.data_format{display:none;}
 	
 	
 	/* [ 問卷第二區 ] */	 
@@ -322,7 +335,7 @@
 	table.tendency_block > thead > *{font-weight:bold;}
 	table.tendency_block td{vertical-align:middle; padding:8px 5px; border:1px #dedede solid;}
 	table.tendency_block td:nth-child(1){width:250px;}
-	table.tendency_block td:nth-child(2){width:110px; background-color:#efefef;}
+	table.tendency_block td:nth-child(2){width:140px; background-color:#efefef; text-align:center;}
 	table.tendency_block td:nth-child(3){min-width:100px;}
 	 
 	.optionset{

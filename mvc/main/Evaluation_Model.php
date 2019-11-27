@@ -1419,5 +1419,209 @@
 	  return $result;  
 	}
 	
+	
+	
+	//-- Admin Collect : Record Attachment Upload // 附件檔案上傳 
+	// [input] : RecordId	:  
+	// [input] : DocumentId	:  
+	
+	// [input] : FILES 		: [array] - System _FILES Array;
+	public function ADCollect_Import_Attachment_Upload($RecordId='', $DocumentId='' , $FILES = array()){
+	  
+	  $result_key = parent::Initial_Result('upload');
+	  $result  = &$this->ModelResult[$result_key];
+	  
+	  // [name] => MyFile.jpg  / [type] => image/jpeg  /  [tmp_name] => /tmp/php/php6hst32 / [error] => UPLOAD_ERR_OK / [size] => 98174
+	  // Allowed extentions.
+      $allowedExts = array("pdf","doc",'docx','jpg','png','xls','xlsx','txt');
+      
+      // Get filename.
+      $temp = explode(".", $FILES["file"]["name"]);
+     
+      // Get extension.
+      $extension = strtolower(end($temp));
+      
+	  // Validate uploaded files.
+	  // Do not use $_FILES["file"]["type"] as it can be easily forged.
+	  $finfo = finfo_open(FILEINFO_MIME_TYPE);
+	  $mime  = finfo_file($finfo, $FILES["file"]["tmp_name"]);
+	  //$upload_data = json_decode(base64_decode(str_replace('*','/',$UploadMeta)),true);   
+	  
+	  try{
+		 
+		// 取得主要資料
+		$record_data    = [];
+		$record_main	= NULL;
+		$record_mett	= NULL;
+		
+		$DB_GET	= $this->DBLink->prepare( SQL_AdEvaluation::GET_RECORD_MAIN() );
+		$DB_GET->bindParam(':record_id'   , $RecordId );	
+		if( !$DB_GET->execute() || !$record_main = $DB_GET->fetch(PDO::FETCH_ASSOC)){
+		  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
+		}
+		
+		// 取得METT資料表
+		$DB_METTDATA	= $this->DBLink->prepare( SQL_AdEvaluation::GET_EVALUATION_METTDATA() );
+		$DB_METTDATA->bindValue(':record_id',$RecordId);
+		$DB_METTDATA->execute();
+		$record_mett = $DB_METTDATA->fetch(PDO::FETCH_ASSOC);
+		
+		if(!$record_mett['emd1400'] || !$documentset = json_decode($record_mett['emd1400'],true)){
+			throw new Exception('文件尚未儲存');
+		}
+		
+		if(!isset($documentset[$DocumentId])){
+			throw new Exception('文件不存在');
+		}
+		
+		$save_file   = $RecordId.'_'.time().'.'.$temp[1];
+		$save_folder = _SYSTEM_ROOT_PATH.'systemUpload/mett/'.$RecordId.'/';
+		if(!is_dir($save_folder )){
+			mkdir($save_folder,0777,true);
+		}
+
+        
+	    // 取得上傳資料
+		move_uploaded_file($FILES["file"]["tmp_name"],$save_folder.$save_file);
+		
+		// 檢查檔案
+		if(!$new_file_size = filesize($save_folder.$save_file)){
+		  throw new Exception('上傳檔案移動失敗，請重新上傳');	
+		}
+		
+		if(!isset($documentset[$DocumentId]['files'])){
+			$documentset[$DocumentId]['files'] = [];
+		}
+		
+		$upload_file = [
+		  'name'=>$FILES["file"]["name"],
+		  'type'=>$mime,
+		  'size'=>$new_file_size,
+		  'time'=>date('Y-m-d H:i:s'),
+		  'user'=>$this->USER->UserID,
+		  'path'=>'http://140.112.114.183/ForestApply/systemUpload/mett/'.$save_file
+		];
+		$documentset[$DocumentId]['files'][] = $upload_file;
+	    
+		// 更新資料
+		$data_update['_user_update'] = $this->USER->UserID;
+		$data_update['emd1400'] = $documentset;
+		
+		$DB_UPD	= $this->DBLink->prepare(SQL_AdEvaluation::UPDATE_EVALUATION_FIELD('evaluation_mettdata',array_keys($data_update)));
+		$DB_UPD->bindValue(':record_id'		, $RecordId);
+		foreach($data_update as $ufield=>$uvalue){
+		  if(is_array($uvalue)){
+			$DB_UPD->bindValue(':'.$ufield , json_encode($uvalue,JSON_UNESCAPED_UNICODE));  
+		  }else{
+			$DB_UPD->bindValue(':'.$ufield , $uvalue);  
+		  }
+		}
+		$DB_UPD->execute();
+        $result['data']['file']   = $documentset[$DocumentId]['files'];
+		$result['action'] = true;
+		
+	  } catch (Exception $e) {
+        $result['message'][] = $e->getMessage();
+      }
+	  return $result;
+	} 
+	
+	
+	
+	//-- Admin Collect : Record Attachment Download // 附件檔案確認 
+	// [input] : ImportId	: \d+ = DB.collection_import.import_id;
+	// [input] : FileId 	: \d+.type ;
+	public function ADCollect_Import_Attachment_Fetch($ImportId='',  $FileId = ''){
+	  
+	  $result_key = parent::Initial_Result('file');
+	  $result  = &$this->ModelResult[$result_key];
+	  
+	  try{
+		
+		if(!preg_match('/\d{7}/',$ImportId)){
+		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');	
+		}
+		
+		// 取得入館資料
+		$import_data	= NULL;
+		$DB_GET		= $this->DBLink->prepare( SQL_AdCollect::SELECT_TARGET_RECORD() );
+		$DB_GET->bindParam(':import_id'   , $ImportId , PDO::PARAM_STR);
+        if( !$DB_GET->execute()){
+		  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
+		}
+		$import_data = $DB_GET->fetch(PDO::FETCH_ASSOC);
+		
+		
+		$attachments_array = json_decode($import_data['attachments'],true);
+		
+		if(!isset($attachments_array[$FileId])){
+		  throw new Exception('錯誤的附件檔案編號');	
+		}
+		
+		$result['action'] = true;
+		
+	  } catch (Exception $e) {
+        $result['message'][] = $e->getMessage();
+      }
+	  return $result;
+	} 
+	
+	
+    
+	//-- Admin Collect : Record Attachment Delete // 附件檔案移除 
+	// [input] : ImportId	: \d+ = DB.collection_import.import_id;
+	// [input] : FileId 	: \d+.type ;
+	public function ADCollect_Import_Attachment_Delete($ImportId='',  $FileId = ''){
+	  
+	  $result_key = parent::Initial_Result('delete');
+	  $result  = &$this->ModelResult[$result_key];
+	  
+	  try{
+		
+		if(!preg_match('/\d{7}/',$ImportId)){
+		  throw new Exception('_SYSTEM_ERROR_PARAMETER_FAILS');	
+		}
+		
+		// 取得入館資料
+		$import_data	= NULL;
+		$DB_GET		= $this->DBLink->prepare( SQL_AdCollect::SELECT_TARGET_RECORD() );
+		$DB_GET->bindParam(':import_id'   , $ImportId , PDO::PARAM_STR);
+        if( !$DB_GET->execute() || !$import_data = $DB_GET->fetch(PDO::FETCH_ASSOC)){
+		  throw new Exception('_SYSTEM_ERROR_DB_RESULT_NULL');
+		}
+		
+		// 檢測資料 _active = -1 不可修正
+        if($import_data['_active']==-1){
+		  throw new Exception('資料記錄已撤銷，無法更改內容');	
+		}
+		
+		$attachments_array = json_decode($import_data['attachments'],true);
+		
+		if(!isset($attachments_array[$FileId])){
+		  throw new Exception('錯誤的附件檔案編號');	
+		}
+		
+		$sysfile = $this->ADSystem_Delete_Managed_File($FileId);
+		if(!$sysfile['action']){
+		  throw new Exception('中斷處理程序');		
+		}
+		
+		unset($attachments_array[$FileId]);
+		 
+		$DB_UPD = $this->DBLink->prepare(SQL_AdCollect::UPDATE_IMPORT_DATA( ['attachments'] ));
+		$DB_UPD->bindValue(':import_id'   	, $import_data['import_id']);
+		$DB_UPD->bindValue(':userupdate'  	, $this->USER->UserID);
+		$DB_UPD->bindValue(':attachments'  	, json_encode($attachments_array,JSON_UNESCAPED_UNICODE));
+		$DB_UPD->execute();
+        
+		$result['action'] = true;
+		
+	  } catch (Exception $e) {
+        $result['message'][] = $e->getMessage();
+      }
+	  return $result;
+	} 
+	
+	
   }
 ?>

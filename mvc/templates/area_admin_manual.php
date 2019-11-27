@@ -69,9 +69,10 @@
 			  <i class="fa fa-database" aria-hidden="true"></i> <span>知識管理</span>
 			</div>
 		    <ul class='group_manuel'>
+			  <li  title=''	 class='option func_activate'	id='Evaluation'	><i class="fa fa-check-square-o" aria-hidden="true"></i> <span >經營管理效能評量</span> </li>
 			  <li  title=''	 class='option func_activate'	id='Archive'	><i class="fa fa-archive" aria-hidden="true"></i> <span >檔案資料庫</span> </li>
 			  <li  title=''	 class='option func_activate'	id='Classify'	><i class="fa fa-folder-open-o" aria-hidden="true"></i> <span >類別編輯</span> </li>
-			  <li  title=''	 class='option func_activate'	id='Evaluation'	><i class="fa fa-folder-open-o" aria-hidden="true"></i> <span >保護區經營管理效能評量</span> </li>
+			 
 			</ul>
 		  </li>
 		  <?php endif; ?>

@@ -190,11 +190,12 @@
 			  
 			  case 'area_type'   :   $condition[] = " area_type='".$filter_set."' "; break;
 			  case 'apply_area'  :   $condition[] = " am_id=".$filter_set." "; break;
-			  case 'apply_search':   $condition[] = " (apply_code='".$filter_set."' OR apply_date='".$filter_set."' OR applicant_name LIKE'%".$filter_set."%' OR applicant_mail LIKE'%".$filter_set."%' OR applicant_id LIKE'%".$filter_set."%' OR apply_reason LIKE'%".$filter_set."%' OR _status LIKE'%".$filter_set."%')"; break;
+			  case 'apply_search':   $condition[] = " (apply_code='".$filter_set."' OR apply_date='".$filter_set."' OR applicant_name LIKE'%".$filter_set."%' OR applicant_mail LIKE'%".$filter_set."%' OR applicant_id LIKE'%".$filter_set."%' OR apply_reason LIKE'%".$filter_set."%' OR _status LIKE'%".$filter_set."%' OR member LIKE'%".$filter_set."%')"; break;
 			  case 'apply_status':   $condition[] = " _status = '".$filter_set."' "; break;
 			  case 'apply_review':   $condition[] = " _review = 1 " ; break;
 			  case 'apply_checked':  $condition[] = " _status IN('正取送審','備取送審','急件送審','補件送審')" ; break;
 			  case 'apply_unfinish':  $condition[] = " _stage < 5" ; break;
+			  case 'apply_fromapi':  $condition[] = " applicant_info LIKE '%hike.mountain%'" ; break;
 			  
 			  case 'apply_date': 
               case 'date_enter':

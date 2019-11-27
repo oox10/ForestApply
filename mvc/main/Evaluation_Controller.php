@@ -177,6 +177,34 @@
 	}
 	
 	
+	
+	
+	// AJAX: 上傳附件檔案
+	public function imathadd(){  
+	  $record_id = isset($_REQUEST['MTID']) ? $_REQUEST['MTID'] : '';
+	  $document_id = isset($_REQUEST['DUID']) ? $_REQUEST['DUID'] : '';
+	  
+	  $this->Model->ADCollect_Import_Attachment_Upload($record_id,$document_id,$_FILES);
+	  self::data_output('json','',$this->Model->ModelResult);
+	}
+	
+	// AJAX: 移除附件檔案
+	public function imathdel($DataId,$FileId){  
+	  $this->Model->ADCollect_Import_Attachment_Delete($DataId,$FileId);
+	  self::data_output('json','',$this->Model->ModelResult);
+	}
+	
+	// AJAX: 下載附件檔案
+	public function imathget($DataId,$FileId){  
+	  $result = $this->Model->ADCollect_Import_Attachment_Fetch($DataId,$FileId);
+	  if($result['action']){
+		$this->Model->ADSystem_Access_Managed_File($FileId,'imathget','采集號:'.$DataId.',附件下載:'.$FileId);  
+	  }
+	  self::data_output('json','',$this->Model->ModelResult);
+	}
+	
+	
+	
   }
   
   

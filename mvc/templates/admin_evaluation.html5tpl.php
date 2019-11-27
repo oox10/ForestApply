@@ -451,32 +451,37 @@
 				
 				
 				<div class='data_col _hashentry' id='block-emd14' > 
-				  <label >(尚未完成)14. 請填寫本年度已執行結束與本保護區相關的計畫成果報告：</label>
+				  <label >14. 請填寫本年度已執行結束與本保護區相關的計畫成果報告：(可自行新增 <a class='option act_add_tbrow' title='新增'><i class='fa fa-plus'></i></a>)</label>
 				  <div class='data_value'>   
-					<table class='record_list'>
+					<table class='record_list increase_table _update'  name='emd1400' id='emd1400'>
+						<thead>
 						<tr class='data_field'>
+						  <td > <a class='option act_add_tbrow' title='新增'><i class='fa fa-plus'></i></a> </td>
 						  <td title='計畫名稱' >計畫名稱</td>
 						  <td title='執行期間' >執行期間</td>
 						  <td title='經費' >經費</td>
 						  <td title='發包單位' >發包單位</td>
 						  <td title='承辦單位' >承辦單位</td>
-						  <td title='結案報告書' >結案報告書</td>
-						  <td title='其他格式檔案*' >其他格式檔案*</td>
+						  <td title='結案報告書' >結案報告書&其他格式檔案</td>
 						</tr>
-						<tbody class='data_result' mode='list' > 
-						  	
-						</tbody>
-						<tbody class='data_format' mode='list' > 
-						  <td title='計畫名稱' ><input type='text'  class='_variable _update ' name="META-E-doc_senter" id='META-E-doc_senter'  placeholder='' value=''  /></td>
-						  <td title='執行期間' ><input type='text'  class='_variable _update ' name="META-E-doc_senter" id='META-E-doc_senter'  placeholder='' value='' size='5' /></td>
-						  <td title='經費' ><input type='text'  class='_variable _update ' name="META-E-doc_senter" id='META-E-doc_senter'  placeholder='' value='' size='5' /></td>
-						  <td title='發包單位' ><input type='text'  class='_variable _update ' name="META-E-doc_senter" id='META-E-doc_senter'  placeholder='' value='' size='10' /></td>
-						  <td title='承辦單位' ><input type='text'  class='_variable _update ' name="META-E-doc_senter" id='META-E-doc_senter'  placeholder='' value='' size='10' /></td>
-						  <td title='結案報告書' ><input type='file'  class='_variable _update ' name="META-E-doc_senter" id='META-E-doc_senter'  placeholder='' value='' size='10' /></td>
-						  <td title='其他格式檔案*' ><input type='file'  class='_variable _update ' name="META-E-doc_senter" id='META-E-doc_senter'  placeholder='' value='' size='10' /></td>
-						</tbody>
-						
+						</thead>
+						<tbody class='data_result' mode='list' ></tbody>
+						<tfoot class='data_format' mode='list' > 
+						    <tr  >
+							  <td align=center  ><a class="option act_remove_tbrow"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
+							  <td title='計畫名稱' ><input type='text'  class='_variable _update _element' partof='#emd1400' name="title"		placeholder='' value=''  /></td>
+							  <td title='執行期間' ><input type='text'  class='_variable _update _element' partof='#emd1400' name="year"		placeholder='' value=''   /></td>
+							  <td title='經費' ><input type='text'  class='_variable _update _element' partof='#emd1400' 		name="budget"	placeholder='' value=''   /></td>
+							  <td title='發包單位' ><input type='text'  class='_variable _update _element' partof='#emd1400' name="organ"		placeholder='' value=''  /></td>
+							  <td title='承辦單位' ><input type='text'  class='_variable _update _element' partof='#emd1400' name="contractor"		placeholder='' value=''   /></td>
+							  <td title='結案報告書&其他格式檔案' >
+							    <ul class='upllist'></ul>
+							    <input type='file'  class='_variable docupload' name="docupload"  placeholder='' value='' disabled  />
+							  </td>
+							</tr>   
+						</tfoot>	
 					</table>
+					
 				  </div>
 				</div>
 				

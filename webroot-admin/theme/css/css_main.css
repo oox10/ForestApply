@@ -36,12 +36,15 @@ body{ background:#eee; }
 		width:250px;
         height:100%;		
 		position:relative;  
+		display:flex;
+		flex-direction:column;
 	  }
 	  
 	  div.system_mark{
 	    height:80px;
 		line-height:80px;
 		border-bottom:1px #383c3c solid;
+	    flex:0 0 80px;
 	  }
 	    
 		span.manual_mark{
@@ -61,7 +64,8 @@ body{ background:#eee; }
 	    
 	  
 	  ul.main_manual{
-	    
+	    flex:1;
+		overflow-y:auto;
 	  }
 	  
 	  @media (max-height: 760px){
