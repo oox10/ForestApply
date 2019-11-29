@@ -62,7 +62,7 @@
 			
 				$ch = curl_init();
 				$options = array(CURLOPT_URL => $api_address,
-						   CURLOPT_HEADER => 1,
+						   CURLOPT_HEADER => false,
 						   CURLOPT_NOBODY => false,
 						   CURLOPT_RETURNTRANSFER => true,
 						   CURLOPT_USERAGENT 	=> "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
