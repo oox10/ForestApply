@@ -2848,8 +2848,8 @@
 		switch($Mode){
 			case 'api':
 				
-				$api_address  = 'http://testmountain.cpami.gov.tw/api/webhook/mail/send';
-				//$api_address = 'https://hike.taiwan.gov.tw/api/webhook/mail/send';
+				//$api_address  = 'http://testmountain.cpami.gov.tw/api/webhook/mail/send';
+				$api_address = 'https://hike.taiwan.gov.tw/api/webhook/mail/send';
 				$mail_submit  = [];
 				
 				try{
