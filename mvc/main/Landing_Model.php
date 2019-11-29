@@ -2796,7 +2796,7 @@
 		}
 		
 		$mail_id = $this->DBLink->lastInsertId('system_mailer');
-		self::Landing_Mail_Sent_Now($mail_id);
+		self::Landing_Mail_Sent_Now($mail_id,'api');
 		
 		// final 
 		$result['data']['maildate']   = date('Y-m-d');
@@ -2815,7 +2815,7 @@
 	
 	//-- Admin Mailer Sent Mail Now 
 	// [input] : DataNo  :  \d+;
-	protected function Landing_Mail_Sent_Now($DataNo=0){
+	protected function Landing_Mail_Sent_Now($DataNo=0 , $Mode='mail'){
 	  $result_key = parent::Initial_Result('sent');
 	  $result  = &$this->ModelResult[$result_key];
 	  try{  
@@ -2842,60 +2842,137 @@
 		$mail_logs      = json_decode($mail_data['_active_logs'],true);
 		$mail_logs[date('Y-m-d H:i:s')] = 'Send mail by system' ;
 		
-        $mail = new PHPMailer(true); // the true param means it will throw exceptions on errors, which we need to catch
-        $mail->IsSMTP(); // telling the class to use SMTP 
-		$mail->SMTPOptions = array(
-			'ssl' => array(
-				'verify_peer' => false,
-				'verify_peer_name' => false,
-				'allow_self_signed' => true
-			)
-		);
-		$mail->SMTPDebug  = 0;
 		
-		try {  
-		  
-          $mail->SMTPAuth   = _SYSTEM_MAIL_SMTPAuth;   // enable SMTP authentication      
-		  if(_SYSTEM_MAIL_SSL_ACTIVE){
-		    $mail->SMTPSecure = _SYSTEM_MAIL_SECURE;   // sets the prefix to the servie
-		  }
-		  $mail->Port       = _SYSTEM_MAIL_PORT;     // set the SMTP port for the GMAIL server
-		  $mail->Host       = _SYSTEM_MAIL_HOST; 	   // SMTP server
-		  $mail->CharSet 	= "utf-8";
-		  $mail->Username   = _SYSTEM_MAIL_ACCOUNT_USER;  // MAIL username
-		  $mail->Password   = _SYSTEM_MAIL_ACCOUNT_PASS;  // MAIL password
-		  //$mail->AddAddress('','');
-          
-		  $mail_to_sent = (preg_match('/.*?\s*<(.*?)>$/',$to_sent,$mail_paser)) ? trim($mail_paser[1]) : trim($to_sent);
-		  if(!filter_var($mail_to_sent, FILTER_VALIDATE_EMAIL)){
-		    throw new Exception('_LOGIN_INFO_REGISTER_MAIL_FALSE');
-		  }
-		  
-		  $mail->AddAddress($mail_to_sent,'');
-		  $mail->SetFrom( $mail_data['mail_from'] , _SYSTEM_MAIL_FROM_NAME);
-		  $mail->AddReplyTo($mail_data['mail_from'] , _SYSTEM_MAIL_FROM_NAME); // 回信位址
-		  $mail->Subject = $mail_title;
-		  $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!'; // optional - MsgHTML will create an alternate automatically
-		  $mail->MsgHTML($mail_content);
-		  
-		  //$mail->AddCC(); 
-		  //$mail->AddAttachment('images/phpmailer.gif');      // attachment
-	      if(!$mail->Send()) {
-			throw new Exception($mail->ErrorInfo);  
-		  }  
-		  sleep(3);
-		  
-		  // final 
-		  $result['data']   = $mail_data['mail_to'];
-		  $result['action'] = true;
 		
-		} catch (phpmailerException $e) {
-		  $mail_error = $e->errorMessage();
-		  $result['message'][] = $e->errorMessage();  //Pretty error messages from PHPMailer
-		} catch (Exception $e) {
-		  $mail_error = $e->errorMessage();
-		  $result['message'][] = $e->errorMessage();  //echo $e->getMessage(); //Boring error messages from anything else!
+		// 根據不同方法送交信件
+		switch($Mode){
+			case 'api':
+				
+				$api_address  = 'http://testmountain.cpami.gov.tw/api/webhook/mail/send';
+				//$api_address = 'https://hike.taiwan.gov.tw/api/webhook/mail/send';
+				$mail_submit  = [];
+				
+				try{
+				
+					$ch = curl_init();
+					$options = array(CURLOPT_URL => $api_address,
+							   CURLOPT_HEADER => 1,
+							   CURLOPT_NOBODY => false,
+							   CURLOPT_RETURNTRANSFER => true,
+							   CURLOPT_USERAGENT 	=> "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+							   CURLOPT_COOKIEFILE	=> _SYSTEM_ROOT_PATH.'logs\cookie.txt',
+							   CURLOPT_COOKIEJAR 	=> _SYSTEM_ROOT_PATH.'logs\cookie.txt',
+							   CURLOPT_FOLLOWLOCATION => true ,
+							   CURLOPT_SSL_VERIFYPEER => 0,
+							   CURLOPT_SSL_VERIFYHOST => 2,
+							   CURLOPT_CAINFO => getcwd() . _SYSTEM_ROOT_PATH."logs\GTECyberTrustGlobalRoot.crt",
+							   CURLINFO_HEADER_OUT=> true,
+							   CURLOPT_VERBOSE=>true
+							  );
+					
+					$options[CURLOPT_POST] = 1;
+					$options[CURLOPT_HTTPHEADER] = array('Content-Type: application/json');
+					
+					$mail_to_sent = (preg_match('/.*?\s*<(.*?)>$/',$to_sent,$mail_paser)) ? trim($mail_paser[1]) : trim($to_sent);
+				    if(!filter_var($mail_to_sent, FILTER_VALIDATE_EMAIL)){
+						throw new Exception('_LOGIN_INFO_REGISTER_MAIL_FALSE');
+					}
+					
+					$mail_submit['mail_to']		= $mail_to_sent;
+					$mail_submit['mail_title']	= $mail_title;
+					$mail_submit['mail_content']= $mail_content;
+					
+					$options[CURLOPT_POSTFIELDS] = json_encode($mail_submit);		
+					curl_setopt_array($ch, $options);
+					$active_result = curl_exec($ch);
+					
+					if(!$active_result){
+						throw new Exception('API送信未成功');
+					}
+					
+					if(!$apiresult = json_decode($active_result,true)){
+						throw new Exception('API回傳無法解析:'.$active_result);
+					}
+					
+					if(!intval($apiresult['action'])){
+						throw new Exception('API回覆失敗:'.$apiresult['info']);
+					}
+					
+					sleep(2);
+				  
+				    // final 
+				    $result['data']   = $mail_data['mail_to'];
+				    $result['action'] = true;
+				
+				} catch (Exception $e) {
+				  $mail_error = $e->getMessage();
+				  $result['message'][] = $mail_error;  //echo $e->getMessage(); //Boring error messages from anything else!
+				}
+				break;
+			
+			
+			default:
+				$mail = new PHPMailer(true); // the true param means it will throw exceptions on errors, which we need to catch
+				$mail->IsSMTP(); // telling the class to use SMTP 
+				$mail->SMTPOptions = array(
+					'ssl' => array(
+						'verify_peer' => false,
+						'verify_peer_name' => false,
+						'allow_self_signed' => true
+					)
+				);
+				$mail->SMTPDebug  = 0;
+				
+				try {  
+				  
+				  $mail->SMTPAuth   = _SYSTEM_MAIL_SMTPAuth;   // enable SMTP authentication      
+				  if(_SYSTEM_MAIL_SSL_ACTIVE){
+					$mail->SMTPSecure = _SYSTEM_MAIL_SECURE;   // sets the prefix to the servie
+				  }
+				  $mail->Port       = _SYSTEM_MAIL_PORT;     // set the SMTP port for the GMAIL server
+				  $mail->Host       = _SYSTEM_MAIL_HOST; 	   // SMTP server
+				  $mail->CharSet 	= "utf-8";
+				  $mail->Username   = _SYSTEM_MAIL_ACCOUNT_USER;  // MAIL username
+				  $mail->Password   = _SYSTEM_MAIL_ACCOUNT_PASS;  // MAIL password
+				  //$mail->AddAddress('','');
+				  
+				  $mail_to_sent = (preg_match('/.*?\s*<(.*?)>$/',$to_sent,$mail_paser)) ? trim($mail_paser[1]) : trim($to_sent);
+				  if(!filter_var($mail_to_sent, FILTER_VALIDATE_EMAIL)){
+					throw new Exception('_LOGIN_INFO_REGISTER_MAIL_FALSE');
+				  }
+				  
+				  $mail->AddAddress($mail_to_sent,'');
+				  $mail->SetFrom( $mail_data['mail_from'] , _SYSTEM_MAIL_FROM_NAME);
+				  $mail->AddReplyTo($mail_data['mail_from'] , _SYSTEM_MAIL_FROM_NAME); // 回信位址
+				  $mail->Subject = $mail_title;
+				  $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!'; // optional - MsgHTML will create an alternate automatically
+				  $mail->MsgHTML($mail_content);
+				  
+				  //$mail->AddCC(); 
+				  //$mail->AddAttachment('images/phpmailer.gif');      // attachment
+				  if(!$mail->Send()) {
+					throw new Exception($mail->ErrorInfo);  
+				  }  
+				  sleep(2);
+				  
+				  // final 
+				  $result['data']   = $mail_data['mail_to'];
+				  $result['action'] = true;
+				
+				} catch (phpmailerException $e) {
+				  $mail_error = $e->errorMessage();
+				  $result['message'][] = $e->errorMessage();  //Pretty error messages from PHPMailer
+				} catch (Exception $e) {
+				  $mail_error = $e->getMessage();
+				  $result['message'][] = $e->getMessage();  //echo $e->getMessage(); //Boring error messages from anything else!
+				}
+				
+				
+				break;
 		}
+		
+		
+        
 		
 	  } catch (Exception $e) {
         $result['message'][] = $e->getMessage();
