@@ -55,7 +55,7 @@
 	  switch($mail_job['mail_method']){
 		case 'hike':
              
-			$api_address  = _HIKE_MAILAPI_SERVER_TEST; //_HIKE_MAILAPI_SERVER_PATH
+			$api_address  = _HIKE_MAILAPI_SERVER_PATH; //_HIKE_MAILAPI_SERVER_PATH
 			$mail_submit  = [];
 			
 			try{
