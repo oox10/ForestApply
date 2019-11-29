@@ -1120,12 +1120,13 @@
 		
 		$mail_logs = [date('Y-m-d H:i:s')=>'Regist Alert Mail From ['.$booking['apply_code'].'].' ];
 		
-		$DB_MAILJOB	= $this->DBLink->prepare(SQL_AdMailer::REGIST_MAIL_JOB());
+		$DB_MAILJOB	= $this->DBLink->prepare(SQL_AdMailer::REGIST_MAIL_JOB_V2());
 		$DB_MAILJOB->bindValue(':mail_type','狀態通知');
 		$DB_MAILJOB->bindValue(':mail_from',_SYSTEM_MAIL_ACCOUNT_USER.'@'._SYSTEM_MAIL_ACCOUNT_HOST);
 		$DB_MAILJOB->bindValue(':mail_to',$mail_to_sent);
 		$DB_MAILJOB->bindValue(':mail_title',$mail_title);
 		$DB_MAILJOB->bindValue(':mail_content',htmlspecialchars($mail_content,ENT_QUOTES,'UTF-8'));
+		$DB_MAILJOB->bindValue(':mail_method',  $booking['_checker']=='hike.mountain' ? 'hike':'self' );
 		$DB_MAILJOB->bindValue(':creator',$this->USER->UserID);
 		$DB_MAILJOB->bindValue(':editor',$this->USER->UserID);
 		$DB_MAILJOB->bindValue(':mail_date',date('Y-m-d'));

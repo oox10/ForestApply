@@ -49,69 +49,157 @@
 	  $mail_from    =  $mail_job['mail_from'];
 	  $mail_logs    = json_decode($mail_job['_active_logs'],true);
 	  
-	  $mail = new PHPMailer(true); // the true param means it will throw exceptions on errors, which we need to catch
-	  $mail->IsSMTP(); // telling the class to use SMTP 
-	  $mail->SMTPOptions = array(
-		'ssl' => array(
-			'verify_peer' => false,
-			'verify_peer_name' => false,
-			'allow_self_signed' => true
-		)
-	  );
-	  $mail->SMTPDebug  = 0;
-	  $mail_error = '';
 	  
-	  try {  
-		
-		$mail->SMTPAuth   = _SYSTEM_MAIL_SMTPAuth;   // enable SMTP authentication      
-		if(_SYSTEM_MAIL_SSL_ACTIVE){
-		  $mail->SMTPSecure = _SYSTEM_MAIL_SECURE;   // sets the prefix to the servie
-		}
-		$mail->Port       = _SYSTEM_MAIL_PORT;     // set the SMTP port for the GMAIL server
-		$mail->Host       = _SYSTEM_MAIL_HOST; 	   // SMTP server
-		$mail->CharSet 	= "utf-8";
-		$mail->Username   = _SYSTEM_MAIL_ACCOUNT_USER;  // MAIL username
-		$mail->Password   = _SYSTEM_MAIL_ACCOUNT_PASS;  // MAIL password
-		
-		foreach($to_sent as $mail_to){
-		  //$mail->AddAddress('','');
-	      $mail_to_sent = (preg_match('/.*?\s*<(.*?)>$/',$mail_to,$mail_paser)) ? trim($mail_paser[1]) : trim($mail_to);
-		  if(!filter_var($mail_to_sent, FILTER_VALIDATE_EMAIL)){
-		    throw new Exception('_LOGIN_INFO_REGISTER_MAIL_FALSE');
-		  }
-		  $mail->AddAddress($mail_to_sent,'');	
-		}
-		
-		$mail->SetFrom( $mail_from, _SYSTEM_MAIL_FROM_NAME);
-		$mail->AddReplyTo( $mail_from, _SYSTEM_MAIL_FROM_NAME); // 回信位址
-		$mail->Subject = $mail_title ;
-		$mail->AltBody = 'To view the message, please use an HTML compatible email viewer!'; // optional - MsgHTML will create an alternate automatically
-		$mail->MsgHTML($mail_content);
 	  
-		//$mail->AddCC(); 
-		//$mail->AddAttachment('images/phpmailer.gif');      // attachment
+	  
+	  switch($mail_job['mail_method']){
+		case 'hike':
+             
+			$api_address  = _HIKE_MAILAPI_SERVER_TEST; //_HIKE_MAILAPI_SERVER_PATH
+			$mail_submit  = [];
+			
+			try{
+			
+				$ch = curl_init();
+				$options = array(CURLOPT_URL => $api_address,
+						   CURLOPT_HEADER => 1,
+						   CURLOPT_NOBODY => false,
+						   CURLOPT_RETURNTRANSFER => true,
+						   CURLOPT_USERAGENT 	=> "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
+						   CURLOPT_COOKIEFILE	=> _SYSTEM_ROOT_PATH.'logs\cookie.txt',
+						   CURLOPT_COOKIEJAR 	=> _SYSTEM_ROOT_PATH.'logs\cookie.txt',
+						   CURLOPT_FOLLOWLOCATION => true ,
+						   CURLOPT_SSL_VERIFYPEER => 0,
+						   CURLOPT_SSL_VERIFYHOST => 2,
+						   CURLOPT_CAINFO => getcwd() . _SYSTEM_ROOT_PATH."logs\GTECyberTrustGlobalRoot.crt",
+						   CURLINFO_HEADER_OUT=> true,
+						   CURLOPT_VERBOSE=>true
+						  );
+				
+				$options[CURLOPT_POST] = 1;
+				$options[CURLOPT_HTTPHEADER] = array('Content-Type: application/json');
+				
+				$mail_to_sent = (preg_match('/.*?\s*<(.*?)>$/',$to_sent,$mail_paser)) ? trim($mail_paser[1]) : trim($to_sent);
+				if(!filter_var($mail_to_sent, FILTER_VALIDATE_EMAIL)){
+					throw new Exception('_LOGIN_INFO_REGISTER_MAIL_FALSE');
+				}
+				
+				$mail_submit['mail_to']		= $mail_to_sent;
+				$mail_submit['mail_title']	= $mail_title;
+				$mail_submit['mail_content']= $mail_content;
+				
+				$options[CURLOPT_POSTFIELDS] = json_encode($mail_submit);		
+				curl_setopt_array($ch, $options);
+				$active_result = curl_exec($ch);
+				
+				if(!$active_result){
+					throw new Exception('API送信未成功');
+				}
+				
+				if(!$apiresult = json_decode($active_result,true)){
+					throw new Exception('API回傳無法解析:'.$active_result);
+				}
+				
+				if(!isset($apiresult['action']) || !intval($apiresult['action'])){
+					throw new Exception('API回覆失敗:'.$apiresult['info']);
+				}
+				
+			    
+				// final 
+				$logs_message .= 'success.'.PHP_EOL;
+				file_put_contents($logs_file,$logs_message,FILE_APPEND);
+				echo $logs_message;
+				sleep(2);
+			
+			} catch (Exception $e) {
+			    $mail_error = $e->getMessage();  //echo $e->getMessage(); //Boring error messages from anything else!
+				$logs_message .= "fail:".$mail_error.PHP_EOL;
+				file_put_contents($logs_file,$logs_message,FILE_APPEND);
+				echo $logs_message;
+			}
+			
+			break;		
 		
-		if(!$mail->Send()) {
-		  throw new Exception($mail->ErrorInfo);  
-		}  
+
+        default: 
+			
+			$mail = new PHPMailer(true); // the true param means it will throw exceptions on errors, which we need to catch
+			$mail->IsSMTP(); // telling the class to use SMTP 
+			$mail->SMTPOptions = array(
+				'ssl' => array(
+					'verify_peer' => false,
+					'verify_peer_name' => false,
+					'allow_self_signed' => true
+				)
+			);
+			$mail->SMTPDebug  = 0;
+			$mail_error = '';
+			  
+			try {  
+				
+				$mail->SMTPAuth   = _SYSTEM_MAIL_SMTPAuth;   // enable SMTP authentication      
+				if(_SYSTEM_MAIL_SSL_ACTIVE){
+				  $mail->SMTPSecure = _SYSTEM_MAIL_SECURE;   // sets the prefix to the servie
+				}
+				$mail->Port       = _SYSTEM_MAIL_PORT;     // set the SMTP port for the GMAIL server
+				$mail->Host       = _SYSTEM_MAIL_HOST; 	   // SMTP server
+				$mail->CharSet 	= "utf-8";
+				$mail->Username   = _SYSTEM_MAIL_ACCOUNT_USER;  // MAIL username
+				$mail->Password   = _SYSTEM_MAIL_ACCOUNT_PASS;  // MAIL password
+				
+				foreach($to_sent as $mail_to){
+				  //$mail->AddAddress('','');
+				  $mail_to_sent = (preg_match('/.*?\s*<(.*?)>$/',$mail_to,$mail_paser)) ? trim($mail_paser[1]) : trim($mail_to);
+				  if(!filter_var($mail_to_sent, FILTER_VALIDATE_EMAIL)){
+					throw new Exception('_LOGIN_INFO_REGISTER_MAIL_FALSE');
+				  }
+				  $mail->AddAddress($mail_to_sent,'');	
+				}
+				
+				$mail->SetFrom( $mail_from, _SYSTEM_MAIL_FROM_NAME);
+				$mail->AddReplyTo( $mail_from, _SYSTEM_MAIL_FROM_NAME); // 回信位址
+				$mail->Subject = $mail_title ;
+				$mail->AltBody = 'To view the message, please use an HTML compatible email viewer!'; // optional - MsgHTML will create an alternate automatically
+				$mail->MsgHTML($mail_content);
+			  
+				//$mail->AddCC(); 
+				//$mail->AddAttachment('images/phpmailer.gif');      // attachment
+				
+				if(!$mail->Send()) {
+				  throw new Exception($mail->ErrorInfo);  
+				}  
+				
+				$logs_message .= 'success.'.PHP_EOL;
+				file_put_contents($logs_file,$logs_message,FILE_APPEND);
+				echo $logs_message;
+				sleep(2);
+				
+			} catch (phpmailerException $e) {
+				$mail_error = $e->errorMessage();  //Pretty error messages from PHPMailer
+				$logs_message .= "fail:".$mail_error.PHP_EOL;
+				file_put_contents($logs_file,$logs_message,FILE_APPEND);
+				echo $logs_message;
+				
+			} catch (Exception $e) {
+				$mail_error = $e->getMessage();  //echo $e->getMessage(); //Boring error messages from anything else!
+				$logs_message .= "fail:".$mail_error.PHP_EOL;
+				file_put_contents($logs_file,$logs_message,FILE_APPEND);
+				echo $logs_message;
+			}    
+			
+			
+			break;		
 		
-		$logs_message .= 'success.'.PHP_EOL;
-        file_put_contents($logs_file,$logs_message,FILE_APPEND);
-        echo $logs_message;
-		sleep(3);
-		
-	  } catch (phpmailerException $e) {
-		$mail_error = $e->errorMessage();  //Pretty error messages from PHPMailer
-		$logs_message .= "fail:".$mail_error.PHP_EOL;
-        file_put_contents($logs_file,$logs_message,FILE_APPEND);
-        echo $logs_message;
-		
-	  } catch (Exception $e) {
-		$mail_error = $e->errorMessage();  //echo $e->getMessage(); //Boring error messages from anything else!
-		$logs_message .= "fail:".$mail_error.PHP_EOL;
-        file_put_contents($logs_file,$logs_message,FILE_APPEND);
-        echo $logs_message;
 	  }
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	 
 	  
 	  // final 
 	  $mail_logs[date('Y-m-d H:i:s')] = $mail_error ?  'SENT MAIL Fails:'.$mail_error : 'SENT MAIL SUCCESS.';

@@ -190,12 +190,13 @@
 		
 		$mail_logs = [date('Y-m-d H:i:s')=>'Regist Checked Mail From [Job_Apply_Auto_Pass_Booking].' ];
 	  
-        $DB_MAILJOB	= $db->DBLink->prepare(SQL_AdMailer::REGIST_MAIL_JOB());
+        $DB_MAILJOB	= $db->DBLink->prepare(SQL_AdMailer::REGIST_MAIL_JOB_V2());
 	    $DB_MAILJOB->bindValue(':mail_type',$mail_title_type);
 	    $DB_MAILJOB->bindValue(':mail_from',_SYSTEM_MAIL_ACCOUNT_USER.'@'._SYSTEM_MAIL_ACCOUNT_HOST);
 	    $DB_MAILJOB->bindValue(':mail_to'	,$to_sent);
 	    $DB_MAILJOB->bindValue(':mail_title',$mail_title);
 	    $DB_MAILJOB->bindValue(':mail_content',htmlspecialchars($mail_content,ENT_QUOTES,'UTF-8'));
+		$DB_MAILJOB->bindValue(':mail_method', $booking['_checker']=='hike.mountain' ? 'hike':'self' );
 	    $DB_MAILJOB->bindValue(':creator' , 'SystemJobs');
 	    $DB_MAILJOB->bindValue(':editor' , '');
 	    $DB_MAILJOB->bindValue(':mail_date',date('Y-m-d'));
@@ -284,12 +285,13 @@
 		
 	  $mail_logs = [date('Y-m-d H:i:s')=>'Regist Checked Mail From [Job_Apply_Auto_Pass_Booking].' ];
 	  
-	  $DB_MAILJOB	= $db->DBLink->prepare(SQL_AdMailer::REGIST_MAIL_JOB());
+	  $DB_MAILJOB	= $db->DBLink->prepare(SQL_AdMailer::REGIST_MAIL_JOB_V2());
 	  $DB_MAILJOB->bindValue(':mail_type',$mail_title_type);
 	  $DB_MAILJOB->bindValue(':mail_from',_SYSTEM_MAIL_ACCOUNT_USER.'@'._SYSTEM_MAIL_ACCOUNT_HOST);
 	  $DB_MAILJOB->bindValue(':mail_to'	,$to_sent);
 	  $DB_MAILJOB->bindValue(':mail_title',$mail_title);
 	  $DB_MAILJOB->bindValue(':mail_content',htmlspecialchars($mail_content,ENT_QUOTES,'UTF-8'));
+	  $DB_MAILJOB->bindValue(':mail_method', $book['_checker']=='hike.mountain' ? 'hike':'self' );
 	  $DB_MAILJOB->bindValue(':creator' , 'SystemJobs');
 	  $DB_MAILJOB->bindValue(':editor' , '');
 	  $DB_MAILJOB->bindValue(':mail_date',date('Y-m-d'));

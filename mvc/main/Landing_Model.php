@@ -2781,12 +2781,13 @@
 		
 		$mail_logs = [date('Y-m-d H:i:s')=>'Regist Alert Mail From ['.$booking['apply_code'].'].' ];
 		
-		$DB_MAILJOB	= $this->DBLink->prepare(SQL_AdMailer::REGIST_MAIL_JOB());
+		$DB_MAILJOB	= $this->DBLink->prepare(SQL_AdMailer::REGIST_MAIL_JOB_V2());
 		$DB_MAILJOB->bindValue(':mail_type','狀態通知');
 		$DB_MAILJOB->bindValue(':mail_from',_SYSTEM_MAIL_ACCOUNT_USER.'@'._SYSTEM_MAIL_ACCOUNT_HOST);
 		$DB_MAILJOB->bindValue(':mail_to',$mail_to_sent);
 		$DB_MAILJOB->bindValue(':mail_title',$mail_title);
 		$DB_MAILJOB->bindValue(':mail_content',htmlspecialchars($mail_content,ENT_QUOTES,'UTF-8'));
+		$DB_MAILJOB->bindValue(':mail_method',    $booking['_checker']=='hike.mountain' ? 'hike':'self' );
 		$DB_MAILJOB->bindValue(':creator' , $booking['applicant_name']);
 		$DB_MAILJOB->bindValue(':editor' , '');
 		$DB_MAILJOB->bindValue(':mail_date',date('Y-m-d'));
@@ -2796,7 +2797,7 @@
 		}
 		
 		$mail_id = $this->DBLink->lastInsertId('system_mailer');
-		self::Landing_Mail_Sent_Now($mail_id,'api');
+		self::Landing_Mail_Sent_Now($mail_id);
 		
 		// final 
 		$result['data']['maildate']   = date('Y-m-d');
@@ -2815,7 +2816,7 @@
 	
 	//-- Admin Mailer Sent Mail Now 
 	// [input] : DataNo  :  \d+;
-	protected function Landing_Mail_Sent_Now($DataNo=0 , $Mode='mail'){
+	protected function Landing_Mail_Sent_Now($DataNo=0 ){
 	  $result_key = parent::Initial_Result('sent');
 	  $result  = &$this->ModelResult[$result_key];
 	  try{  
@@ -2845,11 +2846,10 @@
 		
 		
 		// 根據不同方法送交信件
-		switch($Mode){
-			case 'api':
+		switch($mail_data['mail_method']){
+			case 'hike':
 				
-				//$api_address  = 'http://testmountain.cpami.gov.tw/api/webhook/mail/send';
-				$api_address = 'https://hike.taiwan.gov.tw/api/webhook/mail/send';
+				$api_address  = _HIKE_MAILAPI_SERVER_TEST; //_HIKE_MAILAPI_SERVER_PATH
 				$mail_submit  = [];
 				
 				try{
@@ -2894,7 +2894,7 @@
 						throw new Exception('API回傳無法解析:'.$active_result);
 					}
 					
-					if(!intval($apiresult['action'])){
+					if(!isset($apiresult['action']) || !intval($apiresult['action'])){
 						throw new Exception('API回覆失敗:'.$apiresult['info']);
 					}
 					

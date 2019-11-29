@@ -314,7 +314,7 @@
 		$DB_UPD->bindValue(':_status',$lotto_result); 
 		$DB_UPD->execute();
 		
-		bollet_result_mail($db,$apply_meta[$abid]['applicant_mail'],$apply_meta[$abid]['apply_code'],$apply_meta[$abid]['apply_date'], $area_main['area_name'] ,$lotto_result,$apply_meta[$abid]['date_enter']);
+		bollet_result_mail($db,$apply_meta[$abid]['applicant_mail'],$apply_meta[$abid]['apply_code'],$apply_meta[$abid]['apply_date'], $area_main['area_name'] ,$lotto_result,$apply_meta[$abid]['date_enter'],$apply_meta[$abid]['_checker']);
 	  }
 	  
 	  
@@ -330,7 +330,7 @@
 		$DB_UPD->bindValue(':_status','收件待審');
 		$DB_UPD->bindValue(':_progres',json_encode($progress)); 
 		$DB_UPD->execute();
-	    bollet_result_mail($db,$apply_meta[$abid]['applicant_mail'],$apply_meta[$abid]['apply_code'],$apply_meta[$abid]['apply_date'], $area_main['area_name'] ,$lotto_result,$apply_meta[$abid]['date_enter']);
+	    bollet_result_mail($db,$apply_meta[$abid]['applicant_mail'],$apply_meta[$abid]['apply_code'],$apply_meta[$abid]['apply_date'], $area_main['area_name'] ,$lotto_result,$apply_meta[$abid]['date_enter'],$apply_meta[$abid]['_checker']);
 	  }
 	  
 	  // 區域本日抽籤完成
@@ -564,7 +564,7 @@
 		$DB_UPD->bindValue(':_status',$lotto_result); 
 		$DB_UPD->execute();
 		
-		bollet_result_mail($db,$apply_meta[$abid]['applicant_mail'],$apply_meta[$abid]['apply_code'],$apply_meta[$abid]['apply_date'], $area_main['area_name'] ,$lotto_result,$apply_meta[$abid]['date_enter']);
+		bollet_result_mail($db,$apply_meta[$abid]['applicant_mail'],$apply_meta[$abid]['apply_code'],$apply_meta[$abid]['apply_date'], $area_main['area_name'] ,$lotto_result,$apply_meta[$abid]['date_enter'],$apply_meta[$abid]['_checker']);
 	  }
 	  
 	  // 候補與未中
@@ -585,7 +585,7 @@
 		    $DB_UPD->bindValue(':_status',$lotto_result);
 			$DB_UPD->bindValue(':_progres',json_encode($progress)); 
 			$DB_UPD->execute();
-			bollet_result_mail($db,$apply_meta[$abid]['applicant_mail'],$apply_meta[$abid]['apply_code'],$apply_meta[$abid]['apply_date'], $area_main['area_name'] ,$lotto_result,$apply_meta[$abid]['date_enter']);
+			bollet_result_mail($db,$apply_meta[$abid]['applicant_mail'],$apply_meta[$abid]['apply_code'],$apply_meta[$abid]['apply_date'], $area_main['area_name'] ,$lotto_result,$apply_meta[$abid]['date_enter'],$apply_meta[$abid]['_checker']);
 		}
 	  }
 	  
@@ -616,7 +616,7 @@
   
   
   // 抽籤通知信註冊
-  function bollet_result_mail($DB,$ApplicantMail,$ApplyCode,$ApplyDate,$ApplyArea,$LottoResult,$EnterDate){
+  function bollet_result_mail($DB,$ApplicantMail,$ApplyCode,$ApplyDate,$ApplyArea,$LottoResult,$EnterDate,$ApplyChecker=''){
 	  
 	$mail_type    = '抽籤結果';
 	$mail_logs = [date('Y-m-d H:i:s')=>'Regist Lotto Mail From [Job_Apply_Bollet_N_Lotto].' ];
@@ -641,12 +641,13 @@
 	$mail_content .= "<div><a href='"._SYSTEM_SERVER_ADDRESS."' target=_blank >"._SYSTEM_SERVER_ADDRESS."</a></div>";
 
 	  
-    $DB_MAILJOB	= $DB->DBLink->prepare(SQL_AdMailer::REGIST_MAIL_JOB());
+    $DB_MAILJOB	= $DB->DBLink->prepare(SQL_AdMailer::REGIST_MAIL_JOB_V2());
 	$DB_MAILJOB->bindValue(':mail_type',$mail_type);
 	$DB_MAILJOB->bindValue(':mail_from',_SYSTEM_MAIL_ACCOUNT_USER.'@'._SYSTEM_MAIL_ACCOUNT_HOST);
 	$DB_MAILJOB->bindValue(':mail_to',$ApplicantMail);
 	$DB_MAILJOB->bindValue(':mail_title',$mail_title);
 	$DB_MAILJOB->bindValue(':mail_content',htmlspecialchars($mail_content,ENT_QUOTES,'UTF-8'));
+	$DB_MAILJOB->bindValue(':mail_method',    $ApplyChecker=='hike.mountain' ? 'hike':'self' );
 	$DB_MAILJOB->bindValue(':creator' , 'SystemJobs');
 	$DB_MAILJOB->bindValue(':editor' , '');
 	$DB_MAILJOB->bindValue(':mail_date',date('Y-m-d'));
@@ -657,15 +658,7 @@
   }
   
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
   
   
 ?>

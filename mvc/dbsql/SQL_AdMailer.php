@@ -77,11 +77,15 @@
 	
 	//-- Admin Apply : Regist Apply mail alert job
 	public static function REGIST_MAIL_JOB(){
-	  $SQL_String = "INSERT INTO system_mailer VALUES(NULL,:mail_type,:mail_from,:mail_to,:mail_title,:mail_content,0,:creator,'".date('c')."',:editor,'0000-00-00 00:00:00',:mail_date,'0000-00-00 00:00:00','',:active_logs,1);";
+	  $SQL_String = "INSERT INTO system_mailer VALUES(NULL,:mail_type,:mail_from,:mail_to,:mail_title,:mail_content,'self',0,:creator,'".date('c')."',:editor,'0000-00-00 00:00:00',:mail_date,'0000-00-00 00:00:00','',:active_logs,1);";
 	  return $SQL_String;
 	}
 	
-	
+	//-- Admin Apply : Regist Apply mail alert job
+	public static function REGIST_MAIL_JOB_V2(){
+	  $SQL_String = "INSERT INTO system_mailer VALUES(NULL,:mail_type,:mail_from,:mail_to,:mail_title,:mail_content,:mail_method,0,:creator,'".date('c')."',:editor,'0000-00-00 00:00:00',:mail_date,'0000-00-00 00:00:00','',:active_logs,1);";
+	  return $SQL_String;
+	}
 	
 	
 	
