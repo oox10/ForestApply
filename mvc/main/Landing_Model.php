@@ -346,8 +346,8 @@
 		
 		$result['data']['area']    = $area ;
 		$result['data']['forms']   = $applyforms ;
-		$result['data']['stops']   = $stops ;
-		$result['data']['applied'] = $applied ;
+		$result['data']['stops']   = count($stops) ? $stops : new  ArrayObject();
+		$result['data']['applied'] = count($applied) ? $applied : new  ArrayObject();
 		$result['data']['start']   = date('Y-m-d',strtotime('+'.$area['accept_min_day'].' day'));
 		
 		
