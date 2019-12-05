@@ -69,7 +69,7 @@
 	
 	//-- Client Area :  get open area list 
 	public static function INDEX_GET_AREA_LIST(){
-	  $SQL_String = "SELECT area_code,area_type,area_name,owner FROM area_main WHERE _open=1 AND _keep=1 ORDER BY area_type ASC ,ano ASC;";
+	  $SQL_String = "SELECT area_code,area_type,area_name,owner,`@time` AS time_update FROM area_main WHERE _open=1 AND _keep=1 ORDER BY area_type ASC ,ano ASC;";
 	  return $SQL_String;
 	} 
 	

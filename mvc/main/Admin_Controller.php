@@ -91,7 +91,7 @@
 	  }
 	  
 	  $model_data = array('action'=>$action, 'data'=>$result);
-	  $model_data['version'] = 'forest - apply v2.0 / 2019-09-30'; 
+	  $model_data['version'] = 'forest - apply v2.0 / 2019-11-30'; 
 	  $model_data['mode']    = $usrmode;
 	  
 	  switch( strtolower($IOType) ){

@@ -79,7 +79,7 @@
 				$options[CURLOPT_POST] = 1;
 				$options[CURLOPT_HTTPHEADER] = array('Content-Type: application/json');
 				
-				$mail_to_sent = (preg_match('/.*?\s*<(.*?)>$/',$to_sent,$mail_paser)) ? trim($mail_paser[1]) : trim($to_sent);
+				$mail_to_sent = (preg_match('/.*?\s*<(.*?)>$/',$mail_job['mail_to'],$mail_paser)) ? trim($mail_paser[1]) : trim($to_sent);
 				if(!filter_var($mail_to_sent, FILTER_VALIDATE_EMAIL)){
 					throw new Exception('_LOGIN_INFO_REGISTER_MAIL_FALSE');
 				}

@@ -2894,8 +2894,11 @@
 						throw new Exception('API回傳無法解析:'.$active_result);
 					}
 					
+					
+					$api_fail_message = isset($apiresult['info']) ? $apiresult['info'] : $active_result;
+					
 					if(!isset($apiresult['action']) || !intval($apiresult['action'])){
-						throw new Exception('API回覆失敗:'.$apiresult['info']);
+						throw new Exception('API回覆失敗:'.$api_fail_message);
 					}
 					
 					sleep(2);
